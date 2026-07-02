@@ -1,29 +1,62 @@
-import type { PlacedMirrors, Puzzle } from './types'
-import { validateSolution } from './validateSolution'
+import type { PlacedMirrors, Puzzle, ValidationResult } from './types'
+
+export interface ScoreItem {
+  label: string
+  point: number
+}
 
 export interface Score {
-  /** 정답 여부. */
-  solved: boolean
-  /** 지나간(필수) 별 수. */
-  starsHit: number
-  /** 필수 별 전체 수. */
-  starsTotal: number
-  /** 사용한 거울 수(적을수록 좋다). */
-  mirrorsUsed: number
+  total: number
+  breakdown: ScoreItem[]
 }
 
 /**
- * 판정 결과를 학생에게 보여줄 간단한 점수 요약으로 정리한다.
- * (별점/랭킹 등 확장 여지를 위해 판정과 분리한다.)
+ * 판정 결과를 바탕으로 간단한 점수를 매긴다. (React 비의존 순수 함수)
+ *
+ * 규칙:
+ * - 정해진 출구로 나가면 +5
+ * - 별 하나 지날 때마다 +2
+ * - 금지칸을 지나지 않으면 +2
+ * - 사용 제한보다 적게 쓰면 남은 거울 1개당 +1
+ * - 성공하면 추가 +5
  */
-export function scoreSolution(puzzle: Puzzle, placed: PlacedMirrors): Score {
-  const result = validateSolution(puzzle, placed)
-  const requiredStarSet = new Set(puzzle.rule.requiredStars)
-  const starsHit = result.simulation.visitedStars.filter((s) => requiredStarSet.has(s)).length
-  return {
-    solved: result.success,
-    starsHit,
-    starsTotal: puzzle.rule.requiredStars.length,
-    mirrorsUsed: Object.keys(placed).length,
+export function scoreSolution(
+  puzzle: Puzzle,
+  validation: ValidationResult,
+  placedMirrors: PlacedMirrors,
+): Score {
+  const { simulation } = validation
+  const breakdown: ScoreItem[] = []
+
+  // 출구 도달
+  if (simulation.exitedAtCorrectExit) {
+    breakdown.push({ label: '출구 도달', point: 5 })
   }
+
+  // 별 통과 (필수 별 기준)
+  const requiredStarSet = new Set(puzzle.rule.requiredStars)
+  const starsHit = simulation.visitedStars.filter((s) => requiredStarSet.has(s)).length
+  if (starsHit > 0) {
+    breakdown.push({ label: `별 ${starsHit}개 통과`, point: starsHit * 2 })
+  }
+
+  // 금지칸 회피
+  if (simulation.hitForbidden.length === 0) {
+    breakdown.push({ label: '금지칸 회피', point: 2 })
+  }
+
+  // 남은 거울
+  const mirrorsUsed = Object.keys(placedMirrors).length
+  const remaining = puzzle.rule.maxMirrors - mirrorsUsed
+  if (remaining > 0) {
+    breakdown.push({ label: `남은 거울 ${remaining}개`, point: remaining })
+  }
+
+  // 성공 보너스
+  if (validation.success) {
+    breakdown.push({ label: '성공 보너스', point: 5 })
+  }
+
+  const total = breakdown.reduce((sum, item) => sum + item.point, 0)
+  return { total, breakdown }
 }

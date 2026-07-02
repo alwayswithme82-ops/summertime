@@ -41,4 +41,4 @@ export {
 export { reflectDirection, nextMirror } from './mirror'
 export { simulateLight } from './simulateLight'
 export { validateSolution } from './validateSolution'
-export { scoreSolution, type Score } from './scoreSolution'
+export { scoreSolution, type Score, type ScoreItem } from './scoreSolution'

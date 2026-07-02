@@ -43,7 +43,15 @@ export function simulateLight(puzzle: Puzzle, placed: PlacedMirrors): Simulation
   let exited = false
   let first = true
 
+  // 무한 루프 방지용 상한. (상태 반복 감지가 우선이고, 이건 안전망.)
+  const maxSteps = rows * cols * 4 + 10
+  let steps = 0
+
   while (isInsideBoard(pos, rows, cols)) {
+    if (steps++ > maxSteps) {
+      loopDetected = true
+      break
+    }
     const state = `${pos.row},${pos.col},${dir}`
     if (seenStates.has(state)) {
       loopDetected = true
