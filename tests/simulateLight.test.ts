@@ -6,8 +6,8 @@ import { simulateLight } from '../src/core'
 function make(extra: Partial<Puzzle> = {}): Puzzle {
   return {
     id: 't', title: '', level: 'BASIC', rows: 3, cols: 3,
-    entry: { side: 'LEFT', index: 0, direction: 'RIGHT' },
-    exit: { side: 'RIGHT', index: 0, direction: 'RIGHT' },
+    entry: { side: 'LEFT', index: 1, direction: 'RIGHT' },
+    exit: { side: 'RIGHT', index: 1, direction: 'RIGHT' },
     stars: [], forbiddenCells: [],
     rule: { requiredStars: [], forbiddenCells: [], mirrorPlacementMode: 'ANY_EMPTY', maxMirrors: 9 },
     ...extra,
@@ -28,7 +28,7 @@ describe('simulateLight — 거울 없는 직진', () => {
 
 describe('simulateLight — 거울 하나로 꺾기', () => {
   it("'\\' 거울에서 RIGHT가 DOWN으로 꺾여 아래로 나간다", () => {
-    const puzzle = make({ exit: { side: 'BOTTOM', index: 2, direction: 'DOWN' } })
+    const puzzle = make({ exit: { side: 'BOTTOM', index: 3, direction: 'DOWN' } })
     const r = simulateLight(puzzle, { C1: '\\' })
     expect(r.visitedCells).toEqual(['A1', 'B1', 'C1', 'C2', 'C3'])
     expect(r.finalCell).toBe('C3')
@@ -38,8 +38,8 @@ describe('simulateLight — 거울 하나로 꺾기', () => {
 
   it("'/' 거울에서 RIGHT가 UP으로 꺾여 위로 나간다", () => {
     const puzzle = make({
-      entry: { side: 'LEFT', index: 1, direction: 'RIGHT' },
-      exit: { side: 'TOP', index: 2, direction: 'UP' },
+      entry: { side: 'LEFT', index: 2, direction: 'RIGHT' },
+      exit: { side: 'TOP', index: 3, direction: 'UP' },
     })
     const r = simulateLight(puzzle, { C2: '/' })
     expect(r.visitedCells).toEqual(['A2', 'B2', 'C2', 'C1'])
@@ -52,7 +52,7 @@ describe('simulateLight — 거울 하나로 꺾기', () => {
 describe('simulateLight — 별/금지 방문 기록', () => {
   it('경로가 지난 별과 금지 칸을 각각 기록한다', () => {
     const puzzle = make({
-      exit: { side: 'BOTTOM', index: 2, direction: 'DOWN' },
+      exit: { side: 'BOTTOM', index: 3, direction: 'DOWN' },
       stars: ['C1'], forbiddenCells: ['C2'],
     })
     const r = simulateLight(puzzle, { C1: '\\' })

@@ -18,19 +18,27 @@ export type {
   ValidationResult,
 } from './types'
 
-export { DIRECTIONS, VECTORS, ARROW, opposite, type Delta } from './direction'
+export {
+  DIRECTIONS,
+  ARROW,
+  oppositeDirection,
+  directionToDelta,
+  isHorizontal,
+  isVertical,
+  type Delta,
+} from './direction'
 export {
   colToLetters,
   positionToCellKey,
   cellKeyToPosition,
   samePosition,
-  inBounds,
-  move,
+  isInsideBoard,
+  getNextPosition,
+  getExitEdge,
+  isSameEdgePoint,
   edgeEntryPosition,
-  beamExitEdge,
-  sameEdge,
 } from './coordinate'
-export { reflect, nextMirror } from './mirror'
+export { reflectDirection, nextMirror } from './mirror'
 export { simulateLight } from './simulateLight'
 export { validateSolution } from './validateSolution'
 export { scoreSolution, type Score } from './scoreSolution'

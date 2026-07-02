@@ -8,14 +8,14 @@ import type {
   Puzzle,
   SimulationResult,
 } from './types'
-import { reflect } from './mirror'
+import { reflectDirection } from './mirror'
 import {
-  beamExitEdge,
   edgeEntryPosition,
-  inBounds,
-  move,
+  getExitEdge,
+  getNextPosition,
+  isInsideBoard,
+  isSameEdgePoint,
   positionToCellKey,
-  sameEdge,
 } from './coordinate'
 
 /**
@@ -43,7 +43,7 @@ export function simulateLight(puzzle: Puzzle, placed: PlacedMirrors): Simulation
   let exited = false
   let first = true
 
-  while (inBounds(pos, rows, cols)) {
+  while (isInsideBoard(pos, rows, cols)) {
     const state = `${pos.row},${pos.col},${dir}`
     if (seenStates.has(state)) {
       loopDetected = true
@@ -80,10 +80,10 @@ export function simulateLight(puzzle: Puzzle, placed: PlacedMirrors): Simulation
     path.push(step)
     first = false
 
-    if (mirror) dir = reflect(mirror, dir)
+    if (mirror) dir = reflectDirection(dir, mirror)
 
-    const next = move(pos, dir)
-    if (!inBounds(next, rows, cols)) {
+    const next = getNextPosition(pos, dir)
+    if (!isInsideBoard(next, rows, cols)) {
       exited = true
       break
     }
@@ -93,8 +93,8 @@ export function simulateLight(puzzle: Puzzle, placed: PlacedMirrors): Simulation
   let exitedAtCorrectExit = false
   let wrongExit = false
   if (exited) {
-    const actualExit = beamExitEdge(pos, dir)
-    exitedAtCorrectExit = sameEdge(actualExit, puzzle.exit)
+    const actualExit = getExitEdge(pos, dir, rows, cols)
+    exitedAtCorrectExit = isSameEdgePoint(actualExit, puzzle.exit)
     wrongExit = !exitedAtCorrectExit
     // 마지막 스텝에 출구 사건 표시(금지 칸이 아니라면).
     const last = path[path.length - 1]

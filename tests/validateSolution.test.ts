@@ -6,8 +6,8 @@ import { samplePuzzles } from '../src/data/samplePuzzles'
 // 3x3, 위 입구(A1 아래로), 아래 출구(C3 아래로), 별은 중앙 B2.
 const multi: Puzzle = {
   id: 'multi', title: '여러 정답', level: 'NORMAL', rows: 3, cols: 3,
-  entry: { side: 'TOP', index: 0, direction: 'DOWN' },
-  exit: { side: 'BOTTOM', index: 2, direction: 'DOWN' },
+  entry: { side: 'TOP', index: 1, direction: 'DOWN' },
+  exit: { side: 'BOTTOM', index: 3, direction: 'DOWN' },
   stars: ['B2'], forbiddenCells: [],
   rule: { requiredStars: ['B2'], forbiddenCells: [], mirrorPlacementMode: 'ANY_EMPTY', maxMirrors: 6 },
 }

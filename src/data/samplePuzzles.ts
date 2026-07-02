@@ -15,8 +15,8 @@ export const samplePuzzles: Puzzle[] = [
     level: 'BASIC',
     rows: 3,
     cols: 3,
-    entry: { side: 'TOP', index: 0, direction: 'DOWN' },
-    exit: { side: 'BOTTOM', index: 2, direction: 'DOWN' },
+    entry: { side: 'TOP', index: 1, direction: 'DOWN' },
+    exit: { side: 'BOTTOM', index: 3, direction: 'DOWN' },
     stars: ['B2'],
     forbiddenCells: [],
     rule: {
@@ -34,8 +34,8 @@ export const samplePuzzles: Puzzle[] = [
     level: 'NORMAL',
     rows: 3,
     cols: 3,
-    entry: { side: 'LEFT', index: 0, direction: 'RIGHT' },
-    exit: { side: 'BOTTOM', index: 2, direction: 'DOWN' },
+    entry: { side: 'LEFT', index: 1, direction: 'RIGHT' },
+    exit: { side: 'BOTTOM', index: 3, direction: 'DOWN' },
     stars: ['C1', 'C2'],
     forbiddenCells: ['B3'],
     rule: {
@@ -53,8 +53,8 @@ export const samplePuzzles: Puzzle[] = [
     level: 'HARD',
     rows: 5,
     cols: 5,
-    entry: { side: 'LEFT', index: 0, direction: 'RIGHT' },
-    exit: { side: 'LEFT', index: 2, direction: 'LEFT' },
+    entry: { side: 'LEFT', index: 1, direction: 'RIGHT' },
+    exit: { side: 'LEFT', index: 3, direction: 'LEFT' },
     stars: ['E2', 'C3'],
     forbiddenCells: ['A5'],
     rule: {
