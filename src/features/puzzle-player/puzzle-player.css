@@ -1,0 +1,14 @@
+/* 퍼즐 플레이 화면 스타일 (초기 뼈대) */
+.puzzle-page {
+  padding: 1rem;
+}
+
+.puzzle-board {
+  display: grid;
+  gap: 2px;
+}
+
+.puzzle-cell {
+  aspect-ratio: 1;
+  border: 1px solid #ccc;
+}
