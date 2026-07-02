@@ -1,6 +1,10 @@
 import { colToLetters, positionToCellKey } from '../../core'
 
-const CELL_SIZE = 46
+function cellSizeFor(size: number): number {
+  if (size <= 4) return 58
+  if (size <= 5) return 50
+  return 40
+}
 
 interface BoardEditorProps {
   size: number
@@ -12,6 +16,7 @@ interface BoardEditorProps {
 
 /** 격자 편집기. 클릭한 칸에 현재 편집 모드의 요소를 배치한다. */
 export function BoardEditor({ size, stars, forbidden, allowed, onCellClick }: BoardEditorProps) {
+  const CELL_SIZE = cellSizeFor(size)
   const starSet = new Set(stars)
   const forbiddenSet = new Set(forbidden)
   const allowedSet = new Set(allowed)
@@ -45,11 +50,14 @@ export function BoardEditor({ size, stars, forbidden, allowed, onCellClick }: Bo
               const cell = positionToCellKey({ row, col: c + 1 })
               let content = ''
               let cls = ''
+              let cellCls = 'be-cell'
               if (starSet.has(cell)) {
                 content = '⭐'
+                cellCls += ' is-star'
               } else if (forbiddenSet.has(cell)) {
                 content = '✕'
                 cls = 'be-forbidden'
+                cellCls += ' is-forbidden'
               } else if (allowedSet.has(cell)) {
                 content = '△'
                 cls = 'be-allowed'
@@ -58,7 +66,7 @@ export function BoardEditor({ size, stars, forbidden, allowed, onCellClick }: Bo
                 <button
                   key={cell}
                   type="button"
-                  className="be-cell"
+                  className={cellCls}
                   style={{ width: CELL_SIZE, height: CELL_SIZE }}
                   onClick={() => onCellClick(cell)}
                   aria-label={cell}

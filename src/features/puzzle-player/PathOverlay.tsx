@@ -56,14 +56,14 @@ export function PathOverlay({
       <polyline
         points={pointsAttr}
         fill="none"
-        stroke="#e5484d"
-        strokeWidth={4}
+        stroke="#2563eb"
+        strokeWidth={5}
         strokeLinejoin="round"
         strokeLinecap="round"
-        opacity={0.8}
+        opacity={0.85}
       />
       {points.length > 0 && (
-        <circle cx={points[0][0]} cy={points[0][1]} r={5} fill="#e5484d" />
+        <circle cx={points[0][0]} cy={points[0][1]} r={6} fill="#2563eb" />
       )}
     </svg>
   )

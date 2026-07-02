@@ -63,10 +63,11 @@
 }
 .be-grid {
   display: grid;
-  border: 2px solid #94a3b8;
+  border: 2px solid #334155;
+  background: #fff;
 }
 .be-cell {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   background: #fff;
   cursor: pointer;
   display: flex;
@@ -76,7 +77,13 @@
   padding: 0;
 }
 .be-cell:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
+}
+.be-cell.is-star {
+  background: #fef9c3;
+}
+.be-cell.is-forbidden {
+  background: #fee2e2;
 }
 .be-forbidden {
   color: #dc2626;

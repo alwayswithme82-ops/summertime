@@ -27,6 +27,8 @@ export function PuzzleCell({
   const classes = ['pb-cell']
   if (isEntry) classes.push('is-entry')
   if (isExit) classes.push('is-exit')
+  if (isStar && !mirror) classes.push('is-star')
+  if (isForbidden && !mirror) classes.push('is-forbidden')
 
   let content: string | null = null
   let contentClass = ''

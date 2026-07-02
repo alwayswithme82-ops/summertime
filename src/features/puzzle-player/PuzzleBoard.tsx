@@ -3,7 +3,12 @@ import { colToLetters, positionToCellKey } from '../../core'
 import { PuzzleCell } from './PuzzleCell'
 import { PathOverlay } from './PathOverlay'
 
-const CELL_SIZE = 52
+/** 문제 크기에 따라 칸 크기를 조절해 보드 전체 폭을 비슷하게 유지한다. */
+function cellSizeFor(cols: number): number {
+  if (cols <= 4) return 62
+  if (cols <= 5) return 54
+  return 42
+}
 
 interface PuzzleBoardProps {
   puzzle: Puzzle
@@ -44,6 +49,7 @@ function entryCellKey(puzzle: Puzzle): string {
 /** 격자판. 라벨과 칸을 그리고 그 위에 빛 경로(PathOverlay)를 얹는다. */
 export function PuzzleBoard({ puzzle, placedMirrors, simulation, onCellClick }: PuzzleBoardProps) {
   const { rows, cols } = puzzle
+  const CELL_SIZE = cellSizeFor(cols)
   const stars = new Set(puzzle.stars)
   const forbidden = new Set(puzzle.forbiddenCells)
   const allowed = new Set(puzzle.rule.allowedMirrorCells ?? puzzle.allowedMirrorCells ?? [])

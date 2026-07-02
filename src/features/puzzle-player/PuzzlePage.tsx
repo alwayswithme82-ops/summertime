@@ -77,6 +77,15 @@ export function PuzzlePage() {
       </header>
 
       <div className="pp-layout">
+        <main className="pp-main">
+          <PuzzleBoard
+            puzzle={puzzle}
+            placedMirrors={placedMirrors}
+            simulation={result?.simulation ?? null}
+            onCellClick={handleCellClick}
+          />
+        </main>
+
         <aside className="pp-side">
           <RulePanel puzzle={puzzle} mirrorsUsed={Object.keys(placedMirrors).length} />
           <MirrorPalette selected={selectedMirror} onSelect={setSelectedMirror} />
@@ -103,15 +112,6 @@ export function PuzzlePage() {
 
           <ResultPanel result={result} score={score} />
         </aside>
-
-        <main className="pp-main">
-          <PuzzleBoard
-            puzzle={puzzle}
-            placedMirrors={placedMirrors}
-            simulation={result?.simulation ?? null}
-            onCellClick={handleCellClick}
-          />
-        </main>
       </div>
     </div>
   )
