@@ -57,6 +57,19 @@ export function PuzzlePage() {
     setResult(null)
   }
 
+  function handleShowSample() {
+    const sample = puzzle.sampleAnswer
+    if (!sample) return
+    // 학생의 현재 배치를 덮어쓰기 전에 확인.
+    if (Object.keys(placedMirrors).length > 0) {
+      const ok = window.confirm('지금 놓은 거울을 지우고 예시 정답을 보여줄까요?')
+      if (!ok) return
+    }
+    // 예시 정답은 정답 판정 기준이 아니라 해설용 배치일 뿐이다.
+    setPlacedMirrors({ ...sample })
+    setResult(validateSolution(puzzle, sample))
+  }
+
   return (
     <div className="puzzle-page">
       <header className="pp-header">
@@ -75,6 +88,19 @@ export function PuzzlePage() {
               초기화
             </button>
           </div>
+
+          <div className="pp-sample">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={handleShowSample}
+              disabled={!puzzle.sampleAnswer}
+            >
+              예시 정답 보기
+            </button>
+            <p className="pp-sample-note">예시는 여러 가능한 풀이 중 하나예요.</p>
+          </div>
+
           <ResultPanel result={result} score={score} />
         </aside>
 

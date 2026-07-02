@@ -1,0 +1,162 @@
+/* 문제 제작기 */
+.editor-page {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1f2933;
+  padding: 1rem 1.25rem 2rem;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.editor-page h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+.ed-hint {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0.3rem 0 1rem;
+}
+.ed-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.ed-board-col {
+  flex: 0 0 auto;
+}
+.ed-form-col {
+  flex: 1 1 320px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.ed-modes,
+.ed-size {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* 편집 보드 */
+.be-col-labels,
+.be-row-labels {
+  display: flex;
+}
+.be-row-labels {
+  flex-direction: column;
+  width: 46px;
+}
+.be-body {
+  display: flex;
+}
+.be-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.be-grid {
+  display: grid;
+  border: 2px solid #94a3b8;
+}
+.be-cell {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  padding: 0;
+}
+.be-cell:hover {
+  background: #f1f5f9;
+}
+.be-forbidden {
+  color: #dc2626;
+  font-weight: 800;
+}
+.be-allowed {
+  color: #94a3b8;
+}
+
+/* 폼 */
+.rule-editor,
+.export-json {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  background: #f8fafc;
+}
+.rule-editor h3,
+.export-json h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+.re-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+.re-field span {
+  color: #475569;
+}
+.re-field input,
+.re-field select {
+  padding: 0.3rem 0.4rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.re-field input[type='number'] {
+  width: 90px;
+}
+.re-group {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 0.6rem;
+  display: flex;
+  gap: 0.4rem;
+}
+.re-group legend {
+  font-size: 0.8rem;
+  color: #475569;
+  padding: 0 0.3rem;
+}
+.re-group select,
+.re-group input {
+  padding: 0.3rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.re-group input[type='number'] {
+  width: 60px;
+}
+
+/* JSON */
+.ej-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ej-code {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 360px;
+}

@@ -60,6 +60,21 @@
   filter: brightness(0.97);
 }
 
+.pp-sample {
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+}
+.pp-sample-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0.5rem 0 0;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* 규칙 패널 */
 .rule-panel {
   border: 1px solid var(--line);

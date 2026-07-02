@@ -26,4 +26,13 @@ describe('PuzzlePage (스모크)', () => {
     fireEvent.click(forbidden)
     expect(forbidden.textContent).toBe('✕')
   })
+
+  it('"예시 정답 보기"를 누르면 예시가 적용되고 성공으로 판정된다', () => {
+    render(<PuzzlePage />)
+    fireEvent.click(screen.getByRole('button', { name: '예시 정답 보기' }))
+    // 예시 정답 적용 후 자동 판정 → 성공 메시지
+    expect(screen.getByText('🎉 성공!')).toBeInTheDocument()
+    // 예시 배치의 거울(A1 '/')이 보드에 표시된다.
+    expect(screen.getByRole('button', { name: 'A1' }).textContent).toBe('/')
+  })
 })
