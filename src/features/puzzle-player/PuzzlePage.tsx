@@ -22,10 +22,15 @@ function canPlaceMirror(puzzle: Puzzle, cellKey: string): boolean {
   return true
 }
 
+interface PuzzlePageProps {
+  /** 플레이할 문제. 생략하면 첫 번째 예제 문제. */
+  puzzle?: Puzzle
+  /** 문제 목록으로 돌아가기(있으면 버튼 표시). */
+  onBack?: () => void
+}
+
 /** 학생용 퍼즐 플레이 화면. 정답 판정은 validateSolution만 사용한다. */
-export function PuzzlePage() {
-  // 기본 문제: samplePuzzles[0]
-  const puzzle = samplePuzzles[0]
+export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProps = {}) {
   const [placedMirrors, setPlacedMirrors] = useState<PlacedMirrors>({})
   const [selectedMirror, setSelectedMirror] = useState<MirrorType>('/')
   const [result, setResult] = useState<ValidationResult | null>(null)
@@ -74,7 +79,13 @@ export function PuzzlePage() {
   return (
     <div className="puzzle-page">
       <header className="pp-header">
+        {onBack && (
+          <button type="button" className="btn btn-ghost pp-back" onClick={onBack}>
+            ← 문제 목록
+          </button>
+        )}
         <h1>빛 반사 설계 활동</h1>
+        <p className="pp-puzzle-title">{puzzle.title}</p>
       </header>
 
       <div className="pp-layout">

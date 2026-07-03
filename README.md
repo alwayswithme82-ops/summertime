@@ -46,6 +46,31 @@ npm run preview  # 빌드 결과 로컬 미리보기
 `dist/` 는 순수 정적 파일이므로 GitHub Pages, Netlify, Vercel 등 어떤
 정적 호스팅에도 그대로 올릴 수 있습니다.
 
+### Cloudflare Pages 배포
+
+Cloudflare 대시보드 → **Workers & Pages → Create → Pages →
+Connect to Git** 에서 이 저장소를 연결하고 아래 값으로 설정하면 됩니다.
+
+| 항목 | 값 |
+| --- | --- |
+| Framework preset | **Vite** |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Node version | 20 이상 (저장소의 `.node-version` = 22 자동 인식) |
+
+참고 사항:
+
+- Vite `base` 는 기본값 `/` 그대로입니다. Cloudflare Pages는 사이트를
+  도메인 루트(`https://<project>.pages.dev/`)에서 서빙하므로 추가 설정이
+  필요 없습니다.
+- 화면 전환은 React Router 없이 **상태 기반**으로만 하므로 새로고침 시
+  404가 나는 SPA 라우팅 문제(`_redirects` 설정 등)가 없습니다.
+- Node 버전은 저장소 루트의 `.node-version` 파일(22)을 Cloudflare가
+  자동으로 읽습니다. 필요하면 환경 변수 `NODE_VERSION` 으로도 지정할 수
+  있습니다.
+- `main` 브랜치에 push 하면 자동으로 재배포됩니다.
+
 ## 핵심 구조
 
 ```

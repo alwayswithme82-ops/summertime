@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { validateSolution } from '../src/core'
+import type { PlacedMirrors, Puzzle } from '../src/core'
 import { samplePuzzles, getPuzzle } from '../src/data/samplePuzzles'
 
 // 목표 4: 모든 sampleAnswer가 validateSolution에서 success true (좌표 비교 아님)
@@ -12,6 +13,37 @@ describe('sampleAnswer는 조건 검증으로 통과해야 한다', () => {
       expect(r.success).toBe(true)
     })
   }
+})
+
+// 목표 4.5: 판정은 sampleAnswer 비교가 아니다 — 규칙만 만족하면 어떤 배치든 성공
+describe('sampleAnswer가 아닌 배치도 규칙을 만족하면 성공한다', () => {
+  // 정답이 여러 개인 문제: LEFT 2행 입구 → 별 B2 통과 → BOTTOM 4열 출구.
+  const multi: Puzzle = {
+    id: 'multi', title: '복수 정답', level: 'BASIC', rows: 4, cols: 4,
+    entry: { side: 'LEFT', index: 2, direction: 'RIGHT' },
+    exit: { side: 'BOTTOM', index: 4, direction: 'DOWN' },
+    stars: ['B2'], forbiddenCells: [],
+    rule: {
+      requiredStars: ['B2'], forbiddenCells: [],
+      mirrorPlacementMode: 'ANY_EMPTY', maxMirrors: 3,
+    },
+    // 예시 정답은 1개짜리 배치.
+    sampleAnswer: { D2: '\\' },
+  }
+
+  it('예시 정답(D2 하나)이 성공한다', () => {
+    const r = validateSolution(multi, { ...multi.sampleAnswer! })
+    expect(r.errors).toEqual([])
+    expect(r.success).toBe(true)
+  })
+
+  it('예시와 전혀 다른 3개짜리 배치(C2→C3→D3 우회)도 성공한다', () => {
+    const alt: PlacedMirrors = { C2: '\\', C3: '\\', D3: '\\' }
+    expect(alt).not.toEqual(multi.sampleAnswer) // 좌표가 다름을 명시
+    const r = validateSolution(multi, alt)
+    expect(r.errors).toEqual([])
+    expect(r.success).toBe(true)
+  })
 })
 
 // 목표 5: 금지칸을 지나면 실패

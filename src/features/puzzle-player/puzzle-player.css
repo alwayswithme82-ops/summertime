@@ -10,9 +10,25 @@
   margin: 0 auto;
 }
 
+.pp-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
 .pp-header h1 {
   font-size: 1.4rem;
-  margin: 0 0 1rem;
+  margin: 0;
+}
+.pp-back {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+}
+.pp-puzzle-title {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
 }
 
 .pp-layout {
