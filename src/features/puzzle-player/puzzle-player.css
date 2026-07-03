@@ -1,34 +1,48 @@
-/* 빛 반사 설계 활동 — 학생용 플레이 화면 */
+/* 빛 반사 설계 활동 — 학생용 플레이 화면 (다크 빛 실험실 테마) */
 .puzzle-page {
-  --ink: #1f2933;
-  --line: #cbd5e1;
-  --accent: #3b82f6;
   color: var(--ink);
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  padding: 1rem 1.25rem 2rem;
+  padding: 1.25rem 1.25rem 2.5rem;
   max-width: 960px;
   margin: 0 auto;
+  animation: fade-up 0.45s ease both;
 }
 
+/* 헤더 */
 .pp-header {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+.pp-logo {
+  font-size: 1.5rem;
+  align-self: center;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.5));
 }
 .pp-header h1 {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   margin: 0;
+  background: linear-gradient(100deg, #fbbf24, #38bdf8 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.01em;
 }
 .pp-back {
   font-size: 0.85rem;
-  padding: 0.35rem 0.7rem;
+  padding: 0.35rem 0.8rem;
+  align-self: center;
 }
 .pp-puzzle-title {
   margin: 0;
-  color: #64748b;
+  color: var(--muted);
   font-size: 0.95rem;
+}
+.pp-puzzle-title::before {
+  content: '🎯 ';
 }
 
 .pp-layout {
@@ -41,6 +55,7 @@
 /* 데스크톱: 보드 왼쪽, 조건/버튼 오른쪽 */
 .pp-main {
   flex: 0 0 auto;
+  animation: fade-up 0.5s 0.05s ease both;
 }
 .pp-side {
   flex: 1 1 280px;
@@ -48,6 +63,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  animation: fade-up 0.5s 0.12s ease both;
 }
 
 /* 모바일: 세로 배치 (보드 위, 조작 아래) */
@@ -67,46 +83,77 @@
 }
 .btn {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  padding: 0.6rem 1.05rem;
   font-size: 0.95rem;
   cursor: pointer;
-  background: #fff;
-}
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-}
-.btn-ghost {
-  background: #f1f5f9;
+  background: var(--surface-2);
+  color: var(--ink);
+  transition: transform 0.15s, box-shadow 0.2s, filter 0.2s, border-color 0.2s;
 }
 .btn:hover {
-  filter: brightness(0.97);
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+.btn:active {
+  transform: translateY(0) scale(0.97);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent));
+  border-color: transparent;
+  color: #06121f;
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+}
+.btn-primary::before {
+  content: '▶ ';
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 22px rgba(56, 189, 248, 0.55);
+}
+.btn-ghost {
+  background: var(--surface);
+  color: var(--muted);
+}
+.btn-ghost:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.pp-actions .btn-ghost::before {
+  content: '🔄 ';
+}
+.pp-back::before {
+  content: none; /* 뒤로가기 버튼은 화살표 텍스트 그대로 */
 }
 
 .pp-sample {
   border: 1px dashed var(--line);
-  border-radius: 10px;
-  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  background: rgba(251, 191, 36, 0.04);
+}
+.pp-sample .btn-ghost::before {
+  content: '💡 ';
 }
 .pp-sample-note {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--muted);
   margin: 0.5rem 0 0;
 }
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* 규칙 패널 */
 .rule-panel {
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-  background: #f8fafc;
+  border-radius: 14px;
+  padding: 0.95rem 1.05rem;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
 }
 .rp-title {
   display: flex;
@@ -120,14 +167,16 @@
 }
 .rp-level {
   font-size: 0.7rem;
-  background: #e2e8f0;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: 999px;
-  padding: 0.15rem 0.55rem;
-  color: #475569;
+  padding: 0.15rem 0.6rem;
+  color: var(--accent);
+  font-weight: 600;
 }
 .rp-desc {
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--muted);
   margin: 0.5rem 0;
 }
 .rp-goals {
@@ -135,7 +184,7 @@
   padding: 0;
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
-  line-height: 1.7;
+  line-height: 1.9;
 }
 
 /* 거울 팔레트 */
@@ -143,68 +192,106 @@
   font-size: 1rem;
   margin: 0 0 0.5rem;
 }
+.mirror-palette h3::before {
+  content: '🪞 ';
+}
 .mp-options {
   display: flex;
   gap: 0.5rem;
 }
 .mp-btn {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   font-size: 1.6rem;
   font-weight: 700;
   border: 2px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
   cursor: pointer;
   font-family: ui-monospace, monospace;
+  transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.mp-btn:hover {
+  transform: translateY(-2px) scale(1.05);
 }
 .mp-btn.is-selected {
-  border-color: var(--accent);
-  background: #eff6ff;
+  border-color: var(--beam);
+  color: var(--beam);
+  background: rgba(251, 191, 36, 0.1);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+  animation: pop 0.25s ease;
 }
 .mp-tip {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--muted);
   margin: 0.5rem 0 0;
 }
 
 /* 결과 패널 */
 .result-panel {
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  padding: 0.95rem 1.05rem;
   font-size: 0.9rem;
+  background: var(--surface);
 }
 .result-panel h3 {
   margin: 0 0 0.5rem;
+  font-size: 1.05rem;
 }
 .result-panel ul {
   margin: 0;
   padding-left: 1.1rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 .result-panel.is-empty {
-  color: #64748b;
-  background: #f8fafc;
+  color: var(--muted);
+  border-style: dashed;
+}
+.result-panel.is-empty p::before {
+  content: '🕹️ ';
 }
 .result-panel.is-success {
-  border-color: #16a34a;
-  background: #f0fdf4;
-  color: #166534;
+  border-color: rgba(74, 222, 128, 0.5);
+  background: rgba(74, 222, 128, 0.08);
+  color: #bbf7d0;
+  box-shadow: 0 0 22px rgba(74, 222, 128, 0.18);
+  animation: pop 0.35s ease;
+}
+.result-panel.is-success h3 {
+  color: var(--success);
+}
+.result-panel.is-success h3::after {
+  content: ' 🎊';
+  display: inline-block;
+  animation: party-bounce 0.9s ease infinite;
 }
 .result-panel.is-fail {
-  border-color: #ea580c;
-  background: #fff7ed;
-  color: #9a3412;
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.07);
+  color: #fecaca;
+  animation: shake 0.45s ease;
+}
+.result-panel.is-fail h3::before {
+  content: '🤔 ';
 }
 .rp-score {
   margin: 0.6rem 0 0;
   font-weight: 700;
 }
+.rp-score::before {
+  content: '🏆 ';
+}
 
 /* 보드 */
 .pb-wrap {
   display: inline-block;
+  padding: 0.9rem;
+  border-radius: 16px;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 40px rgba(56, 189, 248, 0.06);
 }
 .pb-col-labels,
 .pb-row-labels {
@@ -221,7 +308,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  color: var(--muted);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -232,15 +319,17 @@
   position: relative;
   display: grid;
   gap: 0;
-  border: 2px solid #334155;
-  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: #0d1326;
+  overflow: hidden;
 }
 
-/* 칸 — 선명한 격자 */
+/* 칸 — 어두운 격자 */
 .pb-cell {
   position: relative;
-  border: 1px solid #cbd5e1;
-  background: #fff;
+  border: 1px solid var(--line-soft);
+  background: rgba(19, 26, 47, 0.6);
   padding: 0;
   cursor: pointer;
   display: flex;
@@ -248,40 +337,66 @@
   justify-content: center;
   font-size: 1.6rem;
   z-index: 1;
+  transition: background 0.15s, box-shadow 0.2s;
+  color: var(--ink);
 }
 .pb-cell:hover {
-  background: #f8fafc;
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.15);
 }
 .pb-cell.is-star {
-  background: #fef9c3; /* 옅은 노랑 */
+  background: rgba(250, 204, 21, 0.09);
 }
 .pb-cell.is-forbidden {
-  background: #fee2e2; /* 옅은 빨강 */
+  background: rgba(248, 113, 113, 0.1);
 }
 .pb-cell.is-entry {
-  box-shadow: inset 0 0 0 3px #22c55e;
+  --glow-color: rgba(52, 211, 153, 0.75);
+  animation: glow-pulse 1.8s ease-in-out infinite;
 }
 .pb-cell.is-exit {
-  box-shadow: inset 0 0 0 3px #3b82f6;
+  --glow-color: rgba(167, 139, 250, 0.75);
+  animation: glow-pulse 1.8s ease-in-out infinite;
 }
-/* 거울: 검은색 굵은 선 느낌 */
+
+/* 거울: 빛나는 은색 사선 */
 .pc-mirror {
   font-family: ui-monospace, monospace;
   font-weight: 900;
   font-size: 1.9rem;
-  color: #0f172a;
+  color: #dbeafe;
   line-height: 1;
+  text-shadow: 0 0 8px rgba(147, 197, 253, 0.8);
+  animation: pop 0.22s ease;
 }
 .pc-forbidden {
-  color: #dc2626; /* 빨간 X */
+  color: var(--danger);
   font-weight: 900;
+  text-shadow: 0 0 6px rgba(248, 113, 113, 0.6);
 }
 .pc-allowed {
-  color: #cbd5e1;
+  color: #3b4a75;
 }
 .pc-star {
   font-size: 1.4rem;
-  color: #eab308; /* 노란 별 */
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+/* 별들이 제각각 반짝이게 살짝 어긋난 박자 */
+.pb-cell:nth-child(3n) .pc-star {
+  animation-delay: 0.5s;
+}
+.pb-cell:nth-child(3n + 1) .pc-star {
+  animation-delay: 1s;
+}
+
+/* 빛 경로 오버레이 — 칸 위에 얹되 클릭은 통과 */
+.path-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* 개발 검수용 디버그 패널 — 학생용 화면에서는 컴포넌트째로 숨긴다 */
@@ -290,24 +405,26 @@
 }
 .dbg-toggle {
   width: 100%;
-  border: 1px dashed #94a3b8;
-  border-radius: 8px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
   padding: 0.5rem 0.8rem;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--surface);
+  color: var(--muted);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
 }
 .dbg-toggle:hover {
-  filter: brightness(0.97);
+  color: var(--ink);
+  border-color: var(--accent);
 }
 .dbg-body {
   margin-top: 0.6rem;
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 0.5rem 0.8rem 0.8rem;
-  background: #0f172a;
+  background: #0d1326;
 }
 .dbg-section {
   margin-top: 0.7rem;
@@ -322,8 +439,8 @@
   margin: 0;
   max-height: 220px;
   overflow: auto;
-  background: #020617;
-  color: #e2e8f0;
+  background: #060a18;
+  color: #cbd5e1;
   border-radius: 6px;
   padding: 0.5rem 0.7rem;
   font-size: 0.75rem;
@@ -331,17 +448,7 @@
   font-family: ui-monospace, monospace;
 }
 .dbg-empty {
-  color: #cbd5e1;
+  color: var(--muted);
   font-size: 0.85rem;
   margin: 0.6rem 0 0;
-}
-
-/* 빛 경로 오버레이 — 칸 위에 얹되 반투명해서 별/거울을 크게 가리지 않음 */
-.path-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 3;
 }

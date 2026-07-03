@@ -1,41 +1,65 @@
-/* 빛 반사 설계 활동 — 문제 목록 화면 */
+/* 빛 반사 설계 활동 — 문제 목록 화면 (다크 테마) */
 .puzzle-list-page {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color: #1f2933;
+  color: var(--ink);
   max-width: 960px;
   margin: 0 auto;
-  padding: 1rem 1.25rem 2rem;
+  padding: 1.25rem 1.25rem 2.5rem;
+  animation: fade-up 0.4s ease both;
 }
 .puzzle-list-page h2 {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   margin: 0 0 0.25rem;
+  background: linear-gradient(100deg, #fbbf24, #38bdf8 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.puzzle-list-page h2::before {
+  content: '✨ ';
+  -webkit-text-fill-color: initial;
+  display: inline-block;
+  animation: twinkle 2s ease-in-out infinite;
 }
 .plp-hint {
-  color: #64748b;
+  color: var(--muted);
   font-size: 0.9rem;
-  margin: 0 0 1rem;
+  margin: 0 0 1.25rem;
 }
 .plp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 /* 카드 */
 .puzzle-card {
   text-align: left;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: #fff;
-  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+  padding: 1rem 1.1rem;
   cursor: pointer;
   font: inherit;
   color: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.2s, box-shadow 0.25s, transform 0.2s;
+  animation: fade-up 0.45s ease both;
 }
+/* 카드가 하나씩 순서대로 떠오르게 */
+.plp-grid .puzzle-card:nth-child(1) { animation-delay: 0.03s; }
+.plp-grid .puzzle-card:nth-child(2) { animation-delay: 0.09s; }
+.plp-grid .puzzle-card:nth-child(3) { animation-delay: 0.15s; }
+.plp-grid .puzzle-card:nth-child(4) { animation-delay: 0.21s; }
+.plp-grid .puzzle-card:nth-child(5) { animation-delay: 0.27s; }
+.plp-grid .puzzle-card:nth-child(n + 6) { animation-delay: 0.33s; }
+
 .puzzle-card:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.4), 0 0 22px rgba(56, 189, 248, 0.22);
+  transform: translateY(-4px);
+}
+.puzzle-card:active {
+  transform: translateY(-1px) scale(0.99);
 }
 .pc-top {
   display: flex;
@@ -47,34 +71,61 @@
   font-size: 1rem;
   margin: 0;
 }
+.pc-top h3::before {
+  content: '🔦 ';
+}
+.puzzle-card:hover .pc-top h3::before {
+  display: inline-block;
+  animation: float 1.4s ease-in-out infinite;
+}
 .pc-level {
   flex: none;
   font-size: 0.7rem;
   border-radius: 999px;
-  padding: 0.15rem 0.55rem;
-  background: #e2e8f0;
-  color: #475569;
+  padding: 0.18rem 0.6rem;
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  font-weight: 600;
+}
+.pc-level::before {
+  content: '✨ ';
 }
 .pc-level-basic {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--success);
+  border-color: rgba(74, 222, 128, 0.35);
+}
+.pc-level-basic::before {
+  content: '🌱 ';
 }
 .pc-level-hard {
-  background: #ffedd5;
-  color: #9a3412;
+  background: rgba(251, 146, 60, 0.12);
+  color: #fdba74;
+  border-color: rgba(251, 146, 60, 0.35);
+}
+.pc-level-hard::before {
+  content: '🔥 ';
 }
 .pc-level-large {
-  background: #ede9fe;
-  color: #5b21b6;
+  background: rgba(167, 139, 250, 0.13);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.35);
+}
+.pc-level-large::before {
+  content: '🌌 ';
 }
 .pc-size {
   font-size: 0.8rem;
-  color: #64748b;
-  margin: 0.4rem 0 0;
+  color: var(--muted);
+  margin: 0.45rem 0 0;
+}
+.pc-size::before {
+  content: '📐 ';
 }
 .pc-desc {
   font-size: 0.85rem;
-  color: #475569;
-  margin: 0.4rem 0 0;
-  line-height: 1.5;
+  color: #b6c2dd;
+  margin: 0.45rem 0 0;
+  line-height: 1.55;
 }

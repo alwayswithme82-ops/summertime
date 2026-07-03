@@ -11,8 +11,10 @@ interface PathOverlayProps {
 }
 
 /**
- * 빛의 이동 경로를 보드 위에 빨간 선(SVG polyline)으로 표시한다.
+ * 빛의 이동 경로를 보드 위에 빛나는 앰버색 광선(SVG path)으로 표시한다.
  * 시각화만 담당하며 시뮬레이션 로직은 건드리지 않는다.
+ * - 광선이 입구부터 스르륵 그려지는 애니메이션(stroke-dashoffset)
+ * - 경로를 따라 반복해서 달리는 광자(photon) 원
  * path의 각 칸 중앙점을 잇고, 마지막엔 출구 방향으로 보드 밖으로 살짝 나가게 그린다.
  */
 export function PathOverlay({
@@ -42,7 +44,18 @@ export function PathOverlay({
 
   const width = cols * cellSize
   const height = rows * cellSize
-  const pointsAttr = points.map(([x, y]) => `${x},${y}`).join(' ')
+  const d = points
+    .map(([x, y], i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
+    .join(' ')
+
+  // 전체 길이(직선 구간 합) — 그려지기 애니메이션과 광자 속도에 사용.
+  let totalLen = 0
+  for (let i = 1; i < points.length; i++) {
+    totalLen +=
+      Math.abs(points[i][0] - points[i - 1][0]) + Math.abs(points[i][1] - points[i - 1][1])
+  }
+  const drawDur = Math.min(1.6, 0.25 + totalLen / 600) // 길수록 조금 더 길게, 최대 1.6초
+  const photonDur = Math.max(1.2, totalLen / 220) // 광자 순회 시간
 
   return (
     <svg
@@ -53,18 +66,72 @@ export function PathOverlay({
       preserveAspectRatio="none"
       aria-hidden="true"
     >
-      <polyline
-        points={pointsAttr}
+      <defs>
+        <filter id="beam-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* 바깥쪽 은은한 빛 번짐 */}
+      <path
+        d={d}
         fill="none"
-        stroke="#2563eb"
-        strokeWidth={5}
+        stroke="rgba(251, 191, 36, 0.35)"
+        strokeWidth={11}
         strokeLinejoin="round"
         strokeLinecap="round"
-        opacity={0.85}
-      />
-      {points.length > 0 && (
-        <circle cx={points[0][0]} cy={points[0][1]} r={6} fill="#2563eb" />
-      )}
+        strokeDasharray={totalLen}
+        strokeDashoffset={totalLen}
+        filter="url(#beam-glow)"
+      >
+        <animate
+          attributeName="stroke-dashoffset"
+          from={totalLen}
+          to={0}
+          dur={`${drawDur}s`}
+          fill="freeze"
+        />
+      </path>
+
+      {/* 광선 본체 */}
+      <path
+        id="beam-core"
+        d={d}
+        fill="none"
+        stroke="#fbbf24"
+        strokeWidth={4}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        strokeDasharray={totalLen}
+        strokeDashoffset={totalLen}
+      >
+        <animate
+          attributeName="stroke-dashoffset"
+          from={totalLen}
+          to={0}
+          dur={`${drawDur}s`}
+          fill="freeze"
+        />
+      </path>
+
+      {/* 출발점 표시 */}
+      <circle cx={points[0][0]} cy={points[0][1]} r={6} fill="#fde68a">
+        <animate attributeName="r" values="5;7;5" dur="1.4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* 경로를 따라 달리는 광자 */}
+      <circle r={5} fill="#fffbeb" filter="url(#beam-glow)">
+        <animateMotion
+          dur={`${photonDur}s`}
+          begin={`${drawDur}s`}
+          repeatCount="indefinite"
+          path={d}
+        />
+      </circle>
     </svg>
   )
 }

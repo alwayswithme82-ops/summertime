@@ -1,8 +1,34 @@
+/* ------------------------------------------------------------------ *
+ * 빛 반사 설계 활동 — 다크 "빛 실험실" 테마 전역 토큰
+ * ------------------------------------------------------------------ */
 :root {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   line-height: 1.5;
-  color: #1f2933;
-  background: #ffffff;
+
+  /* 배경/표면 */
+  --bg: #0a0e1c;
+  --surface: #131a2f;
+  --surface-2: #1a2340;
+  --line: #2a3554;
+  --line-soft: #222c48;
+
+  /* 글자 */
+  --ink: #e6ebf7;
+  --muted: #8fa0c4;
+
+  /* 포인트 색 */
+  --accent: #38bdf8; /* 시안 — 버튼/포커스 */
+  --accent-deep: #0ea5e9;
+  --beam: #fbbf24; /* 앰버 — 빛 광선 */
+  --star: #facc15;
+  --entry: #34d399; /* 입구 초록 */
+  --exit: #a78bfa; /* 출구 보라 */
+  --danger: #f87171;
+  --success: #4ade80;
+
+  color: var(--ink);
+  background: var(--bg);
+  color-scheme: dark;
 }
 
 * {
@@ -12,8 +38,80 @@
 body {
   margin: 0;
   min-height: 100vh;
+  /* 은은한 빛 무리 — 실험실 느낌 */
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(56, 189, 248, 0.13), transparent 60%),
+    radial-gradient(800px 500px at 90% 0%, rgba(167, 139, 250, 0.11), transparent 60%),
+    radial-gradient(700px 600px at 50% 110%, rgba(251, 191, 36, 0.07), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 #root {
   min-height: 100vh;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.35);
+}
+
+/* ------------------------------------------------------------------ *
+ * 공용 키프레임
+ * ------------------------------------------------------------------ */
+
+/* 별 반짝임 */
+@keyframes twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.6)); }
+  50% { transform: scale(1.18) rotate(8deg); filter: drop-shadow(0 0 9px rgba(250, 204, 21, 0.95)); }
+}
+
+/* 두둥실 떠다니기 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* 등장 팝 */
+@keyframes pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* 아래에서 스르륵 */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 입구/출구 빛나는 맥동 */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 3px var(--glow-color), 0 0 6px 0 var(--glow-color); }
+  50% { box-shadow: inset 0 0 0 3px var(--glow-color), 0 0 16px 3px var(--glow-color); }
+}
+
+/* 실패 흔들기 */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* 성공 축하 점프 */
+@keyframes party-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-10px) rotate(-12deg); }
+  60% { transform: translateY(0) rotate(0deg); }
+  80% { transform: translateY(-5px) rotate(10deg); }
+}
+
+/* 움직임 최소화 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
