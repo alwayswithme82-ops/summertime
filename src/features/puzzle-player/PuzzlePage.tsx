@@ -6,6 +6,7 @@ import { PuzzleBoard } from './PuzzleBoard'
 import { MirrorPalette } from './MirrorPalette'
 import { RulePanel } from './RulePanel'
 import { ResultPanel } from './ResultPanel'
+import { DebugPanel } from './DebugPanel'
 import './puzzle-player.css'
 
 /** 별/금지칸/허용칸 정책에 따라 이 칸에 거울을 놓을 수 있는지. */
@@ -111,6 +112,9 @@ export function PuzzlePage() {
           </div>
 
           <ResultPanel result={result} score={score} />
+
+          {/* 개발 검수용. 학생용 정식 화면에서는 이 줄만 지우면 숨길 수 있다. */}
+          <DebugPanel placedMirrors={placedMirrors} result={result} />
         </aside>
       </div>
     </div>

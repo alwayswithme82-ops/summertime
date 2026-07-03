@@ -268,6 +268,58 @@
   color: #eab308; /* 노란 별 */
 }
 
+/* 개발 검수용 디버그 패널 — 학생용 화면에서는 컴포넌트째로 숨긴다 */
+.debug-panel {
+  margin-top: 0.5rem;
+}
+.dbg-toggle {
+  width: 100%;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dbg-toggle:hover {
+  filter: brightness(0.97);
+}
+.dbg-body {
+  margin-top: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem 0.8rem;
+  background: #0f172a;
+}
+.dbg-section {
+  margin-top: 0.7rem;
+}
+.dbg-section h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.8rem;
+  color: #93c5fd;
+  font-family: ui-monospace, monospace;
+}
+.dbg-section pre {
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  background: #020617;
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  font-family: ui-monospace, monospace;
+}
+.dbg-empty {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  margin: 0.6rem 0 0;
+}
+
 /* 빛 경로 오버레이 — 칸 위에 얹되 반투명해서 별/거울을 크게 가리지 않음 */
 .path-overlay {
   position: absolute;
