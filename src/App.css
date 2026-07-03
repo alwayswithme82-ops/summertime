@@ -1,54 +1,130 @@
 .app-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.2rem;
-  border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
-  z-index: 20;
-}
-.app-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-right: auto;
-}
-.app-brand-mark {
-  width: 26px;
-  height: 26px;
-  display: block;
-}
-.app-brand-name {
-  font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-.app-tab {
-  border: 1px solid transparent;
-  background: none;
-  padding: 0.5rem 1.05rem;
-  font-size: 0.95rem;
-  cursor: pointer;
-  border-radius: 999px;
-  color: var(--muted);
-  font-weight: 700;
-}
-.app-tab.is-active {
-  background: var(--primary-soft);
-  border-color: #b8e6df;
-  color: var(--primary-edge);
-}
-.app-tab:hover {
-  background: #f1efe8;
-  color: var(--ink);
+  z-index: 50;
+  border-bottom: 1px solid rgba(23, 34, 59, 0.09);
+  background: rgba(255, 253, 248, 0.82);
+  backdrop-filter: blur(18px) saturate(1.25);
 }
 
-@media (max-width: 560px) {
-  .app-brand-name {
+.app-nav-inner {
+  width: min(1180px, calc(100% - 2rem));
+  min-height: 72px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-right: auto;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-brand-mark {
+  width: 42px;
+  height: 42px;
+  display: block;
+  filter: drop-shadow(0 5px 8px rgba(8, 127, 121, 0.2));
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.app-brand:hover .app-brand-mark {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.app-brand-copy {
+  display: grid;
+  line-height: 1.1;
+}
+
+.app-brand-name {
+  font-size: 1rem;
+  font-weight: 850;
+  letter-spacing: -0.035em;
+}
+
+.app-brand-kicker {
+  margin-top: 0.24rem;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.app-tab {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.91rem;
+  font-weight: 760;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.app-tab svg {
+  width: 17px;
+  height: 17px;
+}
+
+.app-tab:hover {
+  color: var(--ink);
+  background: rgba(23, 34, 59, 0.05);
+  transform: translateY(-1px);
+}
+
+.app-tab.is-active {
+  color: var(--teal-dark);
+  border-color: rgba(8, 127, 121, 0.2);
+  background: var(--teal-soft);
+}
+
+.app-view {
+  animation: page-rise 440ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+@media (max-width: 620px) {
+  .app-nav-inner {
+    width: calc(100% - 1rem);
+    min-height: 62px;
+  }
+
+  .app-brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .app-brand-copy {
+    display: none;
+  }
+
+  .app-tab {
+    padding-inline: 0.78rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .app-tab svg {
     display: none;
   }
 }

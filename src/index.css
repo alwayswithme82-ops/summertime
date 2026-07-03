@@ -1,74 +1,189 @@
-/* ------------------------------------------------------------------ *
- * 빛 반사 설계 활동 — 편집형(editorial) 보드 퍼즐 디자인 시스템
- * 큰 타이포, 따뜻한 종이색, 틸(teal) 포인트 + 코랄 강조.
- * 밝고 명확하되 "디자인된" 느낌. 네온/다크/게임 HUD는 쓰지 않는다.
- * ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
 :root {
-  --font-sans: 'Pretendard', 'Pretendard Variable', system-ui, -apple-system,
-    'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  --paper: #f5f1e8;
+  --paper-deep: #ebe4d6;
+  --surface: #fffdf8;
+  --surface-strong: #ffffff;
+  --ink: #17223b;
+  --ink-soft: #34405a;
+  --muted: #707587;
+  --line: #ded8ca;
+  --line-strong: #c8c1b1;
+  --grid-line: #17223b;
+
+  --teal: #087f79;
+  --teal-dark: #075e5a;
+  --teal-soft: #dff3ef;
+  --coral: #f26b4b;
+  --coral-dark: #bd432d;
+  --coral-soft: #ffe6dc;
+  --yellow: #ffc928;
+  --yellow-soft: #fff3b5;
+  --blue: #4778e8;
+  --blue-soft: #e8efff;
+  --purple: #7657d6;
+  --purple-soft: #eee9ff;
+  --success: #168653;
+  --success-soft: #ddf4e8;
+  --danger: #d94b45;
+  --danger-soft: #ffe4df;
+  --warn: #df6a1a;
+
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius: 16px;
+  --radius-sm: 11px;
+  --shadow-sm: 0 2px 0 rgba(23, 34, 59, 0.08);
+  --shadow-card: 0 16px 38px rgba(55, 48, 36, 0.09), 0 2px 4px rgba(55, 48, 36, 0.06);
+  --shadow-float: 0 22px 52px rgba(23, 34, 59, 0.14), 0 3px 8px rgba(23, 34, 59, 0.07);
 
   font-family: var(--font-sans);
-  line-height: 1.5;
-
-  /* 종이/카드 */
-  --bg: #f7f4ec; /* 따뜻한 종이색 */
-  --bg-tint: #efe9dc; /* 히어로/구분 영역 */
-  --card: #ffffff;
-  --line: #e7e1d3;
-  --line-strong: #d3cbb8;
-  --grid-line: #232c3a; /* 보드 격자선 */
-
-  /* 글자 */
-  --ink: #182031;
-  --muted: #6b6f78;
-
-  /* 포인트 */
-  --primary: #0e9a8d; /* 틸 */
-  --primary-edge: #0a736a;
-  --primary-soft: #e2f4f1;
-  --coral: #ff6a3d; /* 따뜻한 강조 */
-  --coral-soft: #ffe7de;
-  --star: #f5b301;
-  --danger: #e5342b;
-  --success: #17924f;
-  --warn: #ef6c00;
-
-  /* 공통 모양 */
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow-card: 0 1px 2px rgba(24, 32, 49, 0.05), 0 8px 22px rgba(24, 32, 49, 0.07);
-
   color: var(--ink);
-  background: var(--bg);
-  color-scheme: light;
-  -webkit-font-smoothing: antialiased;
+  background: var(--paper);
+  font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
+  min-width: 320px;
   min-height: 100vh;
-  background: var(--bg);
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 13% 7%, rgba(255, 201, 40, 0.16), transparent 24rem),
+    radial-gradient(circle at 88% 18%, rgba(8, 127, 121, 0.12), transparent 27rem),
+    var(--paper);
 }
 
-#root {
-  min-height: 100vh;
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.25;
+  background-image: radial-gradient(rgba(23, 34, 59, 0.23) 0.65px, transparent 0.65px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
 }
 
-h1,
-h2,
-h3 {
-  letter-spacing: -0.02em;
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-  outline: 3px solid #7fd8cf;
-  outline-offset: 2px;
+  outline: 3px solid rgba(71, 120, 232, 0.42);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+h1,
+h2,
+h3,
+p {
+  overflow-wrap: break-word;
+}
+
+@keyframes page-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.84);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes beam-flow {
+  to {
+    stroke-dashoffset: -42;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

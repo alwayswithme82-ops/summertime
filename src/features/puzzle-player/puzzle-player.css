@@ -1,515 +1,1053 @@
-/* 빛 반사 설계 활동 — 학생용 플레이 화면 (보드 퍼즐형 교육 UI) */
 .puzzle-page {
-  color: var(--ink);
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  padding: 1.25rem 1.25rem 2.5rem;
-  max-width: 1020px;
+  width: min(1180px, calc(100% - 2.5rem));
   margin: 0 auto;
+  padding: 1.8rem 0 4rem;
 }
 
-/* 공용 카드 패널 */
-.panel {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1rem 1.1rem;
-  background: var(--card);
-  box-shadow: var(--shadow-card);
-}
-
-/* 헤더 */
 .pp-header {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
+
+.pp-heading {
+  min-width: 0;
+}
+
+.pp-kicker {
+  display: block;
+  margin-bottom: 0.22rem;
+  color: var(--teal);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .pp-header h1 {
-  font-size: 1.55rem;
-  font-weight: 800;
   margin: 0;
-  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  font-weight: 870;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
 }
-.pp-back {
-  font-size: 0.9rem;
-  padding: 0.45rem 0.9rem;
-  align-self: center;
-}
+
 .pp-puzzle-title {
-  margin: 0;
+  margin: 0.4rem 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.87rem;
+  font-weight: 590;
+}
+
+.pp-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  border: 1px solid rgba(23, 34, 59, 0.1);
+  border-radius: 999px;
+  padding: 0.52rem 0.72rem;
+  background: rgba(255, 253, 248, 0.72);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 740;
+}
+
+.pp-progress span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.pp-progress span.is-active {
+  width: 20px;
+  border-radius: 999px;
+  background: var(--teal);
+}
+
+.panel {
+  border: 1px solid rgba(23, 34, 59, 0.11);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem 1.2rem;
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: var(--shadow-card);
 }
 
 .pp-layout {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(470px, 0.9fr) minmax(360px, 1.1fr);
+  align-items: start;
+  gap: 1.4rem;
 }
 
-/* 데스크톱: 보드 왼쪽, 조건/버튼 오른쪽 */
 .pp-main {
-  flex: 0 0 auto;
-}
-.pp-side {
-  flex: 1 1 290px;
-  min-width: 270px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  position: sticky;
+  top: 92px;
+  min-width: 0;
 }
 
-/* 모바일: 세로 배치 (보드 위, 조작 아래) */
-@media (max-width: 720px) {
-  .pp-layout {
-    flex-direction: column;
-  }
-  .pp-side {
-    width: 100%;
-  }
+.pp-board-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(23, 34, 59, 0.12);
+  border-radius: var(--radius-xl);
+  padding: 1rem 1rem 1.3rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(255, 201, 40, 0.18), transparent 13rem),
+    rgba(255, 253, 248, 0.96);
+  box-shadow: var(--shadow-float);
 }
 
-/* ------------------------------------------------------------------ *
- * 버튼 — 보드게임 말처럼 "눌리는" 촉감. 실행하기가 가장 눈에 띈다.
- * ------------------------------------------------------------------ */
-.pp-actions {
-  display: flex;
-  gap: 0.6rem;
-}
-.btn {
-  border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  padding: 0.75rem 1.3rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: var(--card);
-  color: var(--ink);
-  box-shadow: 0 3px 0 var(--line-strong);
-  transition: transform 0.06s, box-shadow 0.06s, filter 0.15s;
-}
-.btn:hover {
-  filter: brightness(0.98);
-}
-.btn:active {
-  transform: translateY(3px);
-  box-shadow: 0 0 0 var(--line-strong);
-}
-.btn-primary {
-  background: var(--primary);
-  border-color: var(--primary-edge);
-  color: #fff;
-  font-weight: 700;
-  box-shadow: 0 3px 0 var(--primary-edge);
-  flex: 1 1 auto;
-}
-.btn-primary:active {
-  box-shadow: 0 0 0 var(--primary-edge);
-}
-.btn-ghost {
-  background: #f4f6f9;
-}
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  transform: none;
+.pp-board-stage::after {
+  content: '';
+  position: absolute;
+  top: -58px;
+  right: -45px;
+  width: 150px;
+  height: 150px;
+  border: 28px solid rgba(255, 201, 40, 0.16);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
-/* 예시 정답(해설용) */
-.pp-sample {
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius);
-  padding: 0.8rem 0.95rem;
-  background: #fffdf5;
-}
-.pp-sample .btn {
-  width: 100%;
-}
-.pp-sample-note {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin: 0.5rem 0 0;
-}
-
-/* ------------------------------------------------------------------ *
- * 조건 패널 — "성공 조건" 체크리스트 카드
- * ------------------------------------------------------------------ */
-.rp-title {
+.pp-board-bar {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-}
-.rp-title h2 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin: 0;
-}
-.rp-level {
-  flex: none;
-  font-size: 0.72rem;
-  border-radius: 999px;
-  padding: 0.18rem 0.6rem;
-  background: #f1f5f9;
-  border: 1px solid var(--line);
-  color: var(--muted);
-  font-weight: 700;
-}
-.rp-level-basic {
-  background: #f0fdf4;
-  color: var(--success);
-  border-color: #bbf7d0;
-}
-.rp-level-hard {
-  background: #fff7ed;
-  color: #c2410c;
-  border-color: #fed7aa;
-}
-.rp-level-large {
-  background: #f5f3ff;
-  color: #6d28d9;
-  border-color: #ddd6fe;
-}
-.rp-desc {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin: 0.5rem 0;
-}
-.rp-subtitle {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--primary);
-  text-transform: uppercase;
-  margin: 0.9rem 0 0.5rem;
-  letter-spacing: 0.12em;
-}
-.rp-goals {
-  list-style: none;
-  padding: 0;
-  margin: 0.4rem 0 0;
-  font-size: 0.92rem;
-  line-height: 1.65;
-}
-.rp-goals li {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  padding: 0.18rem 0;
-}
-/* 체크리스트의 빈 네모 칸 */
-.rp-goals li::before {
-  content: '';
-  flex: none;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--line-strong);
-  border-radius: 3px;
-  transform: translateY(1px);
-}
-.rp-mirror-counts svg {
-  vertical-align: -3px;
-  margin: 0 2px 0 6px;
+  gap: 1rem;
+  padding: 0.15rem 0.35rem 0.8rem;
 }
 
-/* ------------------------------------------------------------------ *
- * 거울 선택 카드
- * ------------------------------------------------------------------ */
-.mirror-palette h3 {
-  font-size: 0.95rem;
-  margin: 0 0 0.5rem;
-}
-.mp-options {
-  display: flex;
-  gap: 0.6rem;
-}
-.mp-btn {
-  width: 62px;
-  height: 62px;
-  border: 2px solid var(--line-strong);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--ink); /* MirrorIcon은 currentColor */
-  cursor: pointer;
+.pp-board-label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 0 var(--line-strong);
-  transition: transform 0.06s, box-shadow 0.06s, border-color 0.15s, background 0.15s;
-}
-.mp-btn:hover {
-  background: #f8fafc;
-}
-.mp-btn:active {
-  transform: translateY(3px);
-  box-shadow: 0 0 0 var(--line-strong);
-}
-.mp-btn.is-selected {
-  border-color: var(--primary);
-  background: #eff6ff;
-  box-shadow: 0 3px 0 var(--primary-edge);
-}
-.mp-tip {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin: 0.5rem 0 0;
+  gap: 0.46rem;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 840;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* ------------------------------------------------------------------ *
- * 결과 패널
- * ------------------------------------------------------------------ */
-.result-panel {
-  font-size: 0.92rem;
+.pp-board-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 4px rgba(242, 107, 75, 0.16);
 }
-.rp-result-title {
-  margin: 0 0 0.5rem;
-  font-size: 1.4rem;
-  font-weight: 800;
+
+.pp-board-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem;
 }
-.result-panel.is-empty {
+
+.pp-board-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.26rem;
+  border-radius: 999px;
+  padding: 0.25rem 0.48rem;
   color: var(--muted);
-  background: #fafbfd;
+  background: var(--paper);
+  font-size: 0.65rem;
+  font-weight: 740;
+}
+
+.pp-side {
+  min-width: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.control-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.control-panel::before {
+  content: 'CONTROL';
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  color: rgba(23, 34, 59, 0.08);
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.control-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.control-step + .control-step {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line);
+}
+
+.control-step-number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  color: white;
+  background: var(--ink);
+  box-shadow: 2px 3px 0 var(--yellow);
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.control-step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pp-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+}
+
+.btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  padding: 0.72rem 1.12rem;
+  color: var(--ink);
+  background: var(--surface-strong);
+  box-shadow: 0 4px 0 var(--line-strong);
+  font-size: 0.9rem;
+  font-weight: 790;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    filter 160ms ease,
+    background 160ms ease;
+}
+
+.btn:hover {
+  filter: brightness(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--line-strong);
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--line-strong);
+}
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  border-color: var(--teal-dark);
+  background: var(--teal);
+  box-shadow: 0 4px 0 var(--teal-dark);
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  left: -30%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  transform: skewX(-18deg);
+  transition: left 420ms ease;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 0 var(--teal-dark);
+}
+
+.btn-primary:hover::after {
+  left: 110%;
+}
+
+.btn-primary:active {
+  box-shadow: 0 1px 0 var(--teal-dark);
+}
+
+.btn-ghost {
+  background: #f8f7f2;
+}
+
+.btn-danger {
+  color: #fff;
+  border-color: var(--coral-dark);
+  background: var(--coral);
+  box-shadow: 0 4px 0 var(--coral-dark);
+}
+
+.btn:disabled {
+  opacity: 0.44;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+  transform: none;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.pp-back {
+  align-self: center;
+  min-height: 42px;
+  padding-inline: 0.9rem;
+  font-size: 0.8rem;
+}
+
+.pp-sample {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--line);
+}
+
+.pp-sample .btn {
+  flex: none;
+  min-height: 40px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.77rem;
   box-shadow: none;
 }
-.result-panel.is-success {
-  border-color: #86efac;
-  background: #f2fdf5;
-  color: #14532d;
-}
-.result-panel.is-success .rp-result-title {
-  color: var(--success);
-}
-.result-panel.is-fail {
-  border-color: #fdba74;
-  background: #fff8f3;
-  color: #7c2d12;
-}
-.result-panel.is-fail .rp-result-title {
-  color: var(--warn);
-}
-/* 성공: 만족한 조건 체크 표시 */
-.rp-checks,
-.rp-reasons {
-  list-style: none;
+
+.pp-sample-note {
   margin: 0;
-  padding: 0;
-  line-height: 1.9;
-}
-.rp-checks li::before {
-  content: '✓';
-  color: var(--success);
-  font-weight: 900;
-  margin-right: 0.5rem;
-}
-/* 실패: 이유를 구체적으로 */
-.rp-reasons li::before {
-  content: '!';
-  display: inline-block;
-  width: 1.05em;
-  text-align: center;
-  color: #fff;
-  background: var(--warn);
-  border-radius: 50%;
-  font-weight: 900;
-  font-size: 0.75em;
-  margin-right: 0.5rem;
-  transform: translateY(-2px);
-}
-.rp-score {
-  margin: 0.6rem 0 0;
-  font-weight: 700;
-}
-/* 경로 좌표 — 작은 글씨로 접어서 */
-.rp-path {
-  margin-top: 0.6rem;
-  font-size: 0.78rem;
   color: var(--muted);
-}
-.rp-path summary {
-  cursor: pointer;
-}
-.rp-path p {
-  margin: 0.35rem 0 0;
-  line-height: 1.7;
+  font-size: 0.72rem;
+  line-height: 1.48;
   word-break: keep-all;
 }
 
-/* ------------------------------------------------------------------ *
- * 보드 — 밝은 종이 위 진한 격자
- * ------------------------------------------------------------------ */
-.pb-wrap {
-  display: inline-block;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
+.rp-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
+
+.rp-title h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.26rem;
+  font-weight: 850;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+
+.rp-level {
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.25rem 0.58rem;
+  color: var(--ink-soft);
+  background: var(--paper-deep);
+  font-size: 0.66rem;
+  font-weight: 820;
+}
+
+.rp-level-basic {
+  color: var(--success);
+  border-color: rgba(22, 134, 83, 0.2);
+  background: var(--success-soft);
+}
+
+.rp-level-hard {
+  color: var(--coral-dark);
+  border-color: rgba(242, 107, 75, 0.24);
+  background: var(--coral-soft);
+}
+
+.rp-level-large {
+  color: var(--purple);
+  border-color: rgba(118, 87, 214, 0.2);
+  background: var(--purple-soft);
+}
+
+.rp-desc {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.83rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.rp-subtitle {
+  margin: 1rem 0 0.55rem;
+  color: var(--teal);
+  font-size: 0.69rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rp-goals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rp-goals li {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  border-radius: 11px;
+  padding: 0.55rem 0.62rem;
+  color: var(--ink-soft);
+  background: #f4f2eb;
+  font-size: 0.75rem;
+  font-weight: 640;
+  line-height: 1.35;
+}
+
+.rp-goals li::before {
+  content: '✓';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 6px;
+  color: var(--teal);
+  background: var(--teal-soft);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.rp-goals .rp-mirror-counts {
+  grid-column: 1 / -1;
+}
+
+.rp-mirror-counts svg {
+  flex: none;
+}
+
+.mirror-palette h3 {
+  margin: 0 0 0.55rem;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 820;
+}
+
+.mp-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.mp-btn {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 0.55rem;
+  border: 2px solid var(--line-strong);
+  border-radius: 15px;
+  padding: 0.48rem 0.65rem;
+  color: var(--ink);
+  background: var(--surface-strong);
+  box-shadow: 0 4px 0 var(--line-strong);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 130ms ease,
+    box-shadow 130ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.mp-btn svg {
+  border-radius: 10px;
+  padding: 6px;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.mp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--line-strong);
+}
+
+.mp-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--line-strong);
+}
+
+.mp-btn.is-selected {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  box-shadow: 0 4px 0 var(--teal-dark);
+}
+
+.mp-btn.is-selected svg {
+  color: #fff;
+  background: var(--teal);
+  animation: soft-pop 260ms ease both;
+}
+
+.mp-copy {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.mp-name {
+  font-size: 0.78rem;
+  font-weight: 820;
+}
+
+.mp-hint {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 590;
+  line-height: 1.3;
+}
+
+.mp-tip {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.result-panel {
+  position: relative;
+  overflow: hidden;
+  font-size: 0.84rem;
+  animation: page-rise 340ms ease both;
+}
+
+.result-panel.is-empty {
+  color: var(--muted);
+  background: rgba(255, 253, 248, 0.6);
+  box-shadow: none;
+}
+
+.result-panel.is-empty p {
+  margin: 0;
+}
+
+.result-panel.is-success {
+  color: #125c3d;
+  border-color: rgba(22, 134, 83, 0.28);
+  background: linear-gradient(135deg, #f2fff8, var(--success-soft));
+}
+
+.result-panel.is-success::after {
+  content: '★';
+  position: absolute;
+  top: -24px;
+  right: 10px;
+  color: rgba(255, 201, 40, 0.54);
+  font-size: 6rem;
+  transform: rotate(14deg);
+  animation: soft-pop 650ms ease both;
+}
+
+.result-panel.is-fail {
+  color: #743023;
+  border-color: rgba(242, 107, 75, 0.3);
+  background: linear-gradient(135deg, #fffaf5, var(--coral-soft));
+}
+
+.rp-result-title {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.55rem;
+  font-size: 1.32rem;
+  font-weight: 880;
+  letter-spacing: -0.035em;
+}
+
+.result-panel.is-success .rp-result-title {
+  color: var(--success);
+}
+
+.result-panel.is-fail .rp-result-title {
+  color: var(--coral-dark);
+}
+
+.rp-checks,
+.rp-reasons {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.26rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rp-checks li::before {
+  content: '✓';
+  margin-right: 0.5rem;
+  color: var(--success);
+  font-weight: 900;
+}
+
+.rp-reasons li::before {
+  content: '!';
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--coral);
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.rp-score {
+  width: fit-content;
+  margin: 0.65rem 0 0;
+  border-radius: 999px;
+  padding: 0.32rem 0.65rem;
+  background: rgba(255, 255, 255, 0.65);
+  font-weight: 830;
+}
+
+.rp-path {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.rp-path summary {
+  cursor: pointer;
+  font-weight: 720;
+}
+
+.rp-path p {
+  margin: 0.4rem 0 0;
+  line-height: 1.65;
+}
+
+.pb-wrap {
+  width: 100%;
+  overflow-x: auto;
+  display: grid;
+  place-items: center;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.pb-frame {
+  isolation: isolate;
+}
+
 .pb-col-labels,
 .pb-row-labels {
   display: flex;
 }
-.pb-col-labels {
-  flex-direction: row;
-}
+
 .pb-row-labels {
   flex-direction: column;
 }
+
 .pb-label {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 700;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
 }
+
 .pb-body {
   display: flex;
 }
+
 .pb-grid {
   position: relative;
   display: grid;
-  gap: 0;
-  border: 3px solid var(--grid-line);
-  border-radius: 4px;
-  background: var(--card);
+  gap: 3px;
+  overflow: hidden;
+  border: 4px solid var(--grid-line);
+  border-radius: 12px;
+  padding: 3px;
+  background: var(--grid-line);
+  box-shadow: 7px 8px 0 rgba(23, 34, 59, 0.12);
 }
 
-/* 칸 — 흰 칸 + 진한 격자선 */
 .pb-cell {
   position: relative;
-  border: 1px solid var(--line-strong);
-  background: #fff;
-  padding: 0;
-  cursor: pointer;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
-  color: var(--ink); /* 거울(MirrorIcon)은 검은색 */
-}
-/* 지금 클릭할 수 있는 칸(호버) — 은은한 테두리 */
-.pb-cell:hover {
-  background: #f0f6ff;
-  box-shadow: inset 0 0 0 2px #93c5fd;
-}
-.pb-cell.is-star {
-  background: #fffbeb;
-}
-.pb-cell.is-forbidden {
-  background: #fef2f2;
-}
-/* 거울을 놓을 수 있는 칸 — 은은한 점선 표시 */
-.pb-cell.is-allowed {
-  box-shadow: inset 0 0 0 2px #e2e8f0;
-}
-.pb-cell.is-allowed:hover {
-  box-shadow: inset 0 0 0 2px #93c5fd;
+  overflow: hidden;
+  border: 0;
+  border-radius: 3px;
+  padding: 0;
+  color: var(--ink);
+  background: #fffefb;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease;
 }
 
-/* 칸 안 기호 */
-.pc-star {
-  font-size: 1.5rem;
-  color: var(--star);
-  line-height: 1;
+.pb-cell::after {
+  content: attr(aria-label);
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  color: rgba(23, 34, 59, 0.22);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 140ms ease;
 }
+
+.pb-cell:hover {
+  z-index: 2;
+  background: var(--blue-soft);
+  box-shadow: inset 0 0 0 3px rgba(71, 120, 232, 0.45);
+  transform: scale(1.035);
+}
+
+.pb-cell:hover::after {
+  opacity: 1;
+}
+
+.pb-cell:active {
+  transform: scale(0.93);
+}
+
+.pb-cell.is-star {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 201, 40, 0.24), transparent 62%),
+    #fffbeb;
+}
+
+.pb-cell.is-forbidden {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 8px, rgba(217, 75, 69, 0.055) 8px 14px),
+    var(--danger-soft);
+}
+
+.pb-cell.is-allowed {
+  background: #f7f7f2;
+  box-shadow: inset 0 0 0 2px rgba(8, 127, 121, 0.2);
+}
+
+.pb-cell.is-allowed:hover {
+  background: var(--teal-soft);
+  box-shadow: inset 0 0 0 3px rgba(8, 127, 121, 0.52);
+}
+
+.pc-star {
+  position: relative;
+  color: var(--yellow);
+  font-size: 1.62rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 0 rgba(23, 34, 59, 0.22));
+  animation: soft-pop 500ms ease both;
+}
+
 .pc-forbidden {
-  font-size: 1.4rem;
   color: var(--danger);
+  font-size: 1.5rem;
   font-weight: 900;
   line-height: 1;
 }
+
 .pc-allowed {
-  font-size: 1.2rem;
-  color: #b5bfcc;
-  line-height: 1;
-}
-.pc-mirror {
-  display: block;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px dashed rgba(8, 127, 121, 0.55);
+  border-radius: 7px;
+  color: transparent;
+  transform: rotate(45deg);
 }
 
-/* 입구/출구 고정 마커 — 보드 바깥, 검정 굵은 화살표 + 라벨 */
+.pc-mirror {
+  display: block;
+  color: var(--teal);
+  filter: drop-shadow(0 3px 0 rgba(7, 94, 90, 0.2));
+  animation: soft-pop 240ms ease both;
+}
+
 .pb-marker {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
-  color: var(--grid-line);
-  pointer-events: none; /* 학생이 클릭/변경 불가 */
+  gap: 2px;
+  color: var(--ink);
+  pointer-events: none;
   user-select: none;
 }
+
 .pb-marker-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  line-height: 1;
-  background: var(--card);
-  border: 1px solid var(--line);
+  border: 2px solid var(--ink);
   border-radius: 999px;
-  padding: 2px 7px;
+  padding: 3px 8px;
+  color: var(--ink);
+  background: var(--surface-strong);
+  box-shadow: 2px 3px 0 var(--ink);
+  font-size: 0.61rem;
+  font-weight: 850;
+  line-height: 1;
 }
+
+.pb-marker-entry .pb-marker-label {
+  background: var(--yellow);
+}
+
+.pb-marker-exit .pb-marker-label {
+  color: #fff;
+  background: var(--coral);
+}
+
 .pb-marker-arrow {
   display: block;
+  animation: marker-pulse 1.25s ease-in-out infinite;
 }
 
-/* 빛 경로 오버레이 — 칸 위에 얹되 클릭은 통과 */
+@keyframes marker-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    translate: 0 0;
+  }
+  50% {
+    opacity: 1;
+    translate: 3px 0;
+  }
+}
+
 .path-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
+  z-index: 4;
+  top: 3px;
+  left: 3px;
   overflow: visible;
   pointer-events: none;
-  z-index: 3;
 }
 
-/* ------------------------------------------------------------------ *
- * 개발 검수용 디버그 패널 — 학생용 화면에서는 컴포넌트째로 숨긴다
- * ------------------------------------------------------------------ */
-.debug-panel {
-  margin-top: 0.5rem;
+.path-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
+
+.path-beam {
+  fill: none;
+  stroke: url('#beam-gradient');
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14 8;
+  filter: url('#beam-glow');
+  animation: beam-flow 0.8s linear infinite;
+}
+
+.path-origin {
+  fill: var(--yellow);
+  stroke: var(--ink);
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: origin-pulse 1s ease-in-out infinite;
+}
+
+@keyframes origin-pulse {
+  50% {
+    transform: scale(1.38);
+  }
+}
+
+.debug-panel {
+  margin-top: 0.2rem;
+}
+
 .dbg-toggle {
   width: 100%;
-  border: 1px dashed var(--line-strong);
-  border-radius: 8px;
-  padding: 0.5rem 0.8rem;
-  background: #f8fafc;
+  border: 0;
+  padding: 0.4rem;
   color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 600;
+  background: transparent;
+  font-size: 0.68rem;
+  font-weight: 690;
   cursor: pointer;
 }
+
 .dbg-toggle:hover {
   color: var(--ink);
 }
+
 .dbg-body {
-  margin-top: 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 0.5rem 0.8rem 0.8rem;
-  background: #f8fafc;
+  margin-top: 0.4rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.55);
 }
+
 .dbg-section {
-  margin-top: 0.7rem;
+  margin-top: 0.65rem;
 }
+
 .dbg-section h4 {
-  margin: 0 0 0.3rem;
-  font-size: 0.8rem;
-  color: #334155;
-  font-family: ui-monospace, monospace;
+  margin: 0 0 0.28rem;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
 }
+
 .dbg-section pre {
-  margin: 0;
   max-height: 220px;
   overflow: auto;
-  background: #0f172a;
-  color: #e2e8f0;
-  border-radius: 6px;
-  padding: 0.5rem 0.7rem;
-  font-size: 0.75rem;
+  margin: 0;
+  border-radius: 8px;
+  padding: 0.65rem;
+  color: #e8edf8;
+  background: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
   line-height: 1.5;
-  font-family: ui-monospace, monospace;
 }
+
 .dbg-empty {
+  margin: 0;
   color: var(--muted);
-  font-size: 0.85rem;
-  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 980px) {
+  .puzzle-page {
+    width: min(100% - 1.5rem, 760px);
+  }
+
+  .pp-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-main {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .puzzle-page {
+    width: calc(100% - 1rem);
+    padding-top: 1rem;
+  }
+
+  .pp-header {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .pp-progress {
+    display: none;
+  }
+
+  .pp-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .pp-puzzle-title {
+    font-size: 0.76rem;
+  }
+
+  .pp-board-stage {
+    padding: 0.72rem 0.2rem 0.9rem;
+    border-radius: 20px;
+  }
+
+  .pp-board-bar {
+    padding-inline: 0.65rem;
+  }
+
+  .pp-board-legend span:nth-child(3) {
+    display: none;
+  }
+
+  .rp-goals {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-goals .rp-mirror-counts {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 430px) {
+  .pp-back {
+    min-width: 42px;
+    width: 42px;
+    padding: 0;
+    overflow: hidden;
+    color: transparent;
+  }
+
+  .pp-back::before {
+    content: '←';
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  .pp-board-legend {
+    display: none;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+
+  .control-step {
+    gap: 0.65rem;
+  }
+
+  .mp-btn {
+    grid-template-columns: 36px 1fr;
+    padding-inline: 0.48rem;
+  }
+
+  .pp-sample {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }

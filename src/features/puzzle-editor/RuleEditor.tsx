@@ -10,6 +10,28 @@ const SIDES: EdgeSide[] = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT']
 const DIRS: Direction[] = ['UP', 'RIGHT', 'DOWN', 'LEFT']
 const LEVELS: PuzzleLevel[] = ['BASIC', 'NORMAL', 'HARD', 'LARGE']
 const MODES: MirrorPlacementMode[] = ['ANY_EMPTY', 'MARKED_ONLY']
+const SIDE_LABEL: Record<EdgeSide, string> = {
+  TOP: '위쪽',
+  RIGHT: '오른쪽',
+  BOTTOM: '아래쪽',
+  LEFT: '왼쪽',
+}
+const DIRECTION_LABEL: Record<Direction, string> = {
+  UP: '위로',
+  RIGHT: '오른쪽으로',
+  DOWN: '아래로',
+  LEFT: '왼쪽으로',
+}
+const LEVEL_LABEL: Record<PuzzleLevel, string> = {
+  BASIC: '기초',
+  NORMAL: '보통',
+  HARD: '어려움',
+  LARGE: '대형',
+}
+const MODE_LABEL: Record<MirrorPlacementMode, string> = {
+  ANY_EMPTY: '모든 빈 칸',
+  MARKED_ONLY: '표시된 칸만',
+}
 
 /** optional 숫자 입력: 빈 값이면 undefined. */
 function toOptionalNumber(v: string): number | undefined {
@@ -35,7 +57,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {LEVELS.map((l) => (
             <option key={l} value={l}>
-              {l}
+              {LEVEL_LABEL[l]}
             </option>
           ))}
         </select>
@@ -49,7 +71,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {SIDES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {SIDE_LABEL[s]}
             </option>
           ))}
         </select>
@@ -65,7 +87,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {DIRS.map((d) => (
             <option key={d} value={d}>
-              {d}
+              {DIRECTION_LABEL[d]}
             </option>
           ))}
         </select>
@@ -79,7 +101,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {SIDES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {SIDE_LABEL[s]}
             </option>
           ))}
         </select>
@@ -95,14 +117,14 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {DIRS.map((d) => (
             <option key={d} value={d}>
-              {d}
+              {DIRECTION_LABEL[d]}
             </option>
           ))}
         </select>
       </fieldset>
 
       <label className="re-field">
-        <span>maxMirrors</span>
+        <span>거울 최대 개수</span>
         <input
           type="number"
           min={0}
@@ -119,14 +141,14 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
         >
           {MODES.map((m) => (
             <option key={m} value={m}>
-              {m}
+              {MODE_LABEL[m]}
             </option>
           ))}
         </select>
       </label>
 
       <label className="re-field">
-        <span>exactMirrorCount (선택)</span>
+        <span>거울 정확한 개수 (선택)</span>
         <input
           type="number"
           min={0}
@@ -136,7 +158,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
       </label>
 
       <label className="re-field">
-        <span>/ 개수 제한 (선택)</span>
+        <span>/ 거울 개수 (선택)</span>
         <input
           type="number"
           min={0}
@@ -146,7 +168,7 @@ export function RuleEditor({ state, onChange }: RuleEditorProps) {
       </label>
 
       <label className="re-field">
-        <span>\ 개수 제한 (선택)</span>
+        <span>\ 거울 개수 (선택)</span>
         <input
           type="number"
           min={0}

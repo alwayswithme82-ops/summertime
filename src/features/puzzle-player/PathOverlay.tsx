@@ -10,11 +10,8 @@ interface PathOverlayProps {
   exited?: boolean
 }
 
-/**
- * 빛의 이동 경로를 보드 위에 빨간 굵은 선(SVG)으로 표시한다.
- * 시각화만 담당하며 시뮬레이션 로직은 건드리지 않는다.
- * path의 각 칸 중앙점을 잇고, 마지막엔 출구 방향으로 보드 밖으로 살짝 나가게 그린다.
- */
+const GRID_GAP = 3
+
 export function PathOverlay({
   path,
   rows,
@@ -26,23 +23,25 @@ export function PathOverlay({
   if (path.length === 0) return null
 
   const center = (col: number, row: number): [number, number] => [
-    (col - 0.5) * cellSize,
-    (row - 0.5) * cellSize,
+    (col - 0.5) * cellSize + (col - 1) * GRID_GAP,
+    (row - 0.5) * cellSize + (row - 1) * GRID_GAP,
   ]
 
-  const points: [number, number][] = path.map((s) => center(s.position.col, s.position.row))
+  const points: [number, number][] = path.map((step) =>
+    center(step.position.col, step.position.row),
+  )
 
-  // 출구 방향으로 마지막 선을 보드 바깥으로 조금 연장한다.
   if (exited && finalDirection) {
     const last = path[path.length - 1].position
-    const d = directionToDelta(finalDirection)
+    const delta = directionToDelta(finalDirection)
     const [x, y] = center(last.col, last.row)
-    points.push([x + d.dCol * cellSize, y + d.dRow * cellSize])
+    const stepSize = cellSize + GRID_GAP
+    points.push([x + delta.dCol * stepSize, y + delta.dRow * stepSize])
   }
 
-  const width = cols * cellSize
-  const height = rows * cellSize
-  const pointsAttr = points.map(([x, y]) => `${x},${y}`).join(' ')
+  const width = cols * cellSize + (cols - 1) * GRID_GAP
+  const height = rows * cellSize + (rows - 1) * GRID_GAP
+  const pointsAttribute = points.map(([x, y]) => `${x},${y}`).join(' ')
 
   return (
     <svg
@@ -53,17 +52,23 @@ export function PathOverlay({
       preserveAspectRatio="none"
       aria-hidden="true"
     >
-      <polyline
-        points={pointsAttr}
-        fill="none"
-        stroke="#dc2626"
-        strokeWidth={5}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        opacity={0.9}
-      />
-      {/* 출발점 */}
-      <circle cx={points[0][0]} cy={points[0][1]} r={6} fill="#dc2626" />
+      <defs>
+        <linearGradient id="beam-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fff8b5" />
+          <stop offset="45%" stopColor="#ffc928" />
+          <stop offset="100%" stopColor="#f26b4b" />
+        </linearGradient>
+        <filter id="beam-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <polyline className="path-track" points={pointsAttribute} />
+      <polyline className="path-beam" points={pointsAttribute} />
+      <circle className="path-origin" cx={points[0][0]} cy={points[0][1]} r={7} />
     </svg>
   )
 }

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Puzzle, PuzzleLevel } from '../../core'
 import { positionToCellKey } from '../../core'
 
@@ -8,20 +9,21 @@ const LEVEL_LABEL: Record<PuzzleLevel, string> = {
   LARGE: '대형',
 }
 
-/** 카드 안에 들어가는 작은 보드 미리보기 (레벨 선택 화면용). */
 function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
   const stars = new Set(puzzle.stars)
   const forbidden = new Set(puzzle.forbiddenCells)
   const cells: React.ReactNode[] = []
+
   for (let row = 1; row <= puzzle.rows; row++) {
     for (let col = 1; col <= puzzle.cols; col++) {
       const key = positionToCellKey({ row, col })
-      let cls = 'pcv-cell'
-      if (stars.has(key)) cls += ' is-star'
-      else if (forbidden.has(key)) cls += ' is-forbidden'
-      cells.push(<span key={key} className={cls} />)
+      let className = 'pcv-cell'
+      if (stars.has(key)) className += ' is-star'
+      else if (forbidden.has(key)) className += ' is-forbidden'
+      cells.push(<span key={key} className={className} />)
     }
   }
+
   return (
     <div
       className="pc-preview"
@@ -35,14 +37,24 @@ function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
 
 interface PuzzleCardProps {
   puzzle: Puzzle
+  order: number
   onSelect: (puzzle: Puzzle) => void
 }
 
-/** 문제 목록의 카드 한 장. 클릭하면 그 문제를 플레이한다. */
-export function PuzzleCard({ puzzle, onSelect }: PuzzleCardProps) {
+export function PuzzleCard({ puzzle, order, onSelect }: PuzzleCardProps) {
+  const style = { '--card-order': order } as CSSProperties
+
   return (
-    <button type="button" className="puzzle-card" onClick={() => onSelect(puzzle)}>
-      <MiniPreview puzzle={puzzle} />
+    <button
+      type="button"
+      className="puzzle-card"
+      style={style}
+      onClick={() => onSelect(puzzle)}
+    >
+      <div className="pc-preview-wrap">
+        <span className="pc-number">{String(order + 1).padStart(2, '0')}</span>
+        <MiniPreview puzzle={puzzle} />
+      </div>
       <div className="pc-body">
         <div className="pc-top">
           <h3>{puzzle.title}</h3>
@@ -55,6 +67,9 @@ export function PuzzleCard({ puzzle, onSelect }: PuzzleCardProps) {
           {puzzle.rule.maxMirrors}개
         </p>
         {puzzle.description && <p className="pc-desc">{puzzle.description}</p>}
+        <span className="pc-start">
+          설계 시작 <span className="pc-start-arrow">→</span>
+        </span>
       </div>
     </button>
   )
