@@ -15,11 +15,13 @@ export function ResultPanel({ result, score }: ResultPanelProps) {
     )
   }
 
+  const pathText = result.simulation.path.map((s) => s.cell).join(' → ')
+
   return (
     <div className={`result-panel ${result.success ? 'is-success' : 'is-fail'}`}>
       {result.success ? (
         <>
-          <h3>🎉 성공!</h3>
+          <h3 className="rp-result-title">성공!</h3>
           <ul>
             {result.messages.map((m) => (
               <li key={m}>{m}</li>
@@ -28,7 +30,7 @@ export function ResultPanel({ result, score }: ResultPanelProps) {
         </>
       ) : (
         <>
-          <h3>다시 해볼까요?</h3>
+          <h3 className="rp-result-title">다시 해볼까요?</h3>
           <ul>
             {result.errors.map((e) => (
               <li key={e}>{e}</li>
@@ -37,6 +39,13 @@ export function ResultPanel({ result, score }: ResultPanelProps) {
         </>
       )}
       {score && <p className="rp-score">점수: {score.total}점</p>}
+
+      {pathText && (
+        <details className="rp-path">
+          <summary>빛이 지나간 길 보기</summary>
+          <p>{pathText}</p>
+        </details>
+      )}
     </div>
   )
 }

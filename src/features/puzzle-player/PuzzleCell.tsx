@@ -1,4 +1,5 @@
 import type { MirrorType } from '../../core'
+import { MirrorIcon } from '../../components/MirrorIcon'
 
 interface PuzzleCellProps {
   cellKey: string
@@ -12,7 +13,7 @@ interface PuzzleCellProps {
   onClick: () => void
 }
 
-/** 격자 한 칸. 거울/별/금지/허용/입구/출구 표시를 담당한다. */
+/** 격자 한 칸. 거울/별/금지/허용 표시를 담당한다. (입구/출구는 보드 밖 화살표로 표시) */
 export function PuzzleCell({
   cellKey,
   size,
@@ -30,20 +31,15 @@ export function PuzzleCell({
   if (isStar && !mirror) classes.push('is-star')
   if (isForbidden && !mirror) classes.push('is-forbidden')
 
-  let content: string | null = null
-  let contentClass = ''
+  let content: React.ReactNode = null
   if (mirror) {
-    content = mirror
-    contentClass = 'pc-mirror'
+    content = <MirrorIcon type={mirror} size={Math.round(size * 0.6)} className="pc-mirror" />
   } else if (isStar) {
-    content = '⭐'
-    contentClass = 'pc-star'
+    content = <span className="pc-star">★</span>
   } else if (isForbidden) {
-    content = '✕'
-    contentClass = 'pc-forbidden'
+    content = <span className="pc-forbidden">✕</span>
   } else if (isAllowed) {
-    content = '△'
-    contentClass = 'pc-allowed'
+    content = <span className="pc-allowed">△</span>
   }
 
   return (
@@ -55,7 +51,7 @@ export function PuzzleCell({
       aria-label={cellKey}
       title={cellKey}
     >
-      {content && <span className={contentClass}>{content}</span>}
+      {content}
     </button>
   )
 }

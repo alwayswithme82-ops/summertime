@@ -122,7 +122,7 @@ export function PuzzleEditorPage() {
           <div className="ed-modes">
             {(
               [
-                ['STAR', '⭐ 별 추가'],
+                ['STAR', '★ 별 추가'],
                 ['FORBIDDEN', '✕ 금지칸 추가'],
                 ['ALLOWED', '△ 허용 거울칸'],
                 ['ERASE', '지우기'],

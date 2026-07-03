@@ -52,7 +52,8 @@ export function BoardEditor({ size, stars, forbidden, allowed, onCellClick }: Bo
               let cls = ''
               let cellCls = 'be-cell'
               if (starSet.has(cell)) {
-                content = '⭐'
+                content = '★'
+                cls = 'be-star'
                 cellCls += ' is-star'
               } else if (forbiddenSet.has(cell)) {
                 content = '✕'

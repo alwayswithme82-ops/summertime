@@ -1,4 +1,5 @@
 import type { MirrorType } from '../../core'
+import { MirrorIcon } from '../../components/MirrorIcon'
 
 interface MirrorPaletteProps {
   selected: MirrorType
@@ -10,7 +11,7 @@ const OPTIONS: { type: MirrorType; hint: string }[] = [
   { type: '\\', hint: '오른쪽↔아래, 왼쪽↔위' },
 ]
 
-/** 놓을 거울(/ 또는 \) 선택 팔레트. */
+/** 놓을 거울 선택 팔레트. 거울은 문자 대신 SVG 대각선으로 보여준다. */
 export function MirrorPalette({ selected, onSelect }: MirrorPaletteProps) {
   return (
     <div className="mirror-palette">
@@ -23,8 +24,10 @@ export function MirrorPalette({ selected, onSelect }: MirrorPaletteProps) {
             className={`mp-btn${selected === type ? ' is-selected' : ''}`}
             onClick={() => onSelect(type)}
             title={hint}
+            aria-label={type === '/' ? '/ 거울 선택' : '\\ 거울 선택'}
+            aria-pressed={selected === type}
           >
-            {type}
+            <MirrorIcon type={type} size={30} />
           </button>
         ))}
       </div>

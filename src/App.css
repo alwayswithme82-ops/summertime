@@ -1,13 +1,9 @@
 .app-nav {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   display: flex;
   gap: 0.35rem;
-  padding: 0.6rem 1rem;
-  border-bottom: 1px solid var(--line-soft);
-  background: rgba(10, 14, 28, 0.82);
-  backdrop-filter: blur(10px);
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--card);
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 .app-tab {
@@ -16,33 +12,16 @@
   padding: 0.5rem 1rem;
   font-size: 0.95rem;
   cursor: pointer;
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--muted);
-  transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
-}
-.app-tab::before {
-  margin-right: 0.4rem;
-}
-.app-tab:nth-child(1)::before {
-  content: '🧩';
-  display: inline-block;
-}
-.app-tab:nth-child(2)::before {
-  content: '🛠️';
-  display: inline-block;
 }
 .app-tab.is-active {
-  background: rgba(56, 189, 248, 0.14);
-  border-color: rgba(56, 189, 248, 0.4);
-  color: var(--accent);
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: var(--primary);
   font-weight: 600;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
-}
-.app-tab.is-active::before {
-  animation: float 2.6s ease-in-out infinite;
 }
 .app-tab:hover {
-  background: rgba(148, 163, 184, 0.12);
+  background: #f1f5f9;
   color: var(--ink);
-  transform: translateY(-1px);
 }

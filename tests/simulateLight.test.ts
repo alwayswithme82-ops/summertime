@@ -72,3 +72,51 @@ describe('simulateLight — 진행/반사/출구', () => {
     expect(r.exited).toBe(true)
   })
 })
+
+// 벽 튕김 금지: 빛은 벽/테두리에서 절대 반사되지 않고, 보드 밖으로 나가는 즉시 종료된다.
+describe('벽 반사 금지 (빛은 벽에 튕기지 않는다)', () => {
+  it('거울이 없으면 방향이 절대 바뀌지 않고 직진해 나간다', () => {
+    const p = make({ entry: { side: 'LEFT', index: 2, direction: 'RIGHT' } })
+    const r = simulateLight(p, {})
+    // A2 → B2 → C2, 모든 스텝에서 방향은 RIGHT 그대로.
+    expect(r.path.map((s) => s.cell)).toEqual(['A2', 'B2', 'C2'])
+    expect(r.path.every((s) => s.direction === 'RIGHT')).toBe(true)
+    expect(r.exited).toBe(true)
+  })
+
+  it('출구가 아닌 벽으로 나가면 wrongExit이고 즉시 종료된다 (튕겨서 계속 진행 금지)', () => {
+    // 출구는 TOP B열인데, 빛은 오른쪽 벽(RIGHT 2행)으로 직진해 나간다.
+    const p = make({
+      entry: { side: 'LEFT', index: 2, direction: 'RIGHT' },
+      exit: { side: 'TOP', index: 2, direction: 'UP' },
+    })
+    const r = simulateLight(p, {})
+    // 보드 밖으로 나간 순간 시뮬레이션 종료 — 경로는 정확히 3칸에서 끝난다.
+    expect(r.path).toHaveLength(3)
+    expect(r.path[r.path.length - 1].cell).toBe('C2')
+    expect(r.exited).toBe(true)
+    expect(r.exitedAtCorrectExit).toBe(false)
+    expect(r.wrongExit).toBe(true)
+    // 튕겨 돌아오지 않았으므로 같은 칸을 두 번 방문하지 않는다.
+    expect(new Set(r.path.map((s) => s.cell)).size).toBe(r.path.length)
+  })
+
+  it('아래 벽으로 직진해도 반사 없이 그대로 나간다 (방향 불변)', () => {
+    const p = make({
+      entry: { side: 'TOP', index: 1, direction: 'DOWN' },
+      exit: { side: 'RIGHT', index: 3, direction: 'RIGHT' },
+    })
+    const r = simulateLight(p, {})
+    expect(r.path.map((s) => s.cell)).toEqual(['A1', 'A2', 'A3'])
+    expect(r.path.every((s) => s.direction === 'DOWN')).toBe(true)
+    expect(r.wrongExit).toBe(true)
+    expect(r.exitedAtCorrectExit).toBe(false)
+  })
+
+  it('정해진 출구로 나가면 exitedAtCorrectExit true', () => {
+    const p = make() // LEFT 1행 → RIGHT 1행 직진
+    const r = simulateLight(p, {})
+    expect(r.exitedAtCorrectExit).toBe(true)
+    expect(r.wrongExit).toBe(false)
+  })
+})

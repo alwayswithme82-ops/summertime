@@ -84,9 +84,6 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
             ← 문제 목록
           </button>
         )}
-        <span className="pp-logo" aria-hidden="true">
-          🔦
-        </span>
         <h1>빛 반사 설계 활동</h1>
         <p className="pp-puzzle-title">{puzzle.title}</p>
       </header>
