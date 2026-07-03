@@ -1,10 +1,31 @@
 .app-nav {
   display: flex;
-  gap: 0.4rem;
-  padding: 0.6rem 1.1rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.2rem;
   border-bottom: 1px solid var(--line);
-  background: var(--card);
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: auto;
+}
+.app-brand-mark {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+.app-brand-name {
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 .app-tab {
   border: 1px solid transparent;
@@ -14,14 +35,20 @@
   cursor: pointer;
   border-radius: 999px;
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
 }
 .app-tab.is-active {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: var(--primary);
+  background: var(--primary-soft);
+  border-color: #b8e6df;
+  color: var(--primary-edge);
 }
 .app-tab:hover {
-  background: #f1f5f9;
+  background: #f1efe8;
   color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .app-brand-name {
+    display: none;
+  }
 }

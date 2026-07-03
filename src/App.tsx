@@ -20,6 +20,21 @@ function App() {
   return (
     <>
       <nav className="app-nav">
+        <span className="app-brand">
+          <svg className="app-brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--primary)" />
+            <line
+              x1="6"
+              y1="18"
+              x2="18"
+              y2="6"
+              stroke="#fff"
+              strokeWidth="3.2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="app-brand-name">빛 반사 설계 활동</span>
+        </span>
         <button
           type="button"
           className={`app-tab${view === 'list' ? ' is-active' : ''}`}

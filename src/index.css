@@ -1,39 +1,48 @@
 /* ------------------------------------------------------------------ *
- * 빛 반사 설계 활동 — 보드 퍼즐형 교육 UI 디자인 토큰
- * "종이 보드게임 + 수업 자료" 느낌: 밝은 모눈종이 배경, 명확한 카드,
- * 눌리는 촉감의 버튼. 네온/다크/과한 장식은 쓰지 않는다.
+ * 빛 반사 설계 활동 — 편집형(editorial) 보드 퍼즐 디자인 시스템
+ * 큰 타이포, 따뜻한 종이색, 틸(teal) 포인트 + 코랄 강조.
+ * 밝고 명확하되 "디자인된" 느낌. 네온/다크/게임 HUD는 쓰지 않는다.
  * ------------------------------------------------------------------ */
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Pretendard', 'Pretendard Variable', system-ui, -apple-system,
+    'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
+  font-family: var(--font-sans);
   line-height: 1.5;
 
   /* 종이/카드 */
-  --bg: #f3f5f8;
-  --paper-dot: #dde2ea; /* 모눈종이 점 */
+  --bg: #f7f4ec; /* 따뜻한 종이색 */
+  --bg-tint: #efe9dc; /* 히어로/구분 영역 */
   --card: #ffffff;
-  --line: #d8dde6;
-  --line-strong: #b7c0cd;
-  --grid-line: #2a3442; /* 보드 격자선 */
+  --line: #e7e1d3;
+  --line-strong: #d3cbb8;
+  --grid-line: #232c3a; /* 보드 격자선 */
 
   /* 글자 */
-  --ink: #1f2933;
-  --muted: #5b6675;
+  --ink: #182031;
+  --muted: #6b6f78;
 
   /* 포인트 */
-  --primary: #2563eb;
-  --primary-edge: #1e40af; /* 버튼 아랫면(눌림 효과) */
-  --star: #f59e0b;
-  --danger: #dc2626;
-  --success: #16a34a;
-  --warn: #ea580c;
+  --primary: #0e9a8d; /* 틸 */
+  --primary-edge: #0a736a;
+  --primary-soft: #e2f4f1;
+  --coral: #ff6a3d; /* 따뜻한 강조 */
+  --coral-soft: #ffe7de;
+  --star: #f5b301;
+  --danger: #e5342b;
+  --success: #17924f;
+  --warn: #ef6c00;
 
   /* 공통 모양 */
-  --radius: 14px;
-  --shadow-card: 0 1px 2px rgba(31, 41, 51, 0.06), 0 4px 14px rgba(31, 41, 51, 0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-card: 0 1px 2px rgba(24, 32, 49, 0.05), 0 8px 22px rgba(24, 32, 49, 0.07);
 
   color: var(--ink);
   background: var(--bg);
   color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -43,20 +52,23 @@
 body {
   margin: 0;
   min-height: 100vh;
-  /* 은은한 모눈종이 배경 — 보드 퍼즐 활동지 느낌 */
-  background-color: var(--bg);
-  background-image: radial-gradient(circle, var(--paper-dot) 1px, transparent 1.4px);
-  background-size: 24px 24px;
+  background: var(--bg);
 }
 
 #root {
   min-height: 100vh;
 }
 
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+}
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-  outline: 3px solid #93c5fd;
-  outline-offset: 1px;
+  outline: 3px solid #7fd8cf;
+  outline-offset: 2px;
 }

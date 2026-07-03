@@ -25,9 +25,10 @@
   margin-bottom: 1rem;
 }
 .pp-header h1 {
-  font-size: 1.4rem;
+  font-size: 1.55rem;
+  font-weight: 800;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
 }
 .pp-back {
   font-size: 0.9rem;
@@ -141,7 +142,8 @@
   gap: 0.5rem;
 }
 .rp-title h2 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
+  font-weight: 800;
   margin: 0;
 }
 .rp-level {
@@ -175,13 +177,12 @@
   margin: 0.5rem 0;
 }
 .rp-subtitle {
-  font-size: 0.82rem;
-  color: var(--muted);
-  text-transform: none;
-  margin: 0.85rem 0 0.35rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid var(--line);
-  letter-spacing: 0.02em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin: 0.9rem 0 0.5rem;
+  letter-spacing: 0.12em;
 }
 .rp-goals {
   list-style: none;
@@ -262,7 +263,8 @@
 }
 .rp-result-title {
   margin: 0 0 0.5rem;
-  font-size: 1.35rem;
+  font-size: 1.4rem;
+  font-weight: 800;
 }
 .result-panel.is-empty {
   color: var(--muted);

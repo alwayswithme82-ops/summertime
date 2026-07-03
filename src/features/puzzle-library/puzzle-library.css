@@ -1,25 +1,72 @@
 /* 빛 반사 설계 활동 — 문제 목록(레벨 선택) 화면 */
 .puzzle-list-page {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: var(--ink);
-  max-width: 1020px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 1.25rem 1.25rem 2.5rem;
+  padding: 0 1.25rem 3rem;
 }
-.puzzle-list-page h2 {
-  font-size: 1.4rem;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.01em;
+
+/* 편집형 히어로 */
+.plp-hero {
+  padding: 2.6rem 0 1.8rem;
 }
-.plp-hint {
+.plp-eyebrow {
+  display: inline-block;
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+}
+.plp-title {
+  margin: 0;
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+.plp-title-accent {
+  color: var(--coral);
+}
+.plp-lead {
+  margin: 0.9rem 0 0;
+  max-width: 46ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
   color: var(--muted);
-  font-size: 0.9rem;
-  margin: 0 0 1.1rem;
 }
+
+/* 섹션 헤더 */
+.plp-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
+  padding-top: 1.2rem;
+  border-top: 2px solid var(--line);
+}
+.plp-section-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+.plp-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--bg-tint);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
 .plp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+  gap: 1.1rem;
 }
 
 /* 레벨 카드 — 미니 보드 미리보기 + 정보 */
@@ -28,23 +75,23 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.9rem;
+  padding: 1rem;
   cursor: pointer;
   font: inherit;
   color: inherit;
   display: flex;
-  gap: 0.85rem;
+  gap: 1rem;
   align-items: flex-start;
   box-shadow: var(--shadow-card);
-  transition: transform 0.08s, box-shadow 0.12s, border-color 0.12s;
+  transition: transform 0.12s, box-shadow 0.14s, border-color 0.14s;
 }
 .puzzle-card:hover {
   border-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 0 rgba(37, 99, 235, 0.25), var(--shadow-card);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(14, 154, 141, 0.16);
 }
 .puzzle-card:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 /* 미니 보드 미리보기 */
@@ -52,10 +99,11 @@
   flex: none;
   display: grid;
   gap: 1px;
-  width: 84px;
+  width: 92px;
   background: var(--grid-line);
   border: 2px solid var(--grid-line);
-  border-radius: 4px;
+  border-radius: 6px;
+  overflow: hidden;
 }
 .pcv-cell {
   aspect-ratio: 1;
@@ -78,42 +126,45 @@
   gap: 0.5rem;
 }
 .pc-top h3 {
-  font-size: 0.98rem;
+  font-size: 1.05rem;
+  font-weight: 800;
   margin: 0;
 }
 .pc-level {
   flex: none;
   font-size: 0.68rem;
   border-radius: 999px;
-  padding: 0.16rem 0.55rem;
-  background: #f1f5f9;
+  padding: 0.2rem 0.6rem;
+  background: #f1efe8;
   color: var(--muted);
   border: 1px solid var(--line);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 .pc-level-basic {
-  background: #f0fdf4;
+  background: #e6f6ec;
   color: var(--success);
-  border-color: #bbf7d0;
+  border-color: #b6e3c6;
 }
 .pc-level-hard {
-  background: #fff7ed;
-  color: #c2410c;
-  border-color: #fed7aa;
+  background: var(--coral-soft);
+  color: #d1451f;
+  border-color: #ffc7b5;
 }
 .pc-level-large {
-  background: #f5f3ff;
+  background: #ece9fb;
   color: #6d28d9;
-  border-color: #ddd6fe;
+  border-color: #d6cff5;
 }
 .pc-size {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  margin: 0.35rem 0 0;
+  margin: 0.4rem 0 0;
+  font-weight: 600;
 }
 .pc-desc {
-  font-size: 0.83rem;
-  color: #46505e;
-  margin: 0.35rem 0 0;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  color: #4b5261;
+  margin: 0.4rem 0 0;
+  line-height: 1.55;
 }
