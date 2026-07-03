@@ -1,7 +1,7 @@
 .app-nav {
   display: flex;
-  gap: 0.35rem;
-  padding: 0.55rem 1rem;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
   border-bottom: 1px solid var(--line);
   background: var(--card);
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -9,17 +9,17 @@
 .app-tab {
   border: 1px solid transparent;
   background: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.05rem;
   font-size: 0.95rem;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 999px;
   color: var(--muted);
+  font-weight: 600;
 }
 .app-tab.is-active {
   background: #eff6ff;
   border-color: #bfdbfe;
   color: var(--primary);
-  font-weight: 600;
 }
 .app-tab:hover {
   background: #f1f5f9;

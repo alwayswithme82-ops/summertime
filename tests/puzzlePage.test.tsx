@@ -40,7 +40,7 @@ describe('PuzzlePage (스모크)', () => {
     render(<PuzzlePage />)
     fireEvent.click(screen.getByRole('button', { name: '예시 정답 보기' }))
     // 예시 정답 적용 후 자동 판정 → 성공 메시지
-    expect(screen.getByText('성공!')).toBeInTheDocument()
+    expect(screen.getByText('성공했어요!')).toBeInTheDocument()
     // 예시 배치의 거울(A1 '/')이 SVG 대각선으로 보드에 표시된다.
     const a1 = screen.getByRole('button', { name: 'A1' })
     expect(a1.querySelector('svg[data-mirror="/"]')).not.toBeNull()

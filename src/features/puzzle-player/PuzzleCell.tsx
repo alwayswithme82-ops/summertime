@@ -30,6 +30,7 @@ export function PuzzleCell({
   if (isExit) classes.push('is-exit')
   if (isStar && !mirror) classes.push('is-star')
   if (isForbidden && !mirror) classes.push('is-forbidden')
+  if (isAllowed) classes.push('is-allowed')
 
   let content: React.ReactNode = null
   if (mirror) {
