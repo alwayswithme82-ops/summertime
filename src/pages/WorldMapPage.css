@@ -198,9 +198,18 @@
 }
 
 .level-marker--upcoming {
-  --marker-fill: #e8cea0;
-  --marker-highlight: #fff0cc;
-  --marker-border: #93683a;
+  --marker-fill: #e9c17f;
+  --marker-highlight: #fff0bd;
+  --marker-border: #8c5a2c;
+}
+
+.level-marker--upcoming .level-marker__sign {
+  box-shadow:
+    inset 0 -0.1em 0 rgba(103, 66, 25, 0.14),
+    inset 0 0.08em 0 rgba(255, 255, 255, 0.62),
+    0.1em 0.14em 0 var(--marker-border),
+    0 0.2em 0.28em rgba(50, 33, 13, 0.38),
+    0 0 0 0.05em rgba(255, 238, 180, 0.45);
 }
 
 .level-marker--current .level-marker__sign {

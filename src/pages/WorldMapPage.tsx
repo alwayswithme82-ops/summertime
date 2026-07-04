@@ -10,6 +10,7 @@ interface WorldMapPageProps {
 }
 
 const CLEARED_STORAGE_KEY = 'cleared_puzzle_ids'
+const SELECTED_STAGE_STORAGE_KEY = 'selected_world_map_stage_id'
 const WORLD_MAP_BACKGROUND = '/assets/world-map/bg-world-map.png'
 
 function readClearedPuzzleIds(): string[] {
@@ -28,16 +29,43 @@ function readClearedPuzzleIds(): string[] {
   }
 }
 
+function readSelectedStageId(): string | null {
+  if (typeof window === 'undefined') return null
+
+  try {
+    return window.localStorage.getItem(SELECTED_STAGE_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function rememberSelectedStage(puzzleId: string) {
+  try {
+    window.localStorage.setItem(SELECTED_STAGE_STORAGE_KEY, puzzleId)
+  } catch {
+    // Stage selection still works when storage is unavailable.
+  }
+}
+
 export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
   const clearedPuzzleIds = readClearedPuzzleIds()
-  const currentStageIndex = stages.findIndex(
+  const savedStageId = readSelectedStageId()
+  const defaultStageId = stages.find(
     (stage) => !clearedPuzzleIds.includes(stage.puzzleId),
-  )
+  )?.puzzleId
+  const selectedStageId = stages.some((stage) => stage.puzzleId === savedStageId)
+    ? savedStageId
+    : defaultStageId
 
-  function markerState(index: number, puzzleId: string): MarkerState {
+  function markerState(puzzleId: string): MarkerState {
+    if (puzzleId === selectedStageId) return 'current'
     if (clearedPuzzleIds.includes(puzzleId)) return 'cleared'
-    if (index === currentStageIndex || currentStageIndex === -1) return 'current'
     return 'upcoming'
+  }
+
+  function selectStage(puzzle: Puzzle) {
+    rememberSelectedStage(puzzle.id)
+    onSelect(puzzle)
   }
 
   return (
@@ -63,7 +91,7 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
           </header>
 
           <div className="world-map-markers">
-            {stages.map((stage, index) => {
+            {stages.map((stage) => {
               const puzzle = samplePuzzles.find((candidate) => candidate.id === stage.puzzleId)
               if (!puzzle) return null
 
@@ -75,10 +103,10 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
                   difficultyLabel={stage.difficultyLabel}
                   stars={puzzle.rule.requiredStars.length}
                   puzzleTitle={puzzle.title}
-                  state={markerState(index, stage.puzzleId)}
+                  state={markerState(stage.puzzleId)}
                   x={stage.x}
                   y={stage.y}
-                  onSelect={() => onSelect(puzzle)}
+                  onSelect={() => selectStage(puzzle)}
                 />
               )
             })}

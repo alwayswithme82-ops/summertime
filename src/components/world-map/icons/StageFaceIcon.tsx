@@ -11,8 +11,9 @@ export default function StageFaceIcon({
 }: StageFaceIconProps) {
   const isHappy = mood === 'happy'
   const isLocked = mood === 'locked'
-  const faceColor = isHappy ? '#FFF0A8' : '#F7E4BE'
-  const cheekColor = isHappy ? '#F29A65' : '#DFA27A'
+  const faceColor = isHappy ? '#FFD968' : '#F3CFA0'
+  const faceBorder = isHappy ? '#B66B2B' : '#9B6840'
+  const cheekColor = isHappy ? '#F17F72' : '#DE8E79'
 
   return (
     <svg
@@ -24,7 +25,15 @@ export default function StageFaceIcon({
       focusable="false"
       opacity={isLocked ? 0.5 : 1}
     >
-      <circle cx="32" cy="33" r="25" fill={faceColor} opacity="0.3" />
+      <circle
+        cx="32"
+        cy="33"
+        r="25"
+        fill={faceColor}
+        stroke={faceBorder}
+        strokeWidth="2.8"
+      />
+      <circle cx="26" cy="20" r="10" fill="#FFF3B7" opacity="0.5" />
 
       <circle cx="22" cy="28" r="3.6" fill="#684224" />
       <circle cx="42" cy="28" r="3.6" fill="#684224" />
@@ -34,12 +43,12 @@ export default function StageFaceIcon({
       <path
         d="M12.5 38 C14.5 34.5 21.5 34.5 23.5 38 C21.5 42 14.5 42 12.5 38 Z"
         fill={cheekColor}
-        opacity="0.5"
+        opacity="0.72"
       />
       <path
         d="M40.5 38 C42.5 34.5 49.5 34.5 51.5 38 C49.5 42 42.5 42 40.5 38 Z"
         fill={cheekColor}
-        opacity="0.5"
+        opacity="0.72"
       />
 
       <path
