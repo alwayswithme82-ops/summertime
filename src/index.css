@@ -1,58 +1,95 @@
+/* 갈무리 픽셀 폰트 (jsDelivr CDN). 제목=Galmuri14, 라벨/버튼/HUD=Galmuri11. */
 @font-face {
-  font-family: 'Pretendard Variable';
-  font-style: normal;
-  font-weight: 45 920;
+  font-family: 'Galmuri14';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/Galmuri14.woff2') format('woff2');
   font-display: swap;
-  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Galmuri11';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/Galmuri11-Bold.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-display: swap;
 }
 
 :root {
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
-  /* 손글씨(제목·버튼 라벨·카운터·배지 전용). 긴 본문은 --font-sans 유지. */
-  --font-hand: 'Nanum Pen Script', var(--font-sans);
+  /* 픽셀 폰트: 제목·큰 문구 = Galmuri14, 번호·버튼·HUD·배지·짧은 라벨 = Galmuri11.
+     긴 본문은 --font-sans(Pretendard)를 그대로 쓴다. */
+  --font-pixel: 'Galmuri14', var(--font-sans);
+  --font-pixel-ui: 'Galmuri11', var(--font-sans);
 
-  --paper: #f5f1e8;
-  --paper-deep: #ebe4d6;
-  --surface: #fffdf8;
-  --surface-strong: #ffffff;
-  --ink: #17223b;
-  --ink-soft: #34405a;
-  --muted: #707587;
-  --line: #ded8ca;
-  --line-strong: #c8c1b1;
-  --grid-line: #17223b;
+  /* ---- 레트로 아케이드 팔레트 ---- */
+  --bg: #0f1024;
+  --bg-deep: #0a0b1a;
+  --panel: #1a1b3a;
+  --panel-hi: #242653;
+  --cell: #12132b;
 
-  --teal: #087f79;
-  --teal-dark: #075e5a;
-  --teal-soft: #dff3ef;
-  --coral: #f26b4b;
-  --coral-dark: #bd432d;
-  --coral-soft: #ffe6dc;
-  --yellow: #ffc928;
-  --yellow-soft: #fff3b5;
-  --blue: #4778e8;
-  --blue-soft: #e8efff;
-  --purple: #7657d6;
-  --purple-soft: #eee9ff;
-  --success: #168653;
-  --success-soft: #ddf4e8;
-  --danger: #d94b45;
-  --danger-soft: #ffe4df;
-  --warn: #df6a1a;
+  --neon-cyan: #38e8ff;
+  --neon-cyan-dim: #12a7c4;
+  --neon-magenta: #ff4dcf;
+  --neon-magenta-dim: #c93da3;
+  --neon-yellow: #ffd23f;
+  --neon-red: #ff5a6e;
+  --neon-green: #4dffb0;
+  --neon-purple: #b58cff;
 
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius: 16px;
-  --radius-sm: 11px;
-  --shadow-sm: 0 2px 0 rgba(23, 34, 59, 0.08);
-  --shadow-card: 0 16px 38px rgba(55, 48, 36, 0.09), 0 2px 4px rgba(55, 48, 36, 0.06);
-  --shadow-float: 0 22px 52px rgba(23, 34, 59, 0.14), 0 3px 8px rgba(23, 34, 59, 0.07);
+  --text: #e8e6ff;
+  --text-soft: #c1bfec;
+  --muted: #8b89bd;
+
+  /* ---- 레거시 변수 매핑(기존 규칙이 그대로 새 팔레트를 따르도록) ---- */
+  --ink: var(--text);
+  --ink-soft: var(--text-soft);
+  --line: rgba(56, 232, 255, 0.18);
+  --line-strong: rgba(56, 232, 255, 0.34);
+  --grid-line: var(--neon-cyan);
+
+  --paper: var(--bg);
+  --paper-deep: var(--panel);
+  --surface: var(--panel);
+  --surface-strong: var(--panel-hi);
+
+  --teal: var(--neon-cyan);
+  --teal-dark: var(--neon-cyan-dim);
+  --teal-soft: rgba(56, 232, 255, 0.13);
+  --coral: var(--neon-magenta);
+  --coral-dark: var(--neon-magenta-dim);
+  --coral-soft: rgba(255, 77, 207, 0.15);
+  --yellow: var(--neon-yellow);
+  --yellow-soft: rgba(255, 210, 63, 0.16);
+  --blue: #5b8cff;
+  --blue-soft: rgba(91, 140, 255, 0.16);
+  --purple: var(--neon-purple);
+  --purple-soft: rgba(181, 140, 255, 0.16);
+  --success: var(--neon-green);
+  --success-soft: rgba(77, 255, 176, 0.13);
+  --danger: var(--neon-red);
+  --danger-soft: rgba(255, 90, 110, 0.15);
+  --warn: #ffb454;
+
+  /* 각지고 깔끔한 레트로 — 라운드는 작게 통일 */
+  --radius-xl: 8px;
+  --radius-lg: 6px;
+  --radius: 5px;
+  --radius-sm: 4px;
+
+  /* 은은한 네온 글로우 — 화면 전체가 아니라 요소 테두리에만 */
+  --glow-cyan: 0 0 8px rgba(56, 232, 255, 0.45);
+  --glow-cyan-strong: 0 0 14px rgba(56, 232, 255, 0.7);
+  --glow-magenta: 0 0 10px rgba(255, 77, 207, 0.5);
+  --glow-yellow: 0 0 9px rgba(255, 210, 63, 0.6);
+
+  --shadow-sm: 0 0 0 1px rgba(56, 232, 255, 0.1);
+  --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 232, 255, 0.08);
+  --shadow-float: 0 10px 34px rgba(0, 0, 0, 0.62), 0 0 20px rgba(56, 232, 255, 0.12);
 
   font-family: var(--font-sans);
-  color: var(--ink);
-  background: var(--paper);
+  color: var(--text);
+  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -72,22 +109,26 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
+  color: var(--text);
   background:
-    radial-gradient(circle at 13% 7%, rgba(255, 201, 40, 0.16), transparent 24rem),
-    radial-gradient(circle at 88% 18%, rgba(8, 127, 121, 0.12), transparent 27rem),
-    var(--paper);
+    radial-gradient(circle at 15% 0%, rgba(56, 232, 255, 0.1), transparent 26rem),
+    radial-gradient(circle at 88% 12%, rgba(255, 77, 207, 0.08), transparent 28rem),
+    var(--bg);
 }
 
+/* CRT 스캔라인 — 아주 옅게, 있는 듯 없는 듯. reduced-motion이면 끈다. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.25;
-  background-image: radial-gradient(rgba(23, 34, 59, 0.23) 0.65px, transparent 0.65px);
-  background-size: 18px 18px;
-  mask-image: linear-gradient(to bottom, black, transparent 72%);
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.16) 0 1px,
+    transparent 1px 3px
+  );
 }
 
 button,
@@ -104,13 +145,13 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-  outline: 3px solid rgba(71, 120, 232, 0.42);
-  outline-offset: 3px;
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
 }
 
 ::selection {
-  color: var(--ink);
-  background: var(--yellow);
+  color: var(--bg-deep);
+  background: var(--neon-cyan);
 }
 
 #root {
@@ -163,16 +204,6 @@ p {
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-1deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(1deg);
-  }
-}
-
 @keyframes beam-flow {
   to {
     stroke-dashoffset: -42;
@@ -187,5 +218,10 @@ p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* 스캔라인 끄기 */
+  body::before {
+    display: none;
   }
 }
