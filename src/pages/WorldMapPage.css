@@ -154,61 +154,70 @@
   filter: drop-shadow(0 0 5px #ffc840);
 }
 
-.world-map-sign {
+.world-map-hint {
   position: absolute;
-  right: 3.5%;
-  bottom: 4%;
-  z-index: 4;
-  width: clamp(150px, 19cqw, 280px);
-  padding: clamp(8px, 1.1cqw, 16px) clamp(12px, 1.5cqw, 22px);
-  border: clamp(2px, 0.25cqw, 4px) solid #5e371c;
-  border-radius: 7px;
-  background:
-    linear-gradient(90deg, transparent 18%, rgba(255, 226, 164, 0.2) 20% 23%, transparent 25%),
-    linear-gradient(180deg, #c98a42, #8d5728);
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 220, 151, 0.24),
-    0.22em 0.28em 0 rgba(58, 34, 15, 0.38);
-  color: #fff0bd;
-  font-family: var(--font-pixel-ui);
-  font-size: clamp(10px, 1.25cqw, 18px);
-  line-height: 1.2;
-  text-align: center;
-  text-shadow: 0 2px 0 #60391d;
-  transform: rotate(-1.5deg);
+  bottom: 3.5%;
+  left: 3%;
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  width: min(45%, 43rem);
+  min-width: 0;
+  pointer-events: none;
+  animation: world-map-hint-pop 520ms cubic-bezier(0.2, 0.85, 0.25, 1.15) both;
 }
 
-.world-map-sign::before,
-.world-map-sign::after {
+.world-map-hint__mascot {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  width: clamp(48px, 7cqw, 104px);
+  height: auto;
+  margin-right: clamp(-14px, -1.1cqw, -6px);
+  margin-bottom: clamp(-5px, -0.4cqh, -2px);
+  filter: drop-shadow(0 4px 2px rgba(70, 43, 18, 0.34));
+  animation: world-map-mascot-float 2.8s ease-in-out infinite;
+}
+
+.world-map-hint__bubble {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0 0 clamp(9px, 1.1cqh, 16px);
+  padding: clamp(8px, 1.1cqw, 16px) clamp(12px, 1.5cqw, 22px);
+  border: clamp(2px, 0.25cqw, 4px) solid #714821;
+  border-radius: clamp(8px, 1cqw, 16px);
+  background:
+    radial-gradient(circle at 92% 15%, rgba(255, 255, 255, 0.55), transparent 20%),
+    linear-gradient(180deg, #fff3cd, #e5c285);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35),
+    0.18em 0.24em 0 rgba(63, 38, 15, 0.38);
+  color: #603b1d;
+  font-size: clamp(9px, 1.15cqw, 17px);
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 249, 220, 0.9);
+}
+
+.world-map-hint__bubble::before {
   content: '';
   position: absolute;
-  top: 13%;
-  width: clamp(3px, 0.4cqw, 6px);
+  bottom: 20%;
+  left: clamp(-13px, -0.9cqw, -7px);
+  width: clamp(13px, 1.3cqw, 20px);
   aspect-ratio: 1;
-  border-radius: 50%;
-  background: #e1bb72;
-  box-shadow: inset 0 0 0 1px #70441f;
+  border-bottom: clamp(2px, 0.25cqw, 4px) solid #714821;
+  border-left: clamp(2px, 0.25cqw, 4px) solid #714821;
+  background: #edcf96;
+  transform: rotate(45deg);
 }
 
-.world-map-sign::before {
-  left: 5%;
-}
-
-.world-map-sign::after {
-  right: 5%;
-}
-
-.world-map-sign > i {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  z-index: -1;
-  width: 14%;
-  height: 85%;
-  border: clamp(2px, 0.2cqw, 3px) solid #5b351a;
-  border-top: 0;
-  background: linear-gradient(90deg, #7c4823, #a66b32 48%, #74411f);
-  transform: translateX(-50%);
+.hint-mascot__eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: world-map-mascot-blink 4.8s ease-in-out infinite;
 }
 
 @keyframes world-map-title-glow {
@@ -233,6 +242,40 @@
   }
 }
 
+@keyframes world-map-mascot-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(clamp(-6px, -0.65cqh, -3px)) rotate(1deg);
+  }
+}
+
+@keyframes world-map-mascot-blink {
+  0%,
+  90%,
+  96%,
+  100% {
+    transform: scaleY(1);
+  }
+  92%,
+  94% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes world-map-hint-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes world-map-light-flow {
   to {
     stroke-dashoffset: -26;
@@ -248,7 +291,10 @@
 @media (prefers-reduced-motion: reduce) {
   .world-map-light-path__beam,
   .world-title-main,
-  .world-title-sparkle {
+  .world-title-sparkle,
+  .world-map-hint,
+  .world-map-hint__mascot,
+  .hint-mascot__eye {
     animation: none;
   }
 }
