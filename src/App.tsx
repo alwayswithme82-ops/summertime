@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Puzzle } from './core'
-import { PuzzleListPage } from './features/puzzle-library/PuzzleListPage'
 import { PuzzlePage } from './features/puzzle-player/PuzzlePage'
+import WorldMapPage from './pages/WorldMapPage'
 import './App.css'
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
       {selectedPuzzle ? (
         <PuzzlePage puzzle={selectedPuzzle} onBack={showList} />
       ) : (
-        <PuzzleListPage onSelect={setSelectedPuzzle} />
+        <WorldMapPage onSelect={setSelectedPuzzle} />
       )}
     </div>
   )
