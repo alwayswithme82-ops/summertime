@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Puzzle } from '../core'
-import HintBubble from '../components/world-map/HintBubble'
+import HintMascot from '../components/world-map/HintMascot'
 import StageDoor, { type StageDoorStatus } from '../components/world-map/StageDoor'
 import LightPath from '../components/world-map/LightPath'
 import SparkleIcon from '../components/world-map/icons/SparkleIcon'
@@ -134,7 +134,10 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
             })}
           </div>
 
-          <HintBubble />
+          <aside className="world-map-mascot" aria-label="빛방울 요정">
+            <p className="world-map-mascot__speech">문을 열어 볼까요?</p>
+            <HintMascot className="world-map-mascot__character" />
+          </aside>
 
           <aside className="world-map-sign" aria-label="모험 안내">
             <span>다음 목표를 향해 가자!</span>

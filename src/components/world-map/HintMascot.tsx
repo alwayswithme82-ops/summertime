@@ -15,6 +15,33 @@ export default function HintMascot({ size = 88, className }: HintMascotProps) {
     >
       <circle cx="48" cy="63" r="36" fill="#FFD65C" opacity="0.3" />
       <path
+        d="M24 67 C16 68 11 64 8 59"
+        fill="none"
+        stroke="#8A5726"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="7" cy="57" r="3" fill="#FFD968" stroke="#8A5726" strokeWidth="2" />
+      <path
+        d="M39 97 C38 103 36 107 32 109"
+        fill="none"
+        stroke="#8A5726"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M60 97 C61 103 64 107 68 109"
+        fill="none"
+        stroke="#8A5726"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="30" cy="109" r="3" fill="#FFD968" stroke="#8A5726" strokeWidth="2" />
+      <circle cx="70" cy="109" r="3" fill="#FFD968" stroke="#8A5726" strokeWidth="2" />
+      <path
         d="M48 13 C43 27 19 39 19 67 C19 88 32 101 50 101 C69 101 81 88 81 68 C81 42 58 28 48 13 Z"
         fill="#FFD968"
         stroke="#8A5726"
@@ -33,8 +60,8 @@ export default function HintMascot({ size = 88, className }: HintMascotProps) {
 
       <circle className="hint-mascot__eye" cx="38" cy="63" r="4" fill="#64401F" />
       <circle className="hint-mascot__eye" cx="61" cy="63" r="4" fill="#64401F" />
-      <circle cx="37" cy="62" r="1.2" fill="#FFFCE8" />
-      <circle cx="60" cy="62" r="1.2" fill="#FFFCE8" />
+      <circle className="hint-mascot__eye" cx="37" cy="62" r="1.2" fill="#FFFCE8" />
+      <circle className="hint-mascot__eye" cx="60" cy="62" r="1.2" fill="#FFFCE8" />
 
       <circle cx="31" cy="75" r="6" fill="#F28B72" opacity="0.58" />
       <circle cx="68" cy="75" r="6" fill="#F28B72" opacity="0.58" />
