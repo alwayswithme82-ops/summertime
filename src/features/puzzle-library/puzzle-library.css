@@ -1,562 +1,360 @@
 .puzzle-list-page {
-  width: min(1120px, calc(100% - 2.5rem));
+  width: min(880px, calc(100% - 2.5rem));
   margin: 0 auto;
   padding-bottom: 4.5rem;
 }
 
-.plp-hero {
-  min-height: 388px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  align-items: center;
-  gap: 3rem;
-  padding: 3.5rem 0 2.6rem;
-}
+/* ------------------------------------------------------------------ *
+ * 상단 (명령형 제목 + 하는 법)
+ * ------------------------------------------------------------------ */
 
-.plp-hero-copy {
-  position: relative;
-  z-index: 2;
-}
-
-.plp-eyebrow {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0 0 1.05rem;
-  border: 1px solid rgba(8, 127, 121, 0.18);
-  border-radius: 999px;
-  padding: 0.44rem 0.82rem;
-  color: var(--teal-dark);
-  background: rgba(223, 243, 239, 0.8);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-}
-
-.plp-eyebrow::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--yellow);
-  box-shadow: 0 0 0 4px rgba(255, 201, 40, 0.19);
+.plp-head {
+  padding: 3.2rem 0 2.4rem;
+  text-align: center;
 }
 
 .plp-title {
-  max-width: 700px;
   margin: 0;
   color: var(--ink);
-  font-size: clamp(2.65rem, 6vw, 5rem);
-  font-weight: 880;
-  line-height: 0.98;
-  letter-spacing: -0.068em;
+  font-family: var(--font-hand);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 8vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
   text-wrap: balance;
 }
 
-.plp-title-accent {
-  position: relative;
-  color: var(--coral);
-  white-space: nowrap;
-}
-
-.plp-title-accent::after {
-  content: '';
-  position: absolute;
-  right: 1%;
-  bottom: -0.12em;
-  left: 4%;
-  height: 0.12em;
-  border-radius: 999px;
-  background: var(--yellow);
-  transform: rotate(-1.4deg);
-  opacity: 0.85;
-}
-
 .plp-lead {
-  max-width: 530px;
-  margin: 1.45rem 0 0;
+  max-width: 34ch;
+  margin: 0.9rem auto 0;
   color: var(--ink-soft);
-  font-size: clamp(1rem, 2vw, 1.12rem);
-  font-weight: 510;
-  line-height: 1.78;
-  letter-spacing: -0.018em;
+  font-size: clamp(0.98rem, 2.4vw, 1.12rem);
+  font-weight: 520;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
   word-break: keep-all;
 }
 
-.plp-meta {
+.plp-howto {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+  max-width: 640px;
+  margin: 2rem auto 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.plp-step {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.35rem;
-}
-
-.plp-meta span {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  border-radius: 999px;
-  padding: 0.46rem 0.75rem;
-  color: var(--ink-soft);
-  background: rgba(255, 255, 255, 0.64);
-  box-shadow: inset 0 0 0 1px rgba(23, 34, 59, 0.08);
-  font-size: 0.78rem;
-  font-weight: 720;
+  gap: 0.5rem;
+  padding: 1rem 0.7rem 0.9rem;
+  border: 1.5px solid rgba(23, 34, 59, 0.14);
+  border-radius: 20px 17px 22px 16px;
+  background: rgba(255, 253, 248, 0.82);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
-.plp-hero-art {
-  position: relative;
-  min-height: 300px;
-  animation: float 6s ease-in-out infinite;
-}
-
-.plp-art-board {
-  position: absolute;
-  top: 24px;
-  right: 15px;
-  width: 285px;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border: 4px solid var(--ink);
-  border-radius: 25px;
-  background-color: var(--surface-strong);
-  background-image:
-    linear-gradient(to right, rgba(23, 34, 59, 0.18) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(23, 34, 59, 0.18) 1px, transparent 1px);
-  background-size: 20% 20%;
-  box-shadow: var(--shadow-float), 12px 14px 0 var(--yellow);
-  transform: rotate(2.5deg);
-}
-
-.plp-art-beam {
-  position: absolute;
-  z-index: 2;
-  top: 56px;
-  right: 34px;
-  width: 240px;
-  height: 182px;
-  filter: drop-shadow(0 0 9px rgba(255, 201, 40, 0.9));
-}
-
-.plp-art-beam path {
-  fill: none;
-  stroke: var(--yellow);
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 11 8;
-  animation: beam-flow 1.2s linear infinite;
-}
-
-.plp-art-star {
-  position: absolute;
-  z-index: 3;
+.plp-step-num {
   display: grid;
   place-items: center;
-  width: 49px;
-  height: 49px;
-  border: 3px solid var(--ink);
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--ink);
   border-radius: 50%;
   color: var(--ink);
   background: var(--yellow);
-  box-shadow: 4px 5px 0 var(--ink);
-  font-size: 1.45rem;
-  animation: soft-pop 700ms both;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
-.plp-art-star.is-one {
-  top: 43px;
-  right: 68px;
+.plp-step-icon svg {
+  display: block;
+  width: 46px;
+  height: 46px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.plp-art-star.is-two {
-  right: 195px;
-  bottom: 58px;
-  animation-delay: 160ms;
+.plp-step-icon .hs-mirror {
+  stroke: var(--teal);
+  stroke-width: 3;
 }
 
-.plp-art-mirror {
-  position: absolute;
-  z-index: 3;
-  right: 124px;
-  bottom: 31px;
-  width: 58px;
-  height: 58px;
-  border: 3px solid var(--ink);
-  border-radius: 14px;
-  background: var(--teal-soft);
-  box-shadow: 4px 5px 0 var(--ink);
-  transform: rotate(2.5deg);
+.plp-step-icon .hs-beam {
+  stroke: var(--yellow);
+  stroke-width: 3;
+  stroke-dasharray: 3 4;
 }
 
-.plp-art-mirror::before {
-  content: '';
-  position: absolute;
-  top: 11px;
-  right: 25px;
-  width: 7px;
-  height: 32px;
-  border-radius: 999px;
-  background: var(--teal);
-  transform: rotate(45deg);
+.plp-step-icon .hs-star {
+  fill: var(--yellow);
+  stroke: var(--ink);
+  stroke-width: 1.8;
 }
+
+.plp-step-icon .hs-arrow {
+  stroke: var(--coral);
+  stroke-width: 2.6;
+}
+
+.plp-step-text {
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 620;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+/* ------------------------------------------------------------------ *
+ * 문제 선택 (레벨 타일 격자)
+ * ------------------------------------------------------------------ */
 
 .plp-section-head {
   display: flex;
-  align-items: end;
-  gap: 0.8rem;
-  margin: 0 0 1.25rem;
-  padding-top: 1.8rem;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: 0 0 1.15rem;
+  padding-top: 1.7rem;
   border-top: 1px solid rgba(23, 34, 59, 0.12);
 }
 
 .plp-section-title {
   margin: 0;
-}
-
-.plp-section-kicker {
-  display: block;
-  margin-bottom: 0.26rem;
-  color: var(--teal);
-  font-size: 0.7rem;
-  font-weight: 850;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.plp-section-head h3 {
-  margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 850;
-  letter-spacing: -0.04em;
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 4vw, 2.2rem);
+  line-height: 1;
 }
 
 .plp-count {
-  margin-bottom: 0.2rem;
+  margin-left: auto;
   border-radius: 999px;
-  padding: 0.24rem 0.62rem;
+  padding: 0.22rem 0.66rem;
   color: var(--ink-soft);
   background: var(--paper-deep);
-  font-size: 0.78rem;
-  font-weight: 780;
-}
-
-.plp-section-note {
-  margin: 0 0 0.32rem auto;
-  color: var(--muted);
-  font-size: 0.83rem;
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .plp-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.1rem;
 }
 
-.puzzle-card {
-  --card-accent: var(--teal);
-  position: relative;
-  min-height: 215px;
-  grid-column: span 2;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
-  align-items: center;
-  gap: 1.05rem;
-  border: 1px solid rgba(23, 34, 59, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 1.1rem;
+.level-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0;
+  border: none;
+  background: none;
   color: inherit;
-  background: rgba(255, 253, 248, 0.92);
-  box-shadow: var(--shadow-card);
   text-align: left;
   cursor: pointer;
+  animation: page-rise 480ms both;
+  animation-delay: calc(var(--tile-order, 0) * 55ms);
+}
+
+.lt-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: clamp(0.9rem, 4vw, 1.4rem);
+  border: 2px solid rgba(23, 34, 59, 0.16);
+  border-radius: 22px 18px 24px 17px;
+  background: rgba(255, 253, 248, 0.92);
+  box-shadow: var(--shadow-card);
+  transform: rotate(var(--tile-rotate, 0deg));
   transition:
     transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 240ms ease,
     border-color 240ms ease;
-  animation: page-rise 500ms both;
-  animation-delay: calc(var(--card-order, 0) * 70ms);
 }
 
-.puzzle-card:nth-child(4),
-.puzzle-card:nth-child(5) {
-  grid-column: span 3;
-}
-
-.puzzle-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 5px;
-  background: var(--card-accent);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 220ms ease;
-}
-
-.puzzle-card:hover {
-  z-index: 2;
-  border-color: rgba(8, 127, 121, 0.35);
+.level-tile:hover .lt-frame {
+  border-color: rgba(8, 127, 121, 0.42);
   box-shadow: var(--shadow-float);
-  transform: translateY(-7px) rotate(-0.35deg);
+  transform: rotate(var(--tile-rotate, 0deg)) translateY(-6px) scale(1.02);
 }
 
-.puzzle-card:hover::before {
-  transform: scaleY(1);
+.level-tile:active .lt-frame {
+  transform: rotate(var(--tile-rotate, 0deg)) translateY(-2px) scale(0.99);
 }
 
-.puzzle-card:active {
-  transform: translateY(-2px) scale(0.99);
-}
-
-.pc-preview-wrap {
-  position: relative;
-}
-
-.pc-number {
+.lt-number {
   position: absolute;
   z-index: 2;
-  top: -11px;
-  left: -9px;
+  top: -12px;
+  left: -10px;
   display: grid;
   place-items: center;
-  width: 31px;
-  height: 31px;
-  border: 2px solid var(--ink);
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.35rem;
+  border: 2.5px solid var(--ink);
   border-radius: 50%;
   color: var(--ink);
   background: var(--yellow);
-  box-shadow: 2px 3px 0 var(--ink);
-  font-size: 0.72rem;
-  font-weight: 900;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--font-hand);
+  font-size: 1.65rem;
+  line-height: 1;
 }
 
-.pc-preview {
+.lt-clear {
+  position: absolute;
+  z-index: 2;
+  top: -11px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--teal-soft);
+  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 1rem;
+}
+
+/* 보드 미리보기 격자 — 깔끔한 직각 유지(회전/비대칭 없음). */
+.pt-preview {
   display: grid;
   gap: 2px;
-  width: 112px;
+  width: 100%;
+  max-width: 108px;
   overflow: hidden;
   border: 3px solid var(--ink);
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--ink);
-  box-shadow: 4px 5px 0 rgba(23, 34, 59, 0.1);
-  transition: transform 240ms ease;
+  box-shadow: 3px 4px 0 rgba(23, 34, 59, 0.1);
 }
 
-.puzzle-card:hover .pc-preview {
-  transform: scale(1.035) rotate(1deg);
-}
-
-.pcv-cell {
+.ptv-cell {
   aspect-ratio: 1;
   background: #fffefb;
 }
 
-.pcv-cell.is-star {
+.ptv-cell.is-star {
   background:
     radial-gradient(circle, var(--yellow) 0 33%, transparent 35%),
     var(--yellow-soft);
 }
 
-.pcv-cell.is-forbidden {
+.ptv-cell.is-forbidden {
   background:
     linear-gradient(45deg, transparent 43%, var(--danger) 44% 56%, transparent 57%),
     linear-gradient(-45deg, transparent 43%, var(--danger) 44% 56%, transparent 57%),
     var(--danger-soft);
 }
 
-.pc-body {
-  min-width: 0;
-}
-
-.pc-top {
+.lt-caption {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0 0.15rem;
 }
 
-.pc-top h3 {
-  margin: 0;
+.lt-name {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
   color: var(--ink);
-  font-size: 1.05rem;
-  font-weight: 840;
-  line-height: 1.28;
-  letter-spacing: -0.035em;
-  word-break: keep-all;
+  font-size: 0.9rem;
+  font-weight: 720;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.pc-level {
+.lt-level {
   flex: none;
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 0.25rem 0.56rem;
+  padding: 0.2rem 0.5rem;
   color: var(--ink-soft);
   background: var(--paper-deep);
   font-size: 0.66rem;
-  font-weight: 820;
+  font-weight: 800;
 }
 
-.pc-level-basic {
+.lt-level-basic {
   color: var(--success);
   border-color: rgba(22, 134, 83, 0.2);
   background: var(--success-soft);
 }
 
-.pc-level-hard {
+.lt-level-hard {
   color: var(--coral-dark);
   border-color: rgba(242, 107, 75, 0.24);
   background: var(--coral-soft);
 }
 
-.pc-level-large {
+.lt-level-large {
   color: var(--purple);
   border-color: rgba(118, 87, 214, 0.2);
   background: var(--purple-soft);
 }
 
-.pc-size {
-  margin: 0.62rem 0 0;
-  color: var(--teal-dark);
-  font-size: 0.74rem;
-  font-weight: 760;
-  line-height: 1.45;
-}
+/* ------------------------------------------------------------------ *
+ * 반응형
+ * ------------------------------------------------------------------ */
 
-.pc-desc {
-  display: -webkit-box;
-  margin: 0.44rem 0 0;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.55;
-  letter-spacing: -0.012em;
-  word-break: keep-all;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.pc-start {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.34rem;
-  margin-top: 0.72rem;
-  color: var(--ink);
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.pc-start-arrow {
-  transition: transform 180ms ease;
-}
-
-.puzzle-card:hover .pc-start-arrow {
-  transform: translateX(4px);
-}
-
-@media (max-width: 950px) {
-  .plp-hero {
-    grid-template-columns: 1fr 310px;
-    gap: 1rem;
-  }
-
-  .plp-art-board {
-    width: 250px;
-  }
-
-  .plp-art-beam {
-    right: 24px;
-    width: 210px;
-  }
-
-  .puzzle-card {
-    grid-column: span 3;
-  }
-
-  .puzzle-card:nth-child(5) {
-    grid-column: 2 / span 4;
-  }
-}
-
-@media (max-width: 760px) {
+@media (max-width: 560px) {
   .puzzle-list-page {
-    width: min(100% - 1.5rem, 600px);
+    width: min(100% - 1.5rem, 520px);
   }
 
-  .plp-hero {
-    min-height: auto;
-    grid-template-columns: 1fr;
-    padding-top: 2.5rem;
+  .plp-head {
+    padding-top: 2.4rem;
   }
 
-  .plp-hero-art {
-    min-height: 260px;
-    margin-top: -1rem;
+  .plp-howto {
+    gap: 0.55rem;
   }
 
-  .plp-art-board {
-    right: 50%;
-    width: 230px;
-    transform: translateX(50%) rotate(2.5deg);
+  .plp-step {
+    padding: 0.8rem 0.4rem 0.7rem;
   }
 
-  .plp-art-beam {
-    right: 50%;
-    width: 195px;
-    transform: translateX(50%);
+  .plp-step-icon svg {
+    width: 38px;
+    height: 38px;
   }
 
-  .plp-art-star.is-one {
-    right: calc(50% - 86px);
-  }
-
-  .plp-art-star.is-two {
-    right: calc(50% + 52px);
-    bottom: 38px;
-  }
-
-  .plp-art-mirror {
-    right: calc(50% - 19px);
-    bottom: 15px;
-  }
-
-  .plp-section-note {
-    display: none;
+  .plp-step-text {
+    font-size: 0.74rem;
   }
 
   .plp-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .puzzle-card,
-  .puzzle-card:nth-child(4),
-  .puzzle-card:nth-child(5) {
-    grid-column: 1;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 0.9rem;
   }
 }
 
-@media (max-width: 440px) {
-  .plp-title {
-    font-size: 2.5rem;
+@media (max-width: 360px) {
+  .plp-grid {
+    gap: 0.9rem 0.8rem;
   }
 
-  .puzzle-card {
-    min-height: 0;
-    grid-template-columns: 92px minmax(0, 1fr);
-    gap: 0.85rem;
-    padding: 0.9rem;
-  }
-
-  .pc-preview {
-    width: 88px;
-    gap: 1px;
-    border-width: 2px;
-  }
-
-  .pc-start {
-    display: none;
+  .lt-name {
+    font-size: 0.82rem;
   }
 }

@@ -17,7 +17,7 @@ function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
   for (let row = 1; row <= puzzle.rows; row++) {
     for (let col = 1; col <= puzzle.cols; col++) {
       const key = positionToCellKey({ row, col })
-      let className = 'pcv-cell'
+      let className = 'ptv-cell'
       if (stars.has(key)) className += ' is-star'
       else if (forbidden.has(key)) className += ' is-forbidden'
       cells.push(<span key={key} className={className} />)
@@ -26,7 +26,7 @@ function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
 
   return (
     <div
-      className="pc-preview"
+      className="pt-preview"
       style={{ gridTemplateColumns: `repeat(${puzzle.cols}, 1fr)` }}
       aria-hidden="true"
     >
@@ -35,40 +35,39 @@ function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
   )
 }
 
-interface PuzzleCardProps {
+interface PuzzleTileProps {
   puzzle: Puzzle
   order: number
+  cleared: boolean
   onSelect: (puzzle: Puzzle) => void
 }
 
-export function PuzzleCard({ puzzle, order, onSelect }: PuzzleCardProps) {
-  const style = { '--card-order': order } as CSSProperties
+export function PuzzleTile({ puzzle, order, cleared, onSelect }: PuzzleTileProps) {
+  // 손그림풍 비대칭을 타일마다 살짝 다르게(고정값).
+  const rotate = (order % 2 === 0 ? -1 : 1) * (0.5 + (order % 3) * 0.25)
+  const style = { '--tile-order': order, '--tile-rotate': `${rotate}deg` } as CSSProperties
 
   return (
     <button
       type="button"
-      className="puzzle-card"
+      className={`level-tile${cleared ? ' is-cleared' : ''}`}
       style={style}
       onClick={() => onSelect(puzzle)}
+      aria-label={`${order + 1}단계 ${puzzle.title}${cleared ? ' (완료)' : ''}`}
     >
-      <div className="pc-preview-wrap">
-        <span className="pc-number">{String(order + 1).padStart(2, '0')}</span>
+      <div className="lt-frame">
+        <span className="lt-number">{order + 1}</span>
+        {cleared && (
+          <span className="lt-clear" aria-hidden="true">
+            ★
+          </span>
+        )}
         <MiniPreview puzzle={puzzle} />
       </div>
-      <div className="pc-body">
-        <div className="pc-top">
-          <h3>{puzzle.title}</h3>
-          <span className={`pc-level pc-level-${puzzle.level.toLowerCase()}`}>
-            {LEVEL_LABEL[puzzle.level]}
-          </span>
-        </div>
-        <p className="pc-size">
-          {puzzle.rows}×{puzzle.cols} · 별 {puzzle.rule.requiredStars.length}개 · 거울 최대{' '}
-          {puzzle.rule.maxMirrors}개
-        </p>
-        {puzzle.description && <p className="pc-desc">{puzzle.description}</p>}
-        <span className="pc-start">
-          설계 시작 <span className="pc-start-arrow">→</span>
+      <div className="lt-caption">
+        <span className="lt-name">{puzzle.title}</span>
+        <span className={`lt-level lt-level-${puzzle.level.toLowerCase()}`}>
+          {LEVEL_LABEL[puzzle.level]}
         </span>
       </div>
     </button>
