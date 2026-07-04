@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import type { MirrorType, PlacedMirrors, Puzzle, ValidationResult } from '../../core'
 import { cellKeyToPosition, scoreSolution, validateSolution } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
-import { DebugPanel } from './DebugPanel'
 import { MirrorPalette } from './MirrorPalette'
 import { PuzzleBoard } from './PuzzleBoard'
 import { ResultPanel } from './ResultPanel'
@@ -164,7 +163,6 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
           </div>
 
           <ResultPanel result={result} score={score} />
-          <DebugPanel placedMirrors={placedMirrors} result={result} />
         </aside>
       </div>
     </div>
