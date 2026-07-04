@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { StageDifficulty } from '../../data/stages'
 import MagnifierIcon from './icons/MagnifierIcon'
+import StageFaceIcon from './icons/StageFaceIcon'
 import StarIcon from './icons/StarIcon'
 
 export type MarkerState = 'cleared' | 'current' | 'upcoming'
@@ -53,11 +54,13 @@ export default function LevelMarker({
             <MagnifierIcon size={32} />
           </span>
         )}
+        <span className="level-marker__stage-label">{number}단계</span>
         <span className="level-marker__number">{number}</span>
-        <span className="level-marker__face" aria-hidden="true">
-          <span />
-          <span />
-          <i />
+        <span className="level-marker__face">
+          <StageFaceIcon
+            className="level-marker__face-icon"
+            mood={state === 'current' ? 'happy' : 'calm'}
+          />
         </span>
       </span>
       <span className="level-marker__wood" aria-hidden="true" />

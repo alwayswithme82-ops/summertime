@@ -1,7 +1,6 @@
 import type { Puzzle } from '../core'
 import LevelMarker, { type MarkerState } from '../components/world-map/LevelMarker'
 import LightPath from '../components/world-map/LightPath'
-import SparkleIcon from '../components/world-map/icons/SparkleIcon'
 import { samplePuzzles } from '../data/samplePuzzles'
 import { stages } from '../data/stages'
 import './WorldMapPage.css'
@@ -56,13 +55,11 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
         <LightPath />
 
         <div className="world-map-ui">
-          <header className="world-map-heading">
-            <SparkleIcon className="world-map-heading__sparkle world-map-heading__sparkle--left" />
-            <div>
-              <h1 id="world-map-title">거울을 설치해 빛을 탈출시켜라!</h1>
-              <p>길을 따라 단계를 하나씩 정복해요!</p>
-            </div>
-            <SparkleIcon className="world-map-heading__sparkle world-map-heading__sparkle--right" />
+          <header className="world-title-wrap">
+            <h1 id="world-map-title" className="world-title-main">
+              빛 반사 거울 설치 활동
+            </h1>
+            <p className="world-title-sub">거울을 설치해 빛을 탈출시켜라!</p>
           </header>
 
           <div className="world-map-markers">
