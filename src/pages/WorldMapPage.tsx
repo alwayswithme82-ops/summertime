@@ -135,6 +135,11 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
           </div>
 
           <HintBubble />
+
+          <aside className="world-map-sign" aria-label="모험 안내">
+            <span>다음 목표를 향해 가자!</span>
+            <i aria-hidden="true" />
+          </aside>
         </div>
       </section>
     </main>
