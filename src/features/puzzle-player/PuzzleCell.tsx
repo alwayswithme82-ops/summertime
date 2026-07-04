@@ -1,6 +1,29 @@
 import type { MirrorType } from '../../core'
 import { MirrorIcon } from '../../components/MirrorIcon'
 
+/** 손으로 그린 듯한 별 윤곽선. 채우기보다 삐뚤한 스케치 선이 주인공. */
+function SketchStar({ size }: { size: number }) {
+  return (
+    <svg
+      className="pc-star"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      role="img"
+      aria-label="목표 별"
+    >
+      <path
+        d="M12 2.4 L14.7 8.7 L21.4 9.2 L16.3 13.7 L18 20.2 L12 16.6 L5.9 20.4 L7.6 13.6 L2.6 9.1 L9.4 8.8 Z"
+        fill="var(--yellow-soft)"
+        stroke="currentColor"
+        strokeWidth={1.8}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 interface PuzzleCellProps {
   cellKey: string
   size: number
@@ -36,7 +59,7 @@ export function PuzzleCell({
   if (mirror) {
     content = <MirrorIcon type={mirror} size={Math.round(size * 0.6)} className="pc-mirror" />
   } else if (isStar) {
-    content = <span className="pc-star">★</span>
+    content = <SketchStar size={Math.round(size * 0.62)} />
   } else if (isForbidden) {
     content = <span className="pc-forbidden">✕</span>
   } else if (isAllowed) {

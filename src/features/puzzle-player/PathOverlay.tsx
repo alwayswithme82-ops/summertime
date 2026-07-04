@@ -53,22 +53,18 @@ export function PathOverlay({
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="beam-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fff8b5" />
-          <stop offset="45%" stopColor="#ffc928" />
-          <stop offset="100%" stopColor="#f26b4b" />
-        </linearGradient>
-        <filter id="beam-glow" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="beam-glow" x="-70%" y="-70%" width="240%" height="240%">
+          <feGaussianBlur stdDeviation="5" />
         </filter>
       </defs>
-      <polyline className="path-track" points={pointsAttribute} />
-      <polyline className="path-beam" points={pointsAttribute} />
-      <circle className="path-origin" cx={points[0][0]} cy={points[0][1]} r={7} />
+      {/* 손그림 배경과 대비되는 유일하게 매끈한 요소: 하얀 발광 빔.
+          바깥 아이보리 글로우(번짐) → 하얀 코어 → 흐르는 하이라이트 순으로 얹는다. */}
+      <polyline className="path-glow" points={pointsAttribute} />
+      <polyline className="path-core" points={pointsAttribute} />
+      <polyline className="path-spark" points={pointsAttribute} />
+      {/* 빛 시작점(입구)의 작은 발광 원 */}
+      <circle className="path-origin-glow" cx={points[0][0]} cy={points[0][1]} r={11} />
+      <circle className="path-origin" cx={points[0][0]} cy={points[0][1]} r={5.5} />
     </svg>
   )
 }

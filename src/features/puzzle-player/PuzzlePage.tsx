@@ -8,6 +8,13 @@ import { ResultPanel } from './ResultPanel'
 import { RulePanel } from './RulePanel'
 import './puzzle-player.css'
 
+const LEVEL_LABEL: Record<Puzzle['level'], string> = {
+  BASIC: '기초',
+  NORMAL: '보통',
+  HARD: '어려움',
+  LARGE: '대형',
+}
+
 function canPlaceMirror(puzzle: Puzzle, cellKey: string): boolean {
   if (puzzle.stars.includes(cellKey)) return false
   if (puzzle.forbiddenCells.includes(cellKey)) return false
@@ -36,11 +43,20 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
   const [placedMirrors, setPlacedMirrors] = useState<PlacedMirrors>({})
   const [selectedMirror, setSelectedMirror] = useState<MirrorType>('/')
   const [result, setResult] = useState<ValidationResult | null>(null)
+  // 문제 입장 시 규칙을 한 번 자동으로 띄운다.
+  const [showRules, setShowRules] = useState(true)
 
   const score = useMemo(
     () => (result ? scoreSolution(puzzle, result, placedMirrors) : null),
     [result, puzzle, placedMirrors],
   )
+
+  const mirrorsUsed = Object.keys(placedMirrors).length
+  const mirrorLimit = puzzle.rule.exactMirrorCount ?? puzzle.rule.maxMirrors
+  const totalStars = puzzle.rule.requiredStars.length
+  const passedStars = result
+    ? result.simulation.visitedStars.filter((s) => puzzle.rule.requiredStars.includes(s)).length
+    : 0
 
   function handleCellClick(cellKey: string) {
     if (!canPlaceMirror(puzzle, cellKey)) return
@@ -82,89 +98,96 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
 
   return (
     <div className={`puzzle-page${resultClass}`}>
-      <header className="pp-header">
-        {onBack && (
-          <button type="button" className="btn btn-ghost pp-back" onClick={onBack}>
-            ← 문제 목록
-          </button>
-        )}
-        <div className="pp-heading">
-          <span className="sr-only">빛 반사 설계 활동</span>
-          <span className="pp-kicker">Light mission</span>
-          <h1>빛의 길을 설계해요</h1>
-          <p className="pp-puzzle-title">{puzzle.title}</p>
+      <header className="pp-hud">
+        <span className="sr-only">빛 반사 설계 활동</span>
+        <div className="pp-hud-left">
+          {onBack && (
+            <button
+              type="button"
+              className="btn btn-ghost pp-back"
+              onClick={onBack}
+              aria-label="문제 목록으로 돌아가기"
+            >
+              ← 문제 목록
+            </button>
+          )}
         </div>
-        <div className="pp-progress" aria-label="활동 순서">
-          <span className="is-active" /> 거울 선택
-          <span /> 배치
-          <span /> 실행
+
+        <div className="pp-hud-center">
+          <h1 className="pp-title">{puzzle.title}</h1>
+          <p className="pp-meta">
+            {LEVEL_LABEL[puzzle.level]} · {puzzle.rows}×{puzzle.cols}
+          </p>
+        </div>
+
+        <div className="pp-hud-right">
+          <span
+            className="pp-badge pp-badge-star"
+            aria-label={`지난 별 ${passedStars}개, 전체 별 ${totalStars}개`}
+          >
+            <span className="pp-badge-icon" aria-hidden="true">★</span>
+            {passedStars}/{totalStars}
+          </span>
+          <span
+            className="pp-badge pp-badge-mirror"
+            aria-label={`사용한 거울 ${mirrorsUsed}개, 최대 ${mirrorLimit}개`}
+          >
+            <span className="pp-badge-icon" aria-hidden="true">◇</span>
+            {mirrorsUsed}/{mirrorLimit}
+          </span>
+          <button
+            type="button"
+            className="pp-icon-btn"
+            onClick={() => setShowRules(true)}
+            aria-label="규칙 보기"
+          >
+            <span aria-hidden="true">ⓘ</span>
+          </button>
         </div>
       </header>
 
-      <div className="pp-layout">
-        <main className="pp-main">
-          <div className="pp-board-stage">
-            <div className="pp-board-bar">
-              <span className="pp-board-label">Puzzle board</span>
-              <div className="pp-board-legend" aria-label="보드 기호">
-                <span>★ 목표 별</span>
-                <span>× 금지칸</span>
-                <span>◇ 거울칸</span>
-              </div>
-            </div>
-            <PuzzleBoard
-              puzzle={puzzle}
-              placedMirrors={placedMirrors}
-              simulation={result?.simulation ?? null}
-              onCellClick={handleCellClick}
-            />
-          </div>
-        </main>
+      <main className="pp-stage">
+        <div className="pp-board-hold">
+          <PuzzleBoard
+            puzzle={puzzle}
+            placedMirrors={placedMirrors}
+            simulation={result?.simulation ?? null}
+            onCellClick={handleCellClick}
+          />
+        </div>
 
-        <aside className="pp-side">
-          <RulePanel puzzle={puzzle} mirrorsUsed={Object.keys(placedMirrors).length} />
+        <div className="pp-result-live" aria-live="polite">
+          <ResultPanel
+            result={result}
+            score={score}
+            onDismiss={() => setResult(null)}
+          />
+        </div>
+      </main>
 
-          <div className="panel control-panel">
-            <div className="control-step">
-              <span className="control-step-number">1</span>
-              <div className="control-step-body">
-                <MirrorPalette selected={selectedMirror} onSelect={setSelectedMirror} />
-              </div>
-            </div>
-
-            <div className="control-step">
-              <span className="control-step-number">2</span>
-              <div className="control-step-body">
-                <div className="pp-actions">
-                  <button type="button" className="btn btn-primary" onClick={handleRun}>
-                    <span className="btn-icon" aria-hidden="true">▶</span>
-                    실행하기
-                  </button>
-                  <button type="button" className="btn btn-ghost" onClick={handleReset}>
-                    <span className="btn-icon" aria-hidden="true">↺</span>
-                    초기화
-                  </button>
-                </div>
-                <div className="pp-sample">
-                  <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={handleShowSample}
-                    disabled={!puzzle.sampleAnswer}
-                  >
-                    예시 정답 보기
-                  </button>
-                  <p className="pp-sample-note">
-                    예시는 여러 가능한 풀이 중 하나예요.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <ResultPanel result={result} score={score} />
-        </aside>
+      <div className="pp-dock">
+        <div className="pp-dock-mirrors">
+          <MirrorPalette selected={selectedMirror} onSelect={setSelectedMirror} />
+        </div>
+        <div className="pp-dock-actions">
+          <button type="button" className="btn btn-ghost" onClick={handleReset}>
+            <span className="btn-icon" aria-hidden="true">↺</span>
+            초기화
+          </button>
+          <button type="button" className="btn btn-primary pp-run" onClick={handleRun}>
+            <span className="btn-icon" aria-hidden="true">▶</span>
+            실행하기
+          </button>
+        </div>
       </div>
+
+      <RulePanel
+        puzzle={puzzle}
+        mirrorsUsed={mirrorsUsed}
+        open={showRules}
+        onClose={() => setShowRules(false)}
+        onShowSample={handleShowSample}
+      />
     </div>
   )
 }

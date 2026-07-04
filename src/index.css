@@ -10,6 +10,8 @@
   --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
     'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  /* 손글씨(제목·버튼 라벨·카운터·배지 전용). 긴 본문은 --font-sans 유지. */
+  --font-hand: 'Nanum Pen Script', var(--font-sans);
 
   --paper: #f5f1e8;
   --paper-deep: #ebe4d6;

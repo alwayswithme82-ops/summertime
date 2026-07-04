@@ -126,12 +126,19 @@ function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
         style={{ transform: `rotate(${rotation}deg)` }}
         aria-hidden="true"
       >
-        <line x1="2" y1="10" x2="14" y2="10" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
-        <polyline
-          points="10,4 16.5,10 10,16"
+        {/* 손그림 화살표: 살짝 휜 자루 + 삐뚤한 촉, 둥근 선끝 */}
+        <path
+          d="M2.4 10.4 Q8 9.2 13.8 10"
           fill="none"
           stroke="currentColor"
-          strokeWidth="3.2"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <path
+          d="M10 4.2 Q16.6 9.6 13.9 10.1 Q16.4 11 10.2 16.2"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
