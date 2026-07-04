@@ -3,7 +3,6 @@ import type { Puzzle } from '../core'
 import StageDoor, { type StageDoorStatus } from '../components/world-map/StageDoor'
 import LightPath from '../components/world-map/LightPath'
 import SparkleIcon from '../components/world-map/icons/SparkleIcon'
-import StarIcon from '../components/world-map/icons/StarIcon'
 import { samplePuzzles } from '../data/samplePuzzles'
 import { stages } from '../data/stages'
 import './WorldMapPage.css'
@@ -55,11 +54,10 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
   const navigationTimer = useRef<number | null>(null)
   const clearedPuzzleIds = readClearedPuzzleIds()
   const savedStageId = readSelectedStageId()
-  const unlockedStages = stages.filter((stage) => stage.number <= 3)
-  const defaultStageId = unlockedStages.find(
+  const defaultStageId = stages.find(
     (stage) => !clearedPuzzleIds.includes(stage.puzzleId),
-  )?.puzzleId ?? unlockedStages[0]?.puzzleId
-  const selectedStageId = unlockedStages.some((stage) => stage.puzzleId === savedStageId)
+  )?.puzzleId ?? stages[0]?.puzzleId
+  const selectedStageId = stages.some((stage) => stage.puzzleId === savedStageId)
     ? savedStageId
     : defaultStageId
 
@@ -71,15 +69,14 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
     }
   }, [])
 
-  function stageStatus(number: number, puzzleId: string): StageDoorStatus {
-    if (number >= 4) return 'locked'
+  function stageStatus(puzzleId: string): StageDoorStatus {
     if (clearedPuzzleIds.includes(puzzleId)) return 'completed'
     if (puzzleId === selectedStageId) return 'current'
     return 'available'
   }
 
   function selectStage(stageNumber: number, puzzle: Puzzle) {
-    if (stageNumber >= 4 || openingStageId !== null) return
+    if (openingStageId !== null) return
 
     rememberSelectedStage(puzzle.id)
     setOpeningStageId(stageNumber)
@@ -126,8 +123,7 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
                   label={`${stage.number}단계`}
                   puzzleTitle={puzzle.title}
                   difficulty={stage.difficultyLabel}
-                  stars={puzzle.rule.requiredStars.length}
-                  status={stageStatus(stage.number, stage.puzzleId)}
+                  status={stageStatus(stage.puzzleId)}
                   left={stage.x}
                   top={stage.y}
                   isOpening={openingStageId === stage.number}
@@ -138,7 +134,6 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
           </div>
 
           <aside className="world-map-sign" aria-label="모험 안내">
-            <StarIcon className="world-map-sign__star" size={24} />
             <span>다음 목표를 향해 가자!</span>
             <i aria-hidden="true" />
           </aside>

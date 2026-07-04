@@ -187,17 +187,6 @@
   transform: translateX(-50%);
 }
 
-.stage-door__info i {
-  width: 1px;
-  height: 1em;
-  background: rgba(90, 55, 24, 0.35);
-}
-
-.stage-door__info-star {
-  width: 1.1em;
-  height: 1.1em;
-}
-
 .stage-door--current {
   --door-frame: #8d581e;
   --door-top-color: #fff0a9;
@@ -243,9 +232,26 @@
 }
 
 .stage-door__completed {
-  top: 13%;
-  left: 17%;
-  transform: rotate(-12deg);
+  top: 10%;
+  left: 12%;
+  width: 25%;
+  aspect-ratio: 1;
+  border: 2px solid #49672b;
+  border-radius: 50%;
+  background: #dff0a8;
+  transform: rotate(-8deg);
+}
+
+.stage-door__completed::after {
+  content: '';
+  position: absolute;
+  top: 21%;
+  left: 27%;
+  width: 34%;
+  height: 48%;
+  border-right: 2px solid #49672b;
+  border-bottom: 2px solid #49672b;
+  transform: rotate(42deg);
 }
 
 .stage-door__sparkle {

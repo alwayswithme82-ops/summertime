@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react'
 import LockIcon from './icons/LockIcon'
 import SparkleIcon from './icons/SparkleIcon'
-import StarIcon from './icons/StarIcon'
 import './StageDoor.css'
 
 export type StageDoorStatus = 'current' | 'available' | 'completed' | 'locked'
@@ -11,7 +10,6 @@ interface StageDoorProps {
   label: string
   puzzleTitle: string
   difficulty: string
-  stars: number
   status: StageDoorStatus
   left: number
   top: number
@@ -24,7 +22,6 @@ export default function StageDoor({
   label,
   puzzleTitle,
   difficulty,
-  stars,
   status,
   left,
   top,
@@ -43,8 +40,8 @@ export default function StageDoor({
       disabled={isLocked || isOpening}
       aria-label={
         isLocked
-          ? `${label} ${difficulty} 별 ${stars}개 잠김`
-          : `${label} ${difficulty} 별 ${stars}개 시작하기`
+          ? `${label} ${difficulty} 잠김`
+          : `${label} ${difficulty} 시작하기`
       }
     >
       <span className="sr-only">{puzzleTitle}</span>
@@ -68,9 +65,7 @@ export default function StageDoor({
         )}
 
         {status === 'completed' && (
-          <span className="stage-door__completed">
-            <StarIcon size={30} fill="#FFF09A" stroke="#58752F" />
-          </span>
+          <span className="stage-door__completed" />
         )}
 
         {isLocked && (
@@ -82,9 +77,6 @@ export default function StageDoor({
 
       <span className="stage-door__info">
         <span>{difficulty}</span>
-        <i aria-hidden="true" />
-        <StarIcon className="stage-door__info-star" size={16} />
-        <span>{stars}</span>
       </span>
     </button>
   )
