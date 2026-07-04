@@ -1,12 +1,13 @@
 import type { CSSProperties } from 'react'
-import type { Puzzle, PuzzleLevel } from '../../core'
+import type { Puzzle } from '../../core'
 import { positionToCellKey } from '../../core'
 
-const LEVEL_LABEL: Record<PuzzleLevel, string> = {
-  BASIC: '기초',
-  NORMAL: '보통',
-  HARD: '어려움',
-  LARGE: '대형',
+/** 보드 크기로 난이도를 정한다: 4×4=기초, 5×5=보통, 7×7=대형. */
+function difficultyOf(puzzle: Puzzle): { key: string; label: string } {
+  const size = Math.max(puzzle.rows, puzzle.cols)
+  if (size <= 4) return { key: 'basic', label: '기초' }
+  if (size >= 7) return { key: 'large', label: '대형' }
+  return { key: 'normal', label: '보통' }
 }
 
 function MiniPreview({ puzzle }: { puzzle: Puzzle }) {
@@ -43,9 +44,11 @@ interface PuzzleTileProps {
 }
 
 export function PuzzleTile({ puzzle, order, cleared, onSelect }: PuzzleTileProps) {
-  // 손그림풍 비대칭을 타일마다 살짝 다르게(고정값).
-  const rotate = (order % 2 === 0 ? -1 : 1) * (0.5 + (order % 3) * 0.25)
-  const style = { '--tile-order': order, '--tile-rotate': `${rotate}deg` } as CSSProperties
+  const stage = order + 1
+  const starCount = puzzle.rule.requiredStars.length
+  const difficulty = difficultyOf(puzzle)
+  const goal = `별 ${starCount}개 · ${puzzle.rows}×${puzzle.cols}`
+  const style = { '--tile-order': order } as CSSProperties
 
   return (
     <button
@@ -53,23 +56,27 @@ export function PuzzleTile({ puzzle, order, cleared, onSelect }: PuzzleTileProps
       className={`level-tile${cleared ? ' is-cleared' : ''}`}
       style={style}
       onClick={() => onSelect(puzzle)}
-      aria-label={`${order + 1}단계 ${puzzle.title}${cleared ? ' (완료)' : ''}`}
+      aria-label={`${stage}단계, ${goal}, 난이도 ${difficulty.label}${cleared ? ', 완료' : ''}`}
     >
-      <div className="lt-frame">
-        <span className="lt-number">{order + 1}</span>
+      <div className="lt-top">
+        <span className="lt-stage">{stage}단계</span>
+        <span className={`lt-badge lt-badge-${difficulty.key}`}>{difficulty.label}</span>
         {cleared && (
           <span className="lt-clear" aria-hidden="true">
             ★
           </span>
         )}
+      </div>
+
+      <div className="lt-frame">
         <MiniPreview puzzle={puzzle} />
       </div>
-      <div className="lt-caption">
-        <span className="lt-name">{puzzle.title}</span>
-        <span className={`lt-level lt-level-${puzzle.level.toLowerCase()}`}>
-          {LEVEL_LABEL[puzzle.level]}
-        </span>
-      </div>
+
+      <p className="lt-goal">{goal}</p>
+
+      <span className="lt-start" aria-hidden="true">
+        시작하기 ▶
+      </span>
     </button>
   )
 }

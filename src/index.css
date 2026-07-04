@@ -21,71 +21,69 @@
   --font-pixel: 'Galmuri14', var(--font-sans);
   --font-pixel-ui: 'Galmuri11', var(--font-sans);
 
-  /* ---- 레트로 아케이드 팔레트 ---- */
-  --bg: #0f1024;
-  --bg-deep: #0a0b1a;
-  --panel: #1a1b3a;
-  --panel-hi: #242653;
-  --cell: #12132b;
+  /* ---- 밝은 레트로 민트 팔레트 ---- */
+  --bg: #eaf7f4;
+  --bg-deep: #dff2ee;
+  --panel: #ffffff;
+  --panel-hi: #f2fbf9;
+  --cell: #ffffff;
 
-  --neon-cyan: #38e8ff;
-  --neon-cyan-dim: #12a7c4;
-  --neon-magenta: #ff4dcf;
-  --neon-magenta-dim: #c93da3;
-  --neon-yellow: #ffd23f;
-  --neon-red: #ff5a6e;
-  --neon-green: #4dffb0;
-  --neon-purple: #b58cff;
+  --teal-line: #0f766e; /* 또렷한 진청록 — 테두리·거울 */
+  --teal-deep: #0b5952; /* 픽셀 그림자용 더 진한 청록 */
+  --mirror: #0f766e;
+  --beam: #ff6a3d; /* 빛줄기 코랄 */
+  --star: #ff8c1a; /* 별 따뜻한 주황 */
+  --danger: #d61f2b; /* 금지칸 ✕ 진한 빨강 */
 
-  --text: #e8e6ff;
-  --text-soft: #c1bfec;
-  --muted: #8b89bd;
+  --text: #123a3a;
+  --text-soft: #2f5a58;
+  --muted: #5f807d;
 
-  /* ---- 레거시 변수 매핑(기존 규칙이 그대로 새 팔레트를 따르도록) ---- */
+  --line: rgba(15, 118, 110, 0.24);
+  --line-strong: rgba(15, 118, 110, 0.5);
+  --grid-line: var(--teal-line);
+
+  /* 8비트 픽셀 그림자 — 딱 떨어지는 오프셋. 글로우 대신 또렷한 대비. */
+  --pixel-sm: 1px 1px 0 rgba(15, 118, 110, 0.35);
+  --pixel: 2px 2px 0 rgba(15, 118, 110, 0.3);
+  --pixel-teal: 2px 2px 0 var(--teal-deep);
+  --pixel-beam: 2px 2px 0 #c74b23;
+
+  /* ---- 레거시 변수 매핑(기존 규칙이 밝은 팔레트를 따르도록) ---- */
   --ink: var(--text);
   --ink-soft: var(--text-soft);
-  --line: rgba(56, 232, 255, 0.18);
-  --line-strong: rgba(56, 232, 255, 0.34);
-  --grid-line: var(--neon-cyan);
 
   --paper: var(--bg);
-  --paper-deep: var(--panel);
+  --paper-deep: var(--bg-deep);
   --surface: var(--panel);
   --surface-strong: var(--panel-hi);
 
-  --teal: var(--neon-cyan);
-  --teal-dark: var(--neon-cyan-dim);
-  --teal-soft: rgba(56, 232, 255, 0.13);
-  --coral: var(--neon-magenta);
-  --coral-dark: var(--neon-magenta-dim);
-  --coral-soft: rgba(255, 77, 207, 0.15);
-  --yellow: var(--neon-yellow);
-  --yellow-soft: rgba(255, 210, 63, 0.16);
-  --blue: #5b8cff;
-  --blue-soft: rgba(91, 140, 255, 0.16);
-  --purple: var(--neon-purple);
-  --purple-soft: rgba(181, 140, 255, 0.16);
-  --success: var(--neon-green);
-  --success-soft: rgba(77, 255, 176, 0.13);
-  --danger: var(--neon-red);
-  --danger-soft: rgba(255, 90, 110, 0.15);
-  --warn: #ffb454;
+  --teal: var(--teal-line);
+  --teal-dark: var(--teal-deep);
+  --teal-soft: rgba(15, 118, 110, 0.1);
+  --coral: var(--beam);
+  --coral-dark: #c74b23;
+  --coral-soft: rgba(255, 106, 61, 0.12);
+  --yellow: var(--star);
+  --yellow-soft: rgba(255, 140, 26, 0.14);
+  --blue: #2f6fed;
+  --blue-soft: rgba(47, 111, 237, 0.1);
+  --purple: #7c5cff;
+  --purple-soft: rgba(124, 92, 255, 0.12);
+  --success: #109c6a;
+  --success-soft: rgba(16, 156, 106, 0.12);
+  --danger-soft: rgba(214, 31, 43, 0.1);
+  --warn: #e8820c;
 
-  /* 각지고 깔끔한 레트로 — 라운드는 작게 통일 */
-  --radius-xl: 8px;
-  --radius-lg: 6px;
-  --radius: 5px;
-  --radius-sm: 4px;
+  /* 살짝 각진 픽셀 코너 — 과한 라운드 금지 */
+  --radius-xl: 6px;
+  --radius-lg: 5px;
+  --radius: 4px;
+  --radius-sm: 3px;
 
-  /* 은은한 네온 글로우 — 화면 전체가 아니라 요소 테두리에만 */
-  --glow-cyan: 0 0 8px rgba(56, 232, 255, 0.45);
-  --glow-cyan-strong: 0 0 14px rgba(56, 232, 255, 0.7);
-  --glow-magenta: 0 0 10px rgba(255, 77, 207, 0.5);
-  --glow-yellow: 0 0 9px rgba(255, 210, 63, 0.6);
-
-  --shadow-sm: 0 0 0 1px rgba(56, 232, 255, 0.1);
-  --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(56, 232, 255, 0.08);
-  --shadow-float: 0 10px 34px rgba(0, 0, 0, 0.62), 0 0 20px rgba(56, 232, 255, 0.12);
+  --shadow-sm: 1px 1px 0 rgba(15, 118, 110, 0.18);
+  --shadow-card: 2px 2px 0 rgba(15, 118, 110, 0.16);
+  --shadow-float: 3px 3px 0 rgba(15, 118, 110, 0.2);
 
   font-family: var(--font-sans);
   color: var(--text);
@@ -111,24 +109,20 @@ body {
   overflow-x: hidden;
   color: var(--text);
   background:
-    radial-gradient(circle at 15% 0%, rgba(56, 232, 255, 0.1), transparent 26rem),
-    radial-gradient(circle at 88% 12%, rgba(255, 77, 207, 0.08), transparent 28rem),
+    radial-gradient(circle at 12% 4%, rgba(15, 118, 110, 0.06), transparent 24rem),
+    radial-gradient(circle at 90% 10%, rgba(255, 106, 61, 0.05), transparent 26rem),
     var(--bg);
 }
 
-/* CRT 스캔라인 — 아주 옅게, 있는 듯 없는 듯. reduced-motion이면 끈다. */
+/* 아주 은은한 도트 그리드 — 밝은 배경 위 픽셀 감성. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.35;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.16) 0 1px,
-    transparent 1px 3px
-  );
+  background-image: radial-gradient(rgba(15, 118, 110, 0.09) 1px, transparent 1.4px);
+  background-size: 16px 16px;
 }
 
 button,
@@ -145,13 +139,13 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--neon-cyan);
+  outline: 2px solid var(--teal-line);
   outline-offset: 2px;
 }
 
 ::selection {
-  color: var(--bg-deep);
-  background: var(--neon-cyan);
+  color: #ffffff;
+  background: var(--teal-line);
 }
 
 #root {
@@ -218,10 +212,5 @@ p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  /* 스캔라인 끄기 */
-  body::before {
-    display: none;
   }
 }

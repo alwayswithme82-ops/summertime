@@ -15,6 +15,28 @@ const LEVEL_LABEL: Record<Puzzle['level'], string> = {
   LARGE: '대형',
 }
 
+const HIDE_INTRO_KEY = 'hide_intro_rules'
+
+/** '다시 보지 않기' 설정을 localStorage에서 읽는다. */
+function readHideIntro(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.localStorage.getItem(HIDE_INTRO_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function writeHideIntro(hide: boolean) {
+  if (typeof window === 'undefined') return
+  try {
+    if (hide) window.localStorage.setItem(HIDE_INTRO_KEY, '1')
+    else window.localStorage.removeItem(HIDE_INTRO_KEY)
+  } catch {
+    /* 저장 실패는 무시 */
+  }
+}
+
 function canPlaceMirror(puzzle: Puzzle, cellKey: string): boolean {
   if (puzzle.stars.includes(cellKey)) return false
   if (puzzle.forbiddenCells.includes(cellKey)) return false
@@ -43,8 +65,14 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
   const [placedMirrors, setPlacedMirrors] = useState<PlacedMirrors>({})
   const [selectedMirror, setSelectedMirror] = useState<MirrorType>('/')
   const [result, setResult] = useState<ValidationResult | null>(null)
-  // 문제 입장 시 규칙을 한 번 자동으로 띄운다.
-  const [showRules, setShowRules] = useState(true)
+  // '다시 보지 않기'를 켜두지 않았다면 문제 입장 시 규칙을 한 번 자동으로 띄운다.
+  const [hideIntro, setHideIntro] = useState(readHideIntro)
+  const [showRules, setShowRules] = useState(() => !readHideIntro())
+
+  function handleToggleHideIntro(hide: boolean) {
+    setHideIntro(hide)
+    writeHideIntro(hide)
+  }
 
   const score = useMemo(
     () => (result ? scoreSolution(puzzle, result, placedMirrors) : null),
@@ -187,6 +215,8 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
         open={showRules}
         onClose={() => setShowRules(false)}
         onShowSample={handleShowSample}
+        hideIntro={hideIntro}
+        onToggleHideIntro={handleToggleHideIntro}
       />
     </div>
   )
