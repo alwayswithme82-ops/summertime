@@ -2,6 +2,7 @@
  * 목록 페이지 = 게임 월드맵.
  * 종횡비 고정 스테이지(1672:941) + 컨테이너 쿼리 단위(cqw)로
  * 배지 위치·크기가 항상 함께 스케일 → 모바일에서도 겹침/이탈 없음.
+ * (진행도 HUD·힌트 배너는 넣지 않는다.)
  * ================================================================== */
 
 .worldmap {
@@ -47,7 +48,7 @@
 /* ------------------------------- 제목 ------------------------------- */
 .wm-titles {
   position: absolute;
-  top: 11cqh;
+  top: 7cqh;
   left: 50%;
   transform: translateX(-50%);
   width: 96%;
@@ -59,66 +60,29 @@
   margin: 0;
   font-family: var(--font-pixel);
   font-weight: 400;
-  font-size: 5.4cqw;
+  font-size: 5.6cqw;
   line-height: 1.05;
   letter-spacing: 0.01em;
   color: #fdeecb;
-  /* 픽셀 외곽선 + 그림자로 하늘 위에서도 또렷하게. */
+  /* 두꺼운 픽셀 외곽선 + 그림자로 하늘 배경 위에서도 또렷하게. */
   text-shadow:
-    -2px 0 #6b4423, 2px 0 #6b4423, 0 -2px #6b4423, 0 2px #6b4423,
-    -2px -2px #6b4423, 2px -2px #6b4423, -2px 2px #6b4423, 2px 2px #6b4423,
-    0 0.14em 0.16em rgba(60, 38, 15, 0.45);
+    -3px 0 #6b4423, 3px 0 #6b4423, 0 -3px #6b4423, 0 3px #6b4423,
+    -3px -3px #6b4423, 3px -3px #6b4423, -3px 3px #6b4423, 3px 3px #6b4423,
+    -2px 3px #6b4423, 2px 3px #6b4423,
+    0 0.16em 0.16em rgba(50, 32, 12, 0.5);
   white-space: nowrap;
 }
 
 .wm-subtitle {
-  margin: 1.4cqh 0 0;
+  margin: 1.6cqh 0 0;
   font-family: var(--font-pixel);
   font-weight: 400;
-  font-size: 2.6cqw;
+  font-size: 2.7cqw;
   line-height: 1.1;
-  color: #4a3320;
+  color: #43301c;
   text-shadow:
     -1px 0 #fff4d9, 1px 0 #fff4d9, 0 -1px #fff4d9, 0 1px #fff4d9,
     0 2px 3px rgba(255, 248, 225, 0.6);
-}
-
-/* --------------------------- 상단 HUD(우측) --------------------------- */
-.wm-hud {
-  position: absolute;
-  top: 2.6cqh;
-  right: 2.6cqw;
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  padding: 0.55em 0.9em;
-  border: 0.16em solid #b07f3f;
-  border-radius: 0.5em;
-  background: linear-gradient(#fae9c2, #f0d69e);
-  box-shadow:
-    0 0.18em 0 #9a6a30,
-    0 0.3em 0.5em rgba(60, 38, 15, 0.3);
-  color: #5c3d1e;
-  font-family: var(--font-pixel-ui);
-  font-size: 2.1cqw;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.wm-hud-star {
-  display: grid;
-  place-items: center;
-  width: 1.3em;
-  height: 1.3em;
-}
-
-.wm-hud-star .wm-star {
-  width: 100%;
-  height: 100%;
-  fill: #ffca3a;
-  stroke: #c9891a;
-  stroke-width: 1.4;
 }
 
 /* ------------------------------ 길(경로) ------------------------------ */
@@ -145,8 +109,8 @@
 }
 
 .wm-path-bright {
-  stroke: #ffd94a;
-  filter: drop-shadow(0 0 6px rgba(255, 210, 70, 0.9));
+  stroke: #ffc23a;
+  filter: drop-shadow(0 0 6px rgba(255, 170, 60, 0.9));
 }
 
 /* ------------------------------ 배지 ------------------------------ */
@@ -179,16 +143,16 @@
   transform: translate(-50%, -50%) scale(0.96);
 }
 
-/* 배지 밑 어두운 받침(땅 그림자) — 숫자 대비 확보. */
+/* 배지 밑 어두운 받침(땅 그림자) — 숫자·라벨 대비 확보. */
 .wm-node-base {
   position: absolute;
-  bottom: -0.4em;
   left: 50%;
-  width: 76%;
-  height: 0.9em;
+  bottom: calc(var(--w) * -0.12);
+  width: 72%;
+  height: calc(var(--w) * 0.16);
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(40, 28, 10, 0.42), transparent 70%);
+  background: radial-gradient(ellipse, rgba(38, 26, 8, 0.4), transparent 70%);
   pointer-events: none;
 }
 
@@ -209,8 +173,8 @@
   box-shadow:
     inset 0 -0.16em 0 rgba(0, 0, 0, 0.14),
     inset 0 0.12em 0 rgba(255, 255, 255, 0.5),
-    0 0.22em 0 var(--badge-line),
-    0 0.4em 0.5em rgba(50, 34, 12, 0.35);
+    0.14em 0.2em 0 var(--badge-line),
+    0.16em 0.3em 0 rgba(50, 34, 12, 0.28);
   /* 배지 크기 기준 폰트 — 내부 요소는 em으로 함께 스케일. */
   font-size: calc(var(--w) * 0.52);
 }
@@ -224,8 +188,8 @@
 }
 
 .wm-face {
-  width: 0.62em;
-  height: 0.62em;
+  width: 0.6em;
+  height: 0.6em;
   margin-top: 0.04em;
 }
 
@@ -255,11 +219,11 @@
 }
 
 .wm-node-todo .wm-badge {
-  --badge: #f6ead0;
-  --badge-hi: #fffaef;
-  --badge-line: #c6a570;
-  --num-color: #7a5230;
-  --num-shadow: rgba(255, 255, 255, 0.6);
+  --badge: #f4dcae; /* 따뜻한 베이지 */
+  --badge-hi: #fbeed0;
+  --badge-line: #b5854a; /* 진한 테두리 */
+  --num-color: #6e4a24;
+  --num-shadow: rgba(255, 255, 255, 0.55);
 }
 
 /* 추천 단계: 은은한 빛 + 살짝 맥동 */
@@ -267,8 +231,8 @@
   box-shadow:
     inset 0 -0.16em 0 rgba(0, 0, 0, 0.12),
     inset 0 0.12em 0 rgba(255, 255, 255, 0.55),
-    0 0.22em 0 var(--badge-line),
-    0 0.4em 0.5em rgba(50, 34, 12, 0.35),
+    0.14em 0.2em 0 var(--badge-line),
+    0.16em 0.3em 0 rgba(50, 34, 12, 0.28),
     0 0 0.9em 0.2em rgba(255, 214, 80, 0.85);
   animation: wm-pulse 1.8s ease-in-out infinite;
 }
@@ -278,8 +242,8 @@
     box-shadow:
       inset 0 -0.16em 0 rgba(0, 0, 0, 0.12),
       inset 0 0.12em 0 rgba(255, 255, 255, 0.55),
-      0 0.22em 0 var(--badge-line),
-      0 0.4em 0.5em rgba(50, 34, 12, 0.35),
+      0.14em 0.2em 0 var(--badge-line),
+      0.16em 0.3em 0 rgba(50, 34, 12, 0.28),
       0 0 1.4em 0.4em rgba(255, 220, 100, 1);
   }
 }
@@ -321,77 +285,69 @@
   filter: drop-shadow(0 0.04em 0.05em rgba(50, 34, 12, 0.4));
 }
 
-/* 배지 아래 라벨 pill(완료/도전!/도전하기) */
-.wm-label {
+/* 배지 아래 라벨: 난이도(색) + 목표(★N) */
+.wm-labels {
   position: relative;
   z-index: 3;
-  margin-top: -0.4em;
-  padding: 0.28em 0.7em;
-  border-radius: 0.45em;
-  border: 0.12em solid #5a3b1f;
-  background: linear-gradient(#7c5230, #5f3e21);
-  box-shadow: 0 0.12em 0.2em rgba(30, 18, 6, 0.4);
-  color: #fff2d6;
+  margin-top: calc(var(--w) * -0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--w) * 0.045);
+  font-size: calc(var(--w) * 0.15);
+}
+
+.wm-diff {
+  padding: 0.2em 0.55em;
+  border-radius: 0.42em;
+  border: 0.14em solid var(--diff-line);
+  background: var(--diff);
+  color: #ffffff;
   font-family: var(--font-pixel-ui);
-  font-size: calc(var(--w) * 0.135);
+  font-size: 1em;
   line-height: 1;
   white-space: nowrap;
+  box-shadow: 0.08em 0.1em 0 rgba(30, 20, 6, 0.3);
+  text-shadow: 0 0.06em 0 rgba(0, 0, 0, 0.28);
 }
 
-.wm-node-cleared .wm-label {
-  color: #d8ffbe;
+.wm-diff-basic {
+  --diff: #4fae3a;
+  --diff-line: #357a26;
 }
 
-.wm-node-recommended .wm-label {
-  border-color: #7a4a12;
-  background: linear-gradient(#a5701f, #85560f);
-  color: #fff3c9;
+.wm-diff-normal {
+  --diff: #3f7fd6;
+  --diff-line: #2a5aa0;
 }
 
-/* ------------------------------ 하단 힌트 ------------------------------ */
-.wm-hint {
-  position: absolute;
-  z-index: 5;
-  bottom: 3cqh;
-  left: 50%;
-  transform: translateX(-50%);
+.wm-diff-large {
+  --diff: #8a5cd6;
+  --diff-line: #6640ab;
+}
+
+.wm-goal {
   display: inline-flex;
   align-items: center;
-  gap: 0.45em;
-  max-width: 90%;
-  padding: 0.55em 1em;
-  border: 0.16em solid #b07f3f;
-  border-radius: 0.5em;
-  background: linear-gradient(#fae9c2, #f0d69e);
-  box-shadow:
-    0 0.18em 0 #9a6a30,
-    0 0.3em 0.5em rgba(60, 38, 15, 0.3);
-  color: #5c3d1e;
-  font-size: 2.3cqw;
-  line-height: 1.2;
-}
-
-.wm-hint-icon {
-  display: grid;
-  place-items: center;
-  width: 1.4em;
-  height: 1.4em;
-  border-radius: 50%;
-  background: #3f8a2e;
-  color: #fff;
-  font-size: 0.9em;
-}
-
-.wm-hint-key {
+  gap: 0.24em;
+  padding: 0.18em 0.5em;
+  border-radius: 0.42em;
+  border: 0.14em solid #b5854a;
+  background: linear-gradient(#fae9c2, #efd69e);
+  color: #6b4a24;
   font-family: var(--font-pixel-ui);
-  color: #8a5a1c;
+  font-size: 0.92em;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0.08em 0.1em 0 rgba(30, 20, 6, 0.22);
 }
 
-/* 힌트 문장은 Pretendard(긴 문장 가독). */
-.wm-hint-text {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  white-space: nowrap;
+.wm-goal-star {
+  width: 1.05em;
+  height: 1.05em;
+  fill: #ffca3a;
+  stroke: #d99a1f;
+  stroke-width: 1.4;
 }
 
 /* ------------------------------ 반응형 ------------------------------ */
@@ -399,13 +355,5 @@
 @media (max-aspect-ratio: 1 / 1) {
   .wm-stage {
     width: 100%;
-  }
-}
-
-/* 아주 좁은 폭(≤360px): 힌트 문장이 길어 두 줄 되지 않도록 살짝 축소. */
-@media (max-width: 360px) {
-  .wm-hint-text {
-    white-space: normal;
-    word-break: keep-all;
   }
 }

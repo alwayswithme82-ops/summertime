@@ -827,7 +827,7 @@
 
 .pb-cell.is-star {
   background:
-    radial-gradient(circle at 50% 48%, rgba(255, 140, 26, 0.22), transparent 62%),
+    radial-gradient(circle at 50% 48%, rgba(255, 196, 47, 0.28), transparent 62%),
     #fff8ee;
 }
 
@@ -850,7 +850,7 @@
 .pc-star {
   display: block;
   color: var(--star);
-  filter: drop-shadow(1px 1px 0 rgba(199, 75, 35, 0.35));
+  filter: drop-shadow(1px 1px 0 rgba(214, 150, 20, 0.4));
   animation: soft-pop 500ms ease both;
 }
 

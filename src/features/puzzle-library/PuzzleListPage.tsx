@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Puzzle } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
-import worldmapBg from '../../assets/worldmap-bg.png'
 import './puzzle-library.css'
 
 interface PuzzleListPageProps {
@@ -10,20 +9,33 @@ interface PuzzleListPageProps {
 
 const CLEARED_STORAGE_KEY = 'cleared_puzzle_ids'
 
+/** public 에셋(절대 URL). */
+const WORLDMAP_BG = '/assets/world-map/bg-world-map.png'
+
 /** 난이도(쉬운→어려운) 순서. 1=p4 2=p1 3=p2 4=p3 5=p5 */
 const PUZZLE_ORDER = ['p4', 'p1', 'p2', 'p3', 'p5']
 
 const IMG_W = 1672
 const IMG_H = 941
 
-/** 배경 흙길 흐름에 맞춘 배지 위치(스테이지 대비 %). */
+/** 배경 흙길 흐름에 맞춘 배지 위치(스테이지 대비 %). 강·나무 위에 겹치지 않게. */
 const NODE_POS = [
-  { x: 13, y: 70 }, // 1 왼쪽 아래
-  { x: 30, y: 52 }, // 2 그 위 언덕
+  { x: 13, y: 70 }, // 1 왼쪽 아래 길
+  { x: 30, y: 52 }, // 2 왼쪽 언덕 길
   { x: 50, y: 43 }, // 3 가운데 위 (강조)
-  { x: 68, y: 62 }, // 4 오른쪽 아래 (다리 건너)
-  { x: 86, y: 50 }, // 5 오른쪽 위 (성 근처)
+  { x: 68, y: 62 }, // 4 오른쪽 아래 (다리 건넌 길)
+  { x: 86, y: 50 }, // 5 오른쪽 위 (성 가는 길)
 ]
+
+type DifficultyKey = 'basic' | 'normal' | 'large'
+
+/** 보드 크기로 난이도를 정한다: 4×4=기초, 5×5=보통, 7×7=대형. */
+function difficultyOf(puzzle: Puzzle): { key: DifficultyKey; label: string } {
+  const size = Math.max(puzzle.rows, puzzle.cols)
+  if (size <= 4) return { key: 'basic', label: '기초' }
+  if (size >= 7) return { key: 'large', label: '대형' }
+  return { key: 'normal', label: '보통' }
+}
 
 function readClearedIds(): string[] {
   if (typeof window === 'undefined') return []
@@ -74,9 +86,9 @@ function SmileFace() {
   )
 }
 
-function StarIcon() {
+function StarIcon({ className = 'wm-star' }: { className?: string }) {
   return (
-    <svg className="wm-star" viewBox="0 0 24 24" aria-hidden="true">
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 2.5 L14.8 9 L21.5 9.4 L16.3 13.7 L18.1 20.2 L12 16.4 L5.9 20.2 L7.7 13.7 L2.5 9.4 L9.2 9 Z" />
     </svg>
   )
@@ -95,18 +107,20 @@ function LensIcon() {
 interface WorldNodeProps {
   stage: number
   state: 'cleared' | 'recommended' | 'todo'
+  difficulty: { key: DifficultyKey; label: string }
+  stars: number
   x: number
   y: number
   onClick: () => void
 }
 
-const STATE_LABEL: Record<WorldNodeProps['state'], string> = {
+const STATE_WORD: Record<WorldNodeProps['state'], string> = {
   cleared: '완료',
-  recommended: '도전!',
-  todo: '도전하기',
+  recommended: '추천',
+  todo: '도전',
 }
 
-function WorldNode({ stage, state, x, y, onClick }: WorldNodeProps) {
+function WorldNode({ stage, state, difficulty, stars, x, y, onClick }: WorldNodeProps) {
   const style = { left: `${x}%`, top: `${y}%` } as CSSProperties
   return (
     <button
@@ -114,7 +128,7 @@ function WorldNode({ stage, state, x, y, onClick }: WorldNodeProps) {
       className={`wm-node wm-node-${state}`}
       style={style}
       onClick={onClick}
-      aria-label={`${stage}단계 ${STATE_LABEL[state]}`}
+      aria-label={`${stage}단계, 난이도 ${difficulty.label}, 별 ${stars}개, ${STATE_WORD[state]}`}
     >
       <span className="wm-node-base" aria-hidden="true" />
       <span className="wm-badge">
@@ -131,7 +145,13 @@ function WorldNode({ stage, state, x, y, onClick }: WorldNodeProps) {
         <span className="wm-num">{stage}</span>
         <SmileFace />
       </span>
-      <span className="wm-label">{STATE_LABEL[state]}</span>
+      <span className="wm-labels">
+        <span className={`wm-diff wm-diff-${difficulty.key}`}>{difficulty.label}</span>
+        <span className="wm-goal">
+          <StarIcon className="wm-goal-star" />
+          {stars}
+        </span>
+      </span>
     </button>
   )
 }
@@ -139,7 +159,6 @@ function WorldNode({ stage, state, x, y, onClick }: WorldNodeProps) {
 export function PuzzleListPage({ onSelect }: PuzzleListPageProps) {
   const clearedIds = readClearedIds()
   const puzzles = orderPuzzles(samplePuzzles)
-  const clearedCount = puzzles.filter((p) => clearedIds.includes(p.id)).length
   // 추천 단계 = 안 깬 것 중 최저 번호.
   const recommendedIndex = puzzles.findIndex((p) => !clearedIds.includes(p.id))
 
@@ -150,7 +169,7 @@ export function PuzzleListPage({ onSelect }: PuzzleListPageProps) {
   const brightPath = smoothPath(points.slice(0, brightEnd))
   const dimPath = recommendedIndex === -1 ? '' : smoothPath(points.slice(recommendedIndex))
 
-  const stageStyle = { '--wm-bg': `url(${worldmapBg})` } as CSSProperties
+  const stageStyle = { '--wm-bg': `url(${WORLDMAP_BG})` } as CSSProperties
 
   function stateOf(index: number): WorldNodeProps['state'] {
     if (clearedIds.includes(puzzles[index].id)) return 'cleared'
@@ -161,13 +180,6 @@ export function PuzzleListPage({ onSelect }: PuzzleListPageProps) {
   return (
     <div className="worldmap" style={stageStyle}>
       <div className="wm-stage">
-        <div className="wm-hud" aria-label={`진행도 ${clearedCount} / ${puzzles.length} 완료`}>
-          <span className="wm-hud-star" aria-hidden="true">
-            <StarIcon />
-          </span>
-          진행도 {clearedCount} / {puzzles.length} 완료
-        </div>
-
         <header className="wm-titles">
           <h1 className="wm-title">거울을 설치해 빛을 탈출시켜라!</h1>
           <p className="wm-subtitle">길을 따라 단계를 하나씩 정복해요!</p>
@@ -188,19 +200,13 @@ export function PuzzleListPage({ onSelect }: PuzzleListPageProps) {
             key={puzzle.id}
             stage={index + 1}
             state={stateOf(index)}
+            difficulty={difficultyOf(puzzle)}
+            stars={puzzle.rule.requiredStars.length}
             x={NODE_POS[index].x}
             y={NODE_POS[index].y}
             onClick={() => onSelect(puzzle)}
           />
         ))}
-
-        <div className="wm-hint">
-          <span className="wm-hint-icon" aria-hidden="true">
-            ⓘ
-          </span>
-          <span className="wm-hint-key">힌트</span>
-          <span className="wm-hint-text">: 거울은 90도 방향으로 빛을 반사해요!</span>
-        </div>
       </div>
     </div>
   )
