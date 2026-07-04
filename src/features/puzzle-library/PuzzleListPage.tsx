@@ -1,6 +1,7 @@
+import type { CSSProperties } from 'react'
 import type { Puzzle } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
-import { PuzzleTile } from './PuzzleTile'
+import worldmapBg from '../../assets/worldmap-bg.png'
 import './puzzle-library.css'
 
 interface PuzzleListPageProps {
@@ -9,10 +10,21 @@ interface PuzzleListPageProps {
 
 const CLEARED_STORAGE_KEY = 'cleared_puzzle_ids'
 
-/** 난이도(쉬운→어려운) 순서로 노출한다. */
+/** 난이도(쉬운→어려운) 순서. 1=p4 2=p1 3=p2 4=p3 5=p5 */
 const PUZZLE_ORDER = ['p4', 'p1', 'p2', 'p3', 'p5']
 
-/** 클리어한 문제 id 목록을 localStorage에서 읽는다. 없거나 깨졌으면 빈 배열. */
+const IMG_W = 1672
+const IMG_H = 941
+
+/** 배경 흙길 흐름에 맞춘 배지 위치(스테이지 대비 %). */
+const NODE_POS = [
+  { x: 13, y: 70 }, // 1 왼쪽 아래
+  { x: 30, y: 52 }, // 2 그 위 언덕
+  { x: 50, y: 43 }, // 3 가운데 위 (강조)
+  { x: 68, y: 62 }, // 4 오른쪽 아래 (다리 건너)
+  { x: 86, y: 50 }, // 5 오른쪽 위 (성 근처)
+]
+
 function readClearedIds(): string[] {
   if (typeof window === 'undefined') return []
   try {
@@ -25,7 +37,6 @@ function readClearedIds(): string[] {
   }
 }
 
-/** 지정한 난이도 순으로 정렬. 목록에 없는 문제는 뒤에 붙인다. */
 function orderPuzzles(puzzles: Puzzle[]): Puzzle[] {
   const byId = new Map(puzzles.map((p) => [p.id, p]))
   const ordered = PUZZLE_ORDER.map((id) => byId.get(id)).filter(
@@ -35,37 +46,161 @@ function orderPuzzles(puzzles: Puzzle[]): Puzzle[] {
   return [...ordered, ...rest]
 }
 
+/** Catmull-Rom 스플라인으로 배지들을 잇는 부드러운 물결 경로. */
+function smoothPath(points: Array<[number, number]>): string {
+  if (points.length < 2) return ''
+  const d = [`M ${points[0][0]} ${points[0][1]}`]
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i - 1] ?? points[i]
+    const p1 = points[i]
+    const p2 = points[i + 1]
+    const p3 = points[i + 2] ?? points[i + 1]
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6
+    d.push(`C ${c1x} ${c1y} ${c2x} ${c2y} ${p2[0]} ${p2[1]}`)
+  }
+  return d.join(' ')
+}
+
+function SmileFace() {
+  return (
+    <svg className="wm-face" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="8.5" cy="10" r="1.6" />
+      <circle cx="15.5" cy="10" r="1.6" />
+      <path d="M8 14.5 Q12 18.5 16 14.5" fill="none" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function StarIcon() {
+  return (
+    <svg className="wm-star" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2.5 L14.8 9 L21.5 9.4 L16.3 13.7 L18.1 20.2 L12 16.4 L5.9 20.2 L7.7 13.7 L2.5 9.4 L9.2 9 Z" />
+    </svg>
+  )
+}
+
+function LensIcon() {
+  return (
+    <svg className="wm-lens" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10" cy="10" r="6.4" fill="rgba(210, 240, 255, 0.9)" stroke="#e7b64a" strokeWidth="2.2" />
+      <path d="M10 5.5 A4.5 4.5 0 0 1 14.5 10" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+      <path d="M14.8 14.8 L21 21" stroke="#a86b2a" strokeWidth="3.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+interface WorldNodeProps {
+  stage: number
+  state: 'cleared' | 'recommended' | 'todo'
+  x: number
+  y: number
+  onClick: () => void
+}
+
+const STATE_LABEL: Record<WorldNodeProps['state'], string> = {
+  cleared: '완료',
+  recommended: '도전!',
+  todo: '도전하기',
+}
+
+function WorldNode({ stage, state, x, y, onClick }: WorldNodeProps) {
+  const style = { left: `${x}%`, top: `${y}%` } as CSSProperties
+  return (
+    <button
+      type="button"
+      className={`wm-node wm-node-${state}`}
+      style={style}
+      onClick={onClick}
+      aria-label={`${stage}단계 ${STATE_LABEL[state]}`}
+    >
+      <span className="wm-node-base" aria-hidden="true" />
+      <span className="wm-badge">
+        {state === 'cleared' && (
+          <span className="wm-deco wm-deco-star" aria-hidden="true">
+            <StarIcon />
+          </span>
+        )}
+        {state === 'recommended' && (
+          <span className="wm-deco wm-deco-lens" aria-hidden="true">
+            <LensIcon />
+          </span>
+        )}
+        <span className="wm-num">{stage}</span>
+        <SmileFace />
+      </span>
+      <span className="wm-label">{STATE_LABEL[state]}</span>
+    </button>
+  )
+}
+
 export function PuzzleListPage({ onSelect }: PuzzleListPageProps) {
   const clearedIds = readClearedIds()
   const puzzles = orderPuzzles(samplePuzzles)
   const clearedCount = puzzles.filter((p) => clearedIds.includes(p.id)).length
+  // 추천 단계 = 안 깬 것 중 최저 번호.
+  const recommendedIndex = puzzles.findIndex((p) => !clearedIds.includes(p.id))
+
+  const points = puzzles.map(
+    (_, i) => [(NODE_POS[i].x / 100) * IMG_W, (NODE_POS[i].y / 100) * IMG_H] as [number, number],
+  )
+  const brightEnd = recommendedIndex === -1 ? points.length : recommendedIndex + 1
+  const brightPath = smoothPath(points.slice(0, brightEnd))
+  const dimPath = recommendedIndex === -1 ? '' : smoothPath(points.slice(recommendedIndex))
+
+  const stageStyle = { '--wm-bg': `url(${worldmapBg})` } as CSSProperties
+
+  function stateOf(index: number): WorldNodeProps['state'] {
+    if (clearedIds.includes(puzzles[index].id)) return 'cleared'
+    if (index === recommendedIndex) return 'recommended'
+    return 'todo'
+  }
 
   return (
-    <div className="puzzle-list-page">
-      <header className="plp-head">
-        <h1 className="plp-title">거울을 설치해 빛을 탈출시켜라!</h1>
-        <p className="plp-lead">
-          거울로 빛을 반사시켜, 모든 별을 지나 출구로 내보내면 성공.
-        </p>
-      </header>
+    <div className="worldmap" style={stageStyle}>
+      <div className="wm-stage">
+        <div className="wm-hud" aria-label={`진행도 ${clearedCount} / ${puzzles.length} 완료`}>
+          <span className="wm-hud-star" aria-hidden="true">
+            <StarIcon />
+          </span>
+          진행도 {clearedCount} / {puzzles.length} 완료
+        </div>
 
-      <div className="plp-section-head">
-        <h2 className="plp-section-title">단계를 골라 시작해요</h2>
-        <span className="plp-progress">
-          전체 {puzzles.length}단계 · {clearedCount}개 완료
-        </span>
-      </div>
+        <header className="wm-titles">
+          <h1 className="wm-title">거울을 설치해 빛을 탈출시켜라!</h1>
+          <p className="wm-subtitle">길을 따라 단계를 하나씩 정복해요!</p>
+        </header>
 
-      <div className="plp-grid">
+        <svg
+          className="wm-path"
+          viewBox={`0 0 ${IMG_W} ${IMG_H}`}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          {dimPath && <path className="wm-path-dim" d={dimPath} />}
+          {brightPath && <path className="wm-path-bright" d={brightPath} />}
+        </svg>
+
         {puzzles.map((puzzle, index) => (
-          <PuzzleTile
+          <WorldNode
             key={puzzle.id}
-            puzzle={puzzle}
-            order={index}
-            cleared={clearedIds.includes(puzzle.id)}
-            onSelect={onSelect}
+            stage={index + 1}
+            state={stateOf(index)}
+            x={NODE_POS[index].x}
+            y={NODE_POS[index].y}
+            onClick={() => onSelect(puzzle)}
           />
         ))}
+
+        <div className="wm-hint">
+          <span className="wm-hint-icon" aria-hidden="true">
+            ⓘ
+          </span>
+          <span className="wm-hint-key">힌트</span>
+          <span className="wm-hint-text">: 거울은 90도 방향으로 빛을 반사해요!</span>
+        </div>
       </div>
     </div>
   )

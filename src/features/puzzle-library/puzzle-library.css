@@ -1,262 +1,411 @@
-.puzzle-list-page {
-  width: min(880px, calc(100% - 2.5rem));
-  margin: 0 auto;
-  padding-bottom: 4.5rem;
+/* ================================================================== *
+ * 목록 페이지 = 게임 월드맵.
+ * 종횡비 고정 스테이지(1672:941) + 컨테이너 쿼리 단위(cqw)로
+ * 배지 위치·크기가 항상 함께 스케일 → 모바일에서도 겹침/이탈 없음.
+ * ================================================================== */
+
+.worldmap {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 0;
 }
 
-/* ------------------------------------------------------------------ *
- * 상단 (명령형 제목 + 진행도)
- * ------------------------------------------------------------------ */
+/* 화면을 꽉 채우는 은은한 배경(레터박스 영역 채움용). */
+.worldmap::before {
+  content: '';
+  position: absolute;
+  inset: -24px;
+  z-index: 0;
+  background-image: var(--wm-bg);
+  background-position: center;
+  background-size: cover;
+  filter: blur(22px) brightness(0.9) saturate(1.05);
+}
 
-.plp-head {
-  padding: 3.2rem 0 2rem;
+/* 실제 장면 — 배지/경로가 얹히는 종횡비 고정 무대. */
+.wm-stage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 177.7dvh);
+  max-width: 1500px;
+  aspect-ratio: 1672 / 941;
+  background-image: var(--wm-bg);
+  background-position: center;
+  background-size: cover;
+  border-radius: 12px;
+  box-shadow:
+    0 12px 40px rgba(40, 30, 10, 0.4),
+    inset 0 0 0 3px rgba(120, 82, 40, 0.35);
+  overflow: hidden;
+  container-type: size;
+  animation: page-rise 460ms ease both;
+}
+
+/* ------------------------------- 제목 ------------------------------- */
+.wm-titles {
+  position: absolute;
+  top: 11cqh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96%;
   text-align: center;
+  pointer-events: none;
 }
 
-.plp-title {
+.wm-title {
   margin: 0;
-  color: var(--text);
   font-family: var(--font-pixel);
   font-weight: 400;
-  font-size: clamp(1.9rem, 5.6vw, 3.2rem);
-  line-height: 1.16;
+  font-size: 5.4cqw;
+  line-height: 1.05;
   letter-spacing: 0.01em;
-  text-wrap: balance;
+  color: #fdeecb;
+  /* 픽셀 외곽선 + 그림자로 하늘 위에서도 또렷하게. */
+  text-shadow:
+    -2px 0 #6b4423, 2px 0 #6b4423, 0 -2px #6b4423, 0 2px #6b4423,
+    -2px -2px #6b4423, 2px -2px #6b4423, -2px 2px #6b4423, 2px 2px #6b4423,
+    0 0.14em 0.16em rgba(60, 38, 15, 0.45);
+  white-space: nowrap;
 }
 
-.plp-lead {
-  max-width: 34ch;
-  margin: 0.9rem auto 0;
-  color: var(--text-soft);
-  font-size: clamp(0.98rem, 2.4vw, 1.12rem);
-  font-weight: 520;
-  line-height: 1.6;
-  letter-spacing: -0.015em;
-  word-break: keep-all;
-}
-
-/* ------------------------------------------------------------------ *
- * 문제 선택 (레벨 타일 격자)
- * ------------------------------------------------------------------ */
-
-.plp-section-head {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin: 0 0 1.15rem;
-  padding-top: 1.6rem;
-  border-top: 2px solid var(--line);
-}
-
-.plp-section-title {
-  margin: 0;
-  color: var(--text);
+.wm-subtitle {
+  margin: 1.4cqh 0 0;
   font-family: var(--font-pixel);
   font-weight: 400;
-  font-size: clamp(1.25rem, 3.2vw, 1.6rem);
-  line-height: 1.15;
+  font-size: 2.6cqw;
+  line-height: 1.1;
+  color: #4a3320;
+  text-shadow:
+    -1px 0 #fff4d9, 1px 0 #fff4d9, 0 -1px #fff4d9, 0 1px #fff4d9,
+    0 2px 3px rgba(255, 248, 225, 0.6);
 }
 
-.plp-progress {
-  margin-left: auto;
-  border: 2px solid var(--teal-line);
-  border-radius: var(--radius);
-  padding: 0.34rem 0.7rem;
-  color: var(--teal-line);
-  background: var(--panel);
-  box-shadow: var(--pixel-sm);
+/* --------------------------- 상단 HUD(우측) --------------------------- */
+.wm-hud {
+  position: absolute;
+  top: 2.6cqh;
+  right: 2.6cqw;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55em 0.9em;
+  border: 0.16em solid #b07f3f;
+  border-radius: 0.5em;
+  background: linear-gradient(#fae9c2, #f0d69e);
+  box-shadow:
+    0 0.18em 0 #9a6a30,
+    0 0.3em 0.5em rgba(60, 38, 15, 0.3);
+  color: #5c3d1e;
   font-family: var(--font-pixel-ui);
-  font-size: 0.76rem;
+  font-size: 2.1cqw;
   line-height: 1;
   white-space: nowrap;
 }
 
-.plp-grid {
+.wm-hud-star {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-  gap: 1.1rem;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
 }
 
-/* ------------------------------- 레벨 타일 ------------------------------- */
-.level-tile {
+.wm-hud-star .wm-star {
+  width: 100%;
+  height: 100%;
+  fill: #ffca3a;
+  stroke: #c9891a;
+  stroke-width: 1.4;
+}
+
+/* ------------------------------ 길(경로) ------------------------------ */
+.wm-path {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.wm-path-dim,
+.wm-path-bright {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 2 26;
+  stroke-width: 13;
+}
+
+.wm-path-dim {
+  stroke: rgba(255, 255, 255, 0.5);
+  opacity: 0.5;
+}
+
+.wm-path-bright {
+  stroke: #ffd94a;
+  filter: drop-shadow(0 0 6px rgba(255, 210, 70, 0.9));
+}
+
+/* ------------------------------ 배지 ------------------------------ */
+.wm-node {
+  --w: 9cqw;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: var(--w);
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.9rem 0.85rem 0.85rem;
-  border: 2px solid var(--teal-line);
-  border-radius: var(--radius-lg);
-  background: var(--panel);
-  box-shadow: var(--pixel);
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    transform 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 130ms ease,
-    background 150ms ease;
-  animation: page-rise 460ms both;
-  animation-delay: calc(var(--tile-order, 0) * 55ms);
-}
-
-.level-tile:hover {
-  transform: translate(-1px, -2px);
-  background: var(--panel-hi);
-  box-shadow: 4px 5px 0 rgba(15, 118, 110, 0.3);
-}
-
-.level-tile:active {
-  transform: translate(1px, 1px);
-  box-shadow: var(--pixel-sm);
-}
-
-.lt-top {
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.lt-stage {
-  font-family: var(--font-pixel);
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--teal-line);
+.wm-node-recommended {
+  --w: 11.8cqw;
+  z-index: 4;
 }
 
-.lt-badge {
-  border: 2px solid currentColor;
-  border-radius: var(--radius-sm);
-  padding: 0.2rem 0.42rem;
-  font-family: var(--font-pixel-ui);
-  font-size: 0.62rem;
-  line-height: 1;
+.wm-node:hover {
+  transform: translate(-50%, calc(-50% - 0.5cqh));
 }
 
-.lt-badge-basic {
-  color: var(--success);
-  background: var(--success-soft);
+.wm-node:active {
+  transform: translate(-50%, -50%) scale(0.96);
 }
 
-.lt-badge-normal {
-  color: var(--blue);
-  background: var(--blue-soft);
+/* 배지 밑 어두운 받침(땅 그림자) — 숫자 대비 확보. */
+.wm-node-base {
+  position: absolute;
+  bottom: -0.4em;
+  left: 50%;
+  width: 76%;
+  height: 0.9em;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(40, 28, 10, 0.42), transparent 70%);
+  pointer-events: none;
 }
 
-.lt-badge-large {
-  color: var(--purple);
-  background: var(--purple-soft);
-}
-
-.lt-clear {
-  margin-left: auto;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 2px solid var(--star);
-  border-radius: var(--radius-sm);
-  color: var(--star);
-  background: var(--yellow-soft);
-  box-shadow: var(--pixel-sm);
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-/* 보드 미리보기 격자 — 흰 칸 + 또렷한 진청록 격자선. */
-.lt-frame {
-  display: grid;
-  place-items: center;
-  padding: 0.3rem 0;
-}
-
-.pt-preview {
-  display: grid;
-  gap: 2px;
+.wm-badge {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 120px;
-  overflow: hidden;
-  border: 2px solid var(--teal-line);
-  border-radius: var(--radius-sm);
-  background: var(--teal-line);
-  box-shadow: var(--pixel-sm);
+  aspect-ratio: 1 / 1.08;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.04em;
+  /* 아치형(위 둥글고 아래 살짝 각진) 배지 */
+  border-radius: 46% 46% 18% 18% / 38% 38% 14% 14%;
+  border: 0.16em solid var(--badge-line);
+  background: linear-gradient(var(--badge-hi), var(--badge));
+  box-shadow:
+    inset 0 -0.16em 0 rgba(0, 0, 0, 0.14),
+    inset 0 0.12em 0 rgba(255, 255, 255, 0.5),
+    0 0.22em 0 var(--badge-line),
+    0 0.4em 0.5em rgba(50, 34, 12, 0.35);
+  /* 배지 크기 기준 폰트 — 내부 요소는 em으로 함께 스케일. */
+  font-size: calc(var(--w) * 0.52);
 }
 
-.ptv-cell {
-  aspect-ratio: 1;
-  background: var(--cell);
+.wm-num {
+  font-family: var(--font-pixel);
+  font-size: 1em;
+  line-height: 0.9;
+  color: var(--num-color);
+  text-shadow: 0 0.04em 0 var(--num-shadow);
 }
 
-.ptv-cell.is-star {
-  background:
-    radial-gradient(circle, var(--star) 0 34%, transparent 36%),
-    var(--yellow-soft);
+.wm-face {
+  width: 0.62em;
+  height: 0.62em;
+  margin-top: 0.04em;
 }
 
-.ptv-cell.is-forbidden {
-  background:
-    linear-gradient(45deg, transparent 42%, var(--danger) 43% 57%, transparent 58%),
-    linear-gradient(-45deg, transparent 42%, var(--danger) 43% 57%, transparent 58%),
-    var(--danger-soft);
+.wm-face circle {
+  fill: var(--num-color);
 }
 
-.lt-goal {
-  margin: 0.1rem 0 0;
-  text-align: center;
-  color: var(--text);
+.wm-face path {
+  stroke: var(--num-color);
+}
+
+/* 상태별 색 */
+.wm-node-cleared .wm-badge {
+  --badge: #61ba46;
+  --badge-hi: #82d05f;
+  --badge-line: #3c8a2c;
+  --num-color: #ffffff;
+  --num-shadow: rgba(38, 92, 22, 0.7);
+}
+
+.wm-node-recommended .wm-badge {
+  --badge: #ffc42f;
+  --badge-hi: #ffe07a;
+  --badge-line: #d99a1f;
+  --num-color: #7a4a12;
+  --num-shadow: rgba(255, 255, 255, 0.55);
+}
+
+.wm-node-todo .wm-badge {
+  --badge: #f6ead0;
+  --badge-hi: #fffaef;
+  --badge-line: #c6a570;
+  --num-color: #7a5230;
+  --num-shadow: rgba(255, 255, 255, 0.6);
+}
+
+/* 추천 단계: 은은한 빛 + 살짝 맥동 */
+.wm-node-recommended .wm-badge {
+  box-shadow:
+    inset 0 -0.16em 0 rgba(0, 0, 0, 0.12),
+    inset 0 0.12em 0 rgba(255, 255, 255, 0.55),
+    0 0.22em 0 var(--badge-line),
+    0 0.4em 0.5em rgba(50, 34, 12, 0.35),
+    0 0 0.9em 0.2em rgba(255, 214, 80, 0.85);
+  animation: wm-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes wm-pulse {
+  50% {
+    box-shadow:
+      inset 0 -0.16em 0 rgba(0, 0, 0, 0.12),
+      inset 0 0.12em 0 rgba(255, 255, 255, 0.55),
+      0 0.22em 0 var(--badge-line),
+      0 0.4em 0.5em rgba(50, 34, 12, 0.35),
+      0 0 1.4em 0.4em rgba(255, 220, 100, 1);
+  }
+}
+
+/* 배지 장식(별/확대경) */
+.wm-deco {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.wm-deco-star {
+  top: -0.42em;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0.74em;
+  height: 0.74em;
+}
+
+.wm-deco-star .wm-star {
+  width: 100%;
+  height: 100%;
+  fill: #ffcb3a;
+  stroke: #d99a1f;
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0.04em 0.05em rgba(50, 34, 12, 0.4));
+}
+
+.wm-deco-lens {
+  top: -0.34em;
+  right: -0.28em;
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.wm-deco-lens .wm-lens {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0.04em 0.05em rgba(50, 34, 12, 0.4));
+}
+
+/* 배지 아래 라벨 pill(완료/도전!/도전하기) */
+.wm-label {
+  position: relative;
+  z-index: 3;
+  margin-top: -0.4em;
+  padding: 0.28em 0.7em;
+  border-radius: 0.45em;
+  border: 0.12em solid #5a3b1f;
+  background: linear-gradient(#7c5230, #5f3e21);
+  box-shadow: 0 0.12em 0.2em rgba(30, 18, 6, 0.4);
+  color: #fff2d6;
   font-family: var(--font-pixel-ui);
-  font-size: 0.82rem;
+  font-size: calc(var(--w) * 0.135);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.wm-node-cleared .wm-label {
+  color: #d8ffbe;
+}
+
+.wm-node-recommended .wm-label {
+  border-color: #7a4a12;
+  background: linear-gradient(#a5701f, #85560f);
+  color: #fff3c9;
+}
+
+/* ------------------------------ 하단 힌트 ------------------------------ */
+.wm-hint {
+  position: absolute;
+  z-index: 5;
+  bottom: 3cqh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  max-width: 90%;
+  padding: 0.55em 1em;
+  border: 0.16em solid #b07f3f;
+  border-radius: 0.5em;
+  background: linear-gradient(#fae9c2, #f0d69e);
+  box-shadow:
+    0 0.18em 0 #9a6a30,
+    0 0.3em 0.5em rgba(60, 38, 15, 0.3);
+  color: #5c3d1e;
+  font-size: 2.3cqw;
   line-height: 1.2;
 }
 
-.lt-start {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  margin-top: 0.15rem;
-  border: 2px solid var(--teal-deep);
-  border-radius: var(--radius);
-  padding: 0.5rem 0.6rem;
-  color: #ffffff;
-  background: var(--teal-line);
-  box-shadow: var(--pixel-teal);
+.wm-hint-icon {
+  display: grid;
+  place-items: center;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background: #3f8a2e;
+  color: #fff;
+  font-size: 0.9em;
+}
+
+.wm-hint-key {
   font-family: var(--font-pixel-ui);
-  font-size: 0.82rem;
-  line-height: 1;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease;
+  color: #8a5a1c;
 }
 
-.level-tile:hover .lt-start {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--teal-deep);
+/* 힌트 문장은 Pretendard(긴 문장 가독). */
+.wm-hint-text {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-/* ------------------------------------------------------------------ *
- * 반응형
- * ------------------------------------------------------------------ */
-
-@media (max-width: 560px) {
-  .puzzle-list-page {
-    width: min(100% - 1.5rem, 520px);
-  }
-
-  .plp-head {
-    padding-top: 2.4rem;
-  }
-
-  .plp-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.9rem;
+/* ------------------------------ 반응형 ------------------------------ */
+/* 세로가 매우 긴 화면: 무대가 너무 작아지지 않게 폭을 우선. */
+@media (max-aspect-ratio: 1 / 1) {
+  .wm-stage {
+    width: 100%;
   }
 }
 
+/* 아주 좁은 폭(≤360px): 힌트 문장이 길어 두 줄 되지 않도록 살짝 축소. */
 @media (max-width: 360px) {
-  .plp-grid {
-    gap: 0.8rem;
-  }
-
-  .lt-stage {
-    font-size: 1.3rem;
+  .wm-hint-text {
+    white-space: normal;
+    word-break: keep-all;
   }
 }
