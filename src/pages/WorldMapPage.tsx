@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import type { Puzzle } from '../core'
-import LevelMarker, { type MarkerState } from '../components/world-map/LevelMarker'
+import StageDoor, { type StageDoorStatus } from '../components/world-map/StageDoor'
 import LightPath from '../components/world-map/LightPath'
 import SparkleIcon from '../components/world-map/icons/SparkleIcon'
 import StarIcon from '../components/world-map/icons/StarIcon'
@@ -50,24 +51,41 @@ function rememberSelectedStage(puzzleId: string) {
 }
 
 export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
+  const [openingStageId, setOpeningStageId] = useState<number | null>(null)
+  const navigationTimer = useRef<number | null>(null)
   const clearedPuzzleIds = readClearedPuzzleIds()
   const savedStageId = readSelectedStageId()
-  const defaultStageId = stages.find(
+  const unlockedStages = stages.filter((stage) => stage.number <= 3)
+  const defaultStageId = unlockedStages.find(
     (stage) => !clearedPuzzleIds.includes(stage.puzzleId),
-  )?.puzzleId
-  const selectedStageId = stages.some((stage) => stage.puzzleId === savedStageId)
+  )?.puzzleId ?? unlockedStages[0]?.puzzleId
+  const selectedStageId = unlockedStages.some((stage) => stage.puzzleId === savedStageId)
     ? savedStageId
     : defaultStageId
 
-  function markerState(puzzleId: string): MarkerState {
+  useEffect(() => {
+    return () => {
+      if (navigationTimer.current !== null) {
+        window.clearTimeout(navigationTimer.current)
+      }
+    }
+  }, [])
+
+  function stageStatus(number: number, puzzleId: string): StageDoorStatus {
+    if (number >= 4) return 'locked'
+    if (clearedPuzzleIds.includes(puzzleId)) return 'completed'
     if (puzzleId === selectedStageId) return 'current'
-    if (clearedPuzzleIds.includes(puzzleId)) return 'cleared'
-    return 'upcoming'
+    return 'available'
   }
 
-  function selectStage(puzzle: Puzzle) {
+  function selectStage(stageNumber: number, puzzle: Puzzle) {
+    if (stageNumber >= 4 || openingStageId !== null) return
+
     rememberSelectedStage(puzzle.id)
-    onSelect(puzzle)
+    setOpeningStageId(stageNumber)
+    navigationTimer.current = window.setTimeout(() => {
+      onSelect(puzzle)
+    }, 850)
   }
 
   return (
@@ -102,17 +120,18 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
               if (!puzzle) return null
 
               return (
-                <LevelMarker
+                <StageDoor
                   key={stage.puzzleId}
-                  number={stage.number}
-                  difficulty={stage.difficulty}
-                  difficultyLabel={stage.difficultyLabel}
-                  stars={puzzle.rule.requiredStars.length}
+                  id={stage.number}
+                  label={`${stage.number}단계`}
                   puzzleTitle={puzzle.title}
-                  state={markerState(stage.puzzleId)}
-                  x={stage.x}
-                  y={stage.y}
-                  onSelect={() => selectStage(puzzle)}
+                  difficulty={stage.difficultyLabel}
+                  stars={puzzle.rule.requiredStars.length}
+                  status={stageStatus(stage.number, stage.puzzleId)}
+                  left={stage.x}
+                  top={stage.y}
+                  isOpening={openingStageId === stage.number}
+                  onSelect={() => selectStage(stage.number, puzzle)}
                 />
               )
             })}
