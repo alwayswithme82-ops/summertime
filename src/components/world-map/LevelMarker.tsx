@@ -49,6 +49,11 @@ export default function LevelMarker({
       <span className="level-marker__ground-shadow" aria-hidden="true" />
       <span className="level-marker__grass" aria-hidden="true" />
       <span className="level-marker__sign">
+        {state === 'cleared' && (
+          <span className="level-marker__complete-icon" aria-hidden="true">
+            <StarIcon size={28} fill="#FFF09A" stroke="#6D7D30" />
+          </span>
+        )}
         {state === 'current' && (
           <span className="level-marker__current-icon" aria-hidden="true">
             <MagnifierIcon size={32} />
@@ -59,7 +64,7 @@ export default function LevelMarker({
         <span className="level-marker__face">
           <StageFaceIcon
             className="level-marker__face-icon"
-            mood={state === 'current' ? 'happy' : 'calm'}
+            mood={state === 'current' ? 'happy' : state === 'cleared' ? 'complete' : 'calm'}
           />
         </span>
       </span>

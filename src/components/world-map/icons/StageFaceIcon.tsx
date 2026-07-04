@@ -1,7 +1,7 @@
 export interface StageFaceIconProps {
   size?: number
   className?: string
-  mood?: 'happy' | 'calm' | 'locked'
+  mood?: 'happy' | 'calm' | 'complete' | 'locked'
 }
 
 export default function StageFaceIcon({
@@ -10,10 +10,11 @@ export default function StageFaceIcon({
   mood = 'happy',
 }: StageFaceIconProps) {
   const isHappy = mood === 'happy'
+  const isComplete = mood === 'complete'
   const isLocked = mood === 'locked'
-  const faceColor = isHappy ? '#FFD968' : '#F3CFA0'
-  const faceBorder = isHappy ? '#B66B2B' : '#9B6840'
-  const cheekColor = isHappy ? '#F17F72' : '#DE8E79'
+  const faceColor = isHappy ? '#FFD968' : isComplete ? '#E0F0A5' : '#F3CFA0'
+  const faceBorder = isHappy ? '#B66B2B' : isComplete ? '#6C873D' : '#9B6840'
+  const cheekColor = isHappy ? '#F17F72' : isComplete ? '#F19A78' : '#DE8E79'
 
   return (
     <svg

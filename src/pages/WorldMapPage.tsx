@@ -1,6 +1,8 @@
 import type { Puzzle } from '../core'
 import LevelMarker, { type MarkerState } from '../components/world-map/LevelMarker'
 import LightPath from '../components/world-map/LightPath'
+import SparkleIcon from '../components/world-map/icons/SparkleIcon'
+import StarIcon from '../components/world-map/icons/StarIcon'
 import { samplePuzzles } from '../data/samplePuzzles'
 import { stages } from '../data/stages'
 import './WorldMapPage.css'
@@ -84,10 +86,14 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
 
         <div className="world-map-ui">
           <header className="world-title-wrap">
+            <SparkleIcon className="world-title-sparkle world-title-sparkle--far-left" />
+            <SparkleIcon className="world-title-sparkle world-title-sparkle--left" />
             <h1 id="world-map-title" className="world-title-main">
               빛 반사 거울 설치 활동
             </h1>
             <p className="world-title-sub">거울을 설치해 빛을 탈출시켜라!</p>
+            <SparkleIcon className="world-title-sparkle world-title-sparkle--right" />
+            <SparkleIcon className="world-title-sparkle world-title-sparkle--far-right" />
           </header>
 
           <div className="world-map-markers">
@@ -111,6 +117,12 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
               )
             })}
           </div>
+
+          <aside className="world-map-sign" aria-label="모험 안내">
+            <StarIcon className="world-map-sign__star" size={24} />
+            <span>다음 목표를 향해 가자!</span>
+            <i aria-hidden="true" />
+          </aside>
         </div>
       </section>
     </main>
