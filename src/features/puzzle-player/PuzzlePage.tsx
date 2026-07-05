@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { MirrorType, PlacedMirrors, Puzzle, ValidationResult } from '../../core'
 import { cellKeyToPosition, scoreSolution, validateSolution } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
 import { MirrorPalette } from './MirrorPalette'
 import { PuzzleBoard } from './PuzzleBoard'
+import { beamDurationMs } from './PathOverlay'
 import { ResultPanel } from './ResultPanel'
 import { RulePanel } from './RulePanel'
+import { SuccessModal } from './SuccessModal'
 import './puzzle-player.css'
 
 const LEVEL_LABEL: Record<Puzzle['level'], string> = {
@@ -56,18 +58,45 @@ function canPlaceMirror(puzzle: Puzzle, cellKey: string): boolean {
   return true
 }
 
+const OTHER_MIRROR: Record<MirrorType, MirrorType> = { '/': '\\', '\\': '/' }
+
 interface PuzzlePageProps {
   puzzle?: Puzzle
   onBack?: () => void
+  /** 성공 모달의 "다음 단계" — 없으면 버튼을 숨긴다. */
+  onNext?: () => void
 }
 
-export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProps = {}) {
+export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: PuzzlePageProps = {}) {
   const [placedMirrors, setPlacedMirrors] = useState<PlacedMirrors>({})
   const [selectedMirror, setSelectedMirror] = useState<MirrorType>('/')
   const [result, setResult] = useState<ValidationResult | null>(null)
+  // 빛 애니메이션이 끝난 뒤에야 성공 모달/실패 배너를 보여준다.
+  const [revealResult, setRevealResult] = useState(false)
+  // 입장 직후와 거울 선택 직후, 놓을 수 있는 빈 칸을 잠깐 반짝인다.
+  const [placeHint, setPlaceHint] = useState(true)
   // '다시 보지 않기'를 켜두지 않았다면 문제 입장 시 규칙을 한 번 자동으로 띄운다.
   const [hideIntro, setHideIntro] = useState(readHideIntro)
   const [showRules, setShowRules] = useState(() => !readHideIntro())
+
+  useEffect(() => {
+    if (!placeHint) return
+    const timer = window.setTimeout(() => setPlaceHint(false), 2600)
+    return () => window.clearTimeout(timer)
+  }, [placeHint])
+
+  useEffect(() => {
+    if (!result) {
+      setRevealResult(false)
+      return
+    }
+    const cells = result.simulation.path.length + (result.simulation.exited ? 1 : 0)
+    const timer = window.setTimeout(
+      () => setRevealResult(true),
+      beamDurationMs(cells) + 400,
+    )
+    return () => window.clearTimeout(timer)
+  }, [result])
 
   function handleToggleHideIntro(hide: boolean) {
     setHideIntro(hide)
@@ -86,21 +115,31 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
     ? result.simulation.visitedStars.filter((s) => puzzle.rule.requiredStars.includes(s)).length
     : 0
 
+  /** 같은 칸을 계속 누르면 빈칸 → 고른 거울 → 반대 거울 → 빈칸으로 순환한다. */
   function handleCellClick(cellKey: string) {
     if (!canPlaceMirror(puzzle, cellKey)) return
     setResult(null)
     setPlacedMirrors((previous) => {
       const next = { ...previous }
-      if (next[cellKey] === selectedMirror) {
-        delete next[cellKey]
-      } else {
+      const current = next[cellKey]
+      if (!current) {
         next[cellKey] = selectedMirror
+      } else if (current === selectedMirror) {
+        next[cellKey] = OTHER_MIRROR[current]
+      } else {
+        delete next[cellKey]
       }
       return next
     })
   }
 
+  function handleSelectMirror(mirror: MirrorType) {
+    setSelectedMirror(mirror)
+    setPlaceHint(true)
+  }
+
   function handleRun() {
+    setRevealResult(false)
     setResult(validateSolution(puzzle, placedMirrors))
   }
 
@@ -119,10 +158,12 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
       if (!shouldReplace) return
     }
     setPlacedMirrors({ ...sample })
+    setRevealResult(false)
     setResult(validateSolution(puzzle, sample))
   }
 
-  const resultClass = result ? (result.success ? ' is-success' : ' is-fail') : ''
+  const resultStatus = result ? (result.success ? 'success' : 'fail') : null
+  const resultClass = resultStatus ? ` is-${resultStatus}` : ''
 
   return (
     <div className={`puzzle-page${resultClass}`}>
@@ -180,22 +221,22 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
             puzzle={puzzle}
             placedMirrors={placedMirrors}
             simulation={result?.simulation ?? null}
+            resultStatus={resultStatus}
+            placeHint={placeHint}
             onCellClick={handleCellClick}
           />
         </div>
 
         <div className="pp-result-live" aria-live="polite">
-          <ResultPanel
-            result={result}
-            score={score}
-            onDismiss={() => setResult(null)}
-          />
+          {revealResult && (
+            <ResultPanel result={result} onDismiss={() => setResult(null)} />
+          )}
         </div>
       </main>
 
       <div className="pp-dock">
         <div className="pp-dock-mirrors">
-          <MirrorPalette selected={selectedMirror} onSelect={setSelectedMirror} />
+          <MirrorPalette selected={selectedMirror} onSelect={handleSelectMirror} />
         </div>
         <div className="pp-dock-actions">
           <button type="button" className="btn btn-ghost" onClick={handleReset}>
@@ -208,6 +249,15 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack }: PuzzlePageProp
           </button>
         </div>
       </div>
+
+      {revealResult && result?.success && (
+        <SuccessModal
+          starCount={totalStars}
+          score={score}
+          onNext={onNext}
+          onWorldMap={onBack}
+        />
+      )}
 
       <RulePanel
         puzzle={puzzle}

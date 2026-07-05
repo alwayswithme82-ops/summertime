@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import type { Direction, EdgeSide, Puzzle } from '../../core'
-import { colToLetters } from '../../core'
 import { MirrorIcon } from '../../components/MirrorIcon'
 
 interface RulePanelProps {
@@ -61,15 +60,17 @@ const DIR_WORD: Record<Direction, string> = {
   RIGHT: '오른쪽으로',
 }
 
-/** 가장자리 점을 "위쪽 C열" / "오른쪽 1행" 처럼 사람이 읽는 문구로. */
-function describeEdge(side: EdgeSide, index: number): string {
-  const where = side === 'TOP' || side === 'BOTTOM' ? `${colToLetters(index)}열` : `${index}행`
-  return `${SIDE_LABEL[side]} ${where}`
-}
-
-/** "…열로" / "…행으로" 조사 처리. */
-function toParticle(side: EdgeSide): string {
-  return side === 'TOP' || side === 'BOTTOM' ? '로' : '으로'
+/**
+ * 문제 설명 속 좌표 표현("E열", "3행")을 떼어낸 표시용 문구.
+ * 입구/출구 위치는 보드의 화살표 마커가 직접 보여주므로 글에서는 방향만 말한다.
+ * core 데이터는 그대로 두고 화면에 보이는 텍스트만 다듬는다.
+ */
+function withoutCoordinates(text: string): string {
+  return text
+    .replace(/[A-Z]+열\s*/g, '')
+    .replace(/\d+행\s*/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
 }
 
 const LEVEL_LABEL: Record<Puzzle['level'], string> = {
@@ -130,7 +131,7 @@ export function RulePanel({
             {LEVEL_LABEL[puzzle.level]}
           </span>
         </div>
-        {puzzle.description && <p className="rp-desc">{puzzle.description}</p>}
+        {puzzle.description && <p className="rp-desc">{withoutCoordinates(puzzle.description)}</p>}
 
         <h3 className="rp-subtitle">이렇게 풀어요</h3>
         <ol className="rp-howto" aria-label="하는 법">
@@ -148,13 +149,9 @@ export function RulePanel({
           <li>별 {rule.requiredStars.length}개 모두 지나기</li>
           {rule.forbiddenCells.length > 0 && <li>금지칸 지나지 않기</li>}
           <li>
-            입구: {describeEdge(puzzle.entry.side, puzzle.entry.index)}에서{' '}
-            {DIR_WORD[puzzle.entry.direction]} 시작
+            입구: {SIDE_LABEL[puzzle.entry.side]}에서 {DIR_WORD[puzzle.entry.direction]} 시작
           </li>
-          <li>
-            출구: {describeEdge(puzzle.exit.side, puzzle.exit.index)}
-            {toParticle(puzzle.exit.side)} 나가기
-          </li>
+          <li>출구: {SIDE_LABEL[puzzle.exit.side]} 출구로 나가기</li>
           <li>
             거울: {mirrorsUsed} / {rule.exactMirrorCount ?? rule.maxMirrors}개
             {rule.exactMirrorCount ? ' (정확히)' : ' 이하'}

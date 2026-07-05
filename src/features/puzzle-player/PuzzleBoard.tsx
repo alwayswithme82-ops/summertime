@@ -1,5 +1,5 @@
 import type { EdgePoint, PlacedMirrors, Puzzle, SimulationResult } from '../../core'
-import { colToLetters, positionToCellKey } from '../../core'
+import { positionToCellKey } from '../../core'
 import { PuzzleCell } from './PuzzleCell'
 import { PathOverlay } from './PathOverlay'
 
@@ -10,10 +10,6 @@ function cellSizeFor(cols: number): number {
   return 42
 }
 
-/** 행 라벨(1,2,3…)이 차지하는 왼쪽 여백. 열 라벨 정렬에도 똑같이 쓴다. */
-const GUTTER = 26
-/** 열 라벨 줄 높이. */
-const LABEL_H = 22
 /** 보드 바깥 입구/출구 화살표가 들어가는 띠의 두께. */
 const EDGE_ZONE = 44
 
@@ -21,6 +17,10 @@ interface PuzzleBoardProps {
   puzzle: Puzzle
   placedMirrors: PlacedMirrors
   simulation: SimulationResult | null
+  /** 실행 결과 성공/실패 — 빛 색(노랑/빨강)을 정한다. */
+  resultStatus: 'success' | 'fail' | null
+  /** 거울 선택 직후 빈 칸들을 잠깐 반짝여 "여기 놓을 수 있어"를 알려준다. */
+  placeHint: boolean
   onCellClick: (cellKey: string) => void
 }
 
@@ -82,9 +82,9 @@ interface EdgeMarkerProps {
  */
 function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
   const { side, index } = point
-  // 격자 원점(왼쪽 위)의 좌표. 바깥 띠(EDGE_ZONE) + 라벨 여백을 지나야 격자가 시작된다.
-  const gridX = EDGE_ZONE + GUTTER
-  const gridY = EDGE_ZONE + LABEL_H
+  // 격자 원점(왼쪽 위)의 좌표. 바깥 띠(EDGE_ZONE)를 지나야 격자가 시작된다.
+  const gridX = EDGE_ZONE
+  const gridY = EDGE_ZONE
 
   const style: React.CSSProperties = { position: 'absolute' }
   const centerAlong = (i: number) => (i - 0.5) * cellSize
@@ -147,8 +147,15 @@ function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
   )
 }
 
-/** 격자판. 라벨/칸/입출구 화살표를 그리고 그 위에 빛 경로(PathOverlay)를 얹는다. */
-export function PuzzleBoard({ puzzle, placedMirrors, simulation, onCellClick }: PuzzleBoardProps) {
+/** 격자판. 칸/입출구 화살표를 그리고 그 위에 빛 경로(PathOverlay)를 얹는다. */
+export function PuzzleBoard({
+  puzzle,
+  placedMirrors,
+  simulation,
+  resultStatus,
+  placeHint,
+  onCellClick,
+}: PuzzleBoardProps) {
   const { rows, cols } = puzzle
   const CELL_SIZE = cellSizeFor(cols)
   const stars = new Set(puzzle.stars)
@@ -158,70 +165,58 @@ export function PuzzleBoard({ puzzle, placedMirrors, simulation, onCellClick }: 
   const entryCell = entryCellKey(puzzle)
   const exitCell = exitCellKey(puzzle)
 
-  const colLabels = Array.from({ length: cols }, (_, i) => colToLetters(i + 1))
   const rowNumbers = Array.from({ length: rows }, (_, i) => i + 1)
+  const colNumbers = Array.from({ length: cols }, (_, i) => i + 1)
 
   return (
     <div className="pb-wrap">
-      {/* 바깥 띠(EDGE_ZONE)에 입구/출구 화살표가, 안쪽에 라벨과 격자가 놓인다. */}
+      {/* 바깥 띠(EDGE_ZONE)에 입구/출구 화살표가, 안쪽에 격자가 놓인다. */}
       <div className="pb-frame" style={{ position: 'relative', padding: EDGE_ZONE }}>
-        {/* 열 라벨 — 각 칸 중앙 위에 정렬 */}
-        <div className="pb-col-labels" style={{ marginLeft: GUTTER, height: LABEL_H }}>
-          {colLabels.map((label) => (
-            <div key={label} className="pb-label" style={{ width: CELL_SIZE }}>
-              {label}
-            </div>
-          ))}
-        </div>
+        <div
+          className="pb-grid"
+          style={{
+            gridTemplateColumns: `repeat(${cols}, ${CELL_SIZE}px)`,
+            gridTemplateRows: `repeat(${rows}, ${CELL_SIZE}px)`,
+          }}
+        >
+          {rowNumbers.map((row) =>
+            colNumbers.map((col) => {
+              const cellKey = positionToCellKey({ row, col })
+              const isStar = stars.has(cellKey)
+              const isForbidden = forbidden.has(cellKey)
+              const isPlaceable =
+                !isStar && !isForbidden && (!isMarkedOnly || allowed.has(cellKey))
+              return (
+                <PuzzleCell
+                  key={cellKey}
+                  row={row}
+                  col={col}
+                  size={CELL_SIZE}
+                  mirror={placedMirrors[cellKey]}
+                  isStar={isStar}
+                  isForbidden={isForbidden}
+                  isAllowed={isMarkedOnly && allowed.has(cellKey)}
+                  isEntry={cellKey === entryCell}
+                  isExit={cellKey === exitCell}
+                  isPlaceable={isPlaceable}
+                  showPlaceHint={placeHint}
+                  onClick={() => onCellClick(cellKey)}
+                />
+              )
+            }),
+          )}
 
-        <div className="pb-body">
-          {/* 행 라벨 — 각 행 중앙 왼쪽에 정렬 */}
-          <div className="pb-row-labels" style={{ width: GUTTER }}>
-            {rowNumbers.map((n) => (
-              <div key={n} className="pb-label" style={{ height: CELL_SIZE }}>
-                {n}
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="pb-grid"
-            style={{
-              gridTemplateColumns: `repeat(${cols}, ${CELL_SIZE}px)`,
-              gridTemplateRows: `repeat(${rows}, ${CELL_SIZE}px)`,
-            }}
-          >
-            {rowNumbers.map((row) =>
-              colLabels.map((_, c) => {
-                const cellKey = positionToCellKey({ row, col: c + 1 })
-                return (
-                  <PuzzleCell
-                    key={cellKey}
-                    cellKey={cellKey}
-                    size={CELL_SIZE}
-                    mirror={placedMirrors[cellKey]}
-                    isStar={stars.has(cellKey)}
-                    isForbidden={forbidden.has(cellKey)}
-                    isAllowed={isMarkedOnly && allowed.has(cellKey)}
-                    isEntry={cellKey === entryCell}
-                    isExit={cellKey === exitCell}
-                    onClick={() => onCellClick(cellKey)}
-                  />
-                )
-              }),
-            )}
-
-            {simulation && (
-              <PathOverlay
-                path={simulation.path}
-                rows={rows}
-                cols={cols}
-                cellSize={CELL_SIZE}
-                finalDirection={simulation.finalDirection}
-                exited={simulation.exited}
-              />
-            )}
-          </div>
+          {simulation && (
+            <PathOverlay
+              path={simulation.path}
+              rows={rows}
+              cols={cols}
+              cellSize={CELL_SIZE}
+              finalDirection={simulation.finalDirection}
+              exited={simulation.exited}
+              status={resultStatus}
+            />
+          )}
         </div>
 
         {/* 입구/출구 고정 표시 (학생이 변경 불가) */}

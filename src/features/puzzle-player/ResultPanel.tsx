@@ -1,54 +1,43 @@
-import type { Score, ValidationResult } from '../../core'
+import type { ValidationResult } from '../../core'
 
 interface ResultPanelProps {
   result: ValidationResult | null
-  score: Score | null
   /** 실패 후 계속 고치기(배너 닫기). */
   onDismiss?: () => void
-  /** 성공 후 다음 문제로. 동작은 다음 단계에서 연결한다. */
-  onNext?: () => void
 }
 
 /**
- * 실행 결과 배너. 성공은 초록, 실패는 빨강 계열(기존 --success/--danger).
- * 판정 자체는 core의 ValidationResult를 그대로 보여준다.
+ * core 메시지 끝의 좌표 나열(": A1, B2")을 떼어낸다.
+ * 아이들은 좌표를 모르므로 빛 색(빨강)이 어디가 문제인지 보여주는 역할을 대신한다.
+ * core 데이터는 그대로 두고 표시 텍스트만 다듬는다.
  */
-export function ResultPanel({ result, score, onDismiss, onNext }: ResultPanelProps) {
-  if (!result) return null
+function withoutCoordinates(message: string): string {
+  return message.replace(/:\s*[A-Z]+\d+(\s*,\s*[A-Z]+\d+)*/g, '').trim()
+}
 
-  // 제목("성공했어요!")과 겹치는 첫 메시지는 빼고, 만족한 조건만 보여준다.
-  const checks = result.messages.filter((m) => m !== '성공했어요!')
+/**
+ * 실패 배너. 성공은 SuccessModal이 담당하므로 여기서는 실패만 가볍게 보여주고
+ * 다시 시도를 유도한다. 판정 자체는 core의 ValidationResult를 그대로 따른다.
+ */
+export function ResultPanel({ result, onDismiss }: ResultPanelProps) {
+  if (!result || result.success) return null
 
   return (
-    <div className={`result-banner ${result.success ? 'is-success' : 'is-fail'}`}>
+    <div className="result-banner is-fail">
       <div className="rb-body">
-        <h3 className="rb-title">{result.success ? '성공했어요!' : '다시 해볼까요?'}</h3>
-        {result.success ? (
-          <ul className="rp-checks">
-            {checks.map((m) => (
-              <li key={m}>{m}</li>
-            ))}
-          </ul>
-        ) : (
-          <ul className="rp-reasons">
-            {result.errors.map((e) => (
-              <li key={e}>{e}</li>
-            ))}
-          </ul>
-        )}
-        {score && <p className="rp-score">점수: {score.total}점</p>}
+        <h3 className="rb-title">다시 해볼까요?</h3>
+        <ul className="rp-reasons">
+          {result.errors.map((e) => (
+            <li key={e}>{withoutCoordinates(e)}</li>
+          ))}
+        </ul>
+        <p className="rb-tip">빨간 빛을 따라가면 어디서 막혔는지 보여요</p>
       </div>
 
       <div className="rb-actions">
-        {result.success ? (
-          <button type="button" className="btn btn-primary" onClick={onNext}>
-            다음 문제 →
-          </button>
-        ) : (
-          <button type="button" className="btn btn-ghost" onClick={onDismiss}>
-            계속 고치기
-          </button>
-        )}
+        <button type="button" className="btn btn-ghost" onClick={onDismiss}>
+          계속 고치기
+        </button>
       </div>
     </div>
   )

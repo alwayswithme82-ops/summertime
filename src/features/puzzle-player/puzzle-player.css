@@ -189,11 +189,6 @@
   animation: page-rise 320ms ease both;
 }
 
-.result-banner.is-success {
-  border-color: var(--success);
-  background: linear-gradient(135deg, var(--success-soft), var(--panel));
-}
-
 .result-banner.is-fail {
   border-color: var(--danger);
   background: linear-gradient(135deg, var(--danger-soft), var(--panel));
@@ -213,10 +208,6 @@
   letter-spacing: 0.01em;
 }
 
-.result-banner.is-success .rb-title {
-  color: var(--success);
-}
-
 .result-banner.is-fail .rb-title {
   color: var(--danger);
 }
@@ -225,7 +216,6 @@
   flex: none;
 }
 
-.rp-checks,
 .rp-reasons {
   display: grid;
   gap: 0.24rem;
@@ -234,13 +224,6 @@
   list-style: none;
   font-size: 0.83rem;
   color: var(--text-soft);
-}
-
-.rp-checks li::before {
-  content: '✓';
-  margin-right: 0.5rem;
-  color: var(--success);
-  font-weight: 900;
 }
 
 .rp-reasons li::before {
@@ -257,17 +240,12 @@
   font-weight: 900;
 }
 
-.rp-score {
-  width: fit-content;
-  margin: 0.55rem 0 0;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 0.24rem 0.7rem;
-  color: var(--text);
-  background: var(--panel-hi);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.78rem;
-  font-weight: 400;
+.rb-tip {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 620;
+  word-break: keep-all;
 }
 
 /* --------------------------- 하단 조작 바 --------------------------- */
@@ -304,6 +282,28 @@
 }
 
 /* ------------------------- 거울 선택 버튼 ------------------------- */
+.mp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.mp-title {
+  color: var(--teal-line);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.mp-hint {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 620;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+
 .mirror-palette {
   display: flex;
   align-items: center;
@@ -313,12 +313,11 @@
 .mp-btn {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border: 2px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 0;
-  color: var(--text);
   background: var(--panel);
   box-shadow: var(--pixel);
   cursor: pointer;
@@ -329,11 +328,19 @@
     background 150ms ease;
 }
 
-.mp-btn svg {
+.mp-diagram {
+  width: 46px;
+  height: 46px;
   border-radius: var(--radius-sm);
-  padding: 5px;
-  color: var(--mirror);
   background: var(--panel-hi);
+}
+
+.mp-diagram .mp-mirror-line {
+  stroke: var(--mirror);
+}
+
+.mp-diagram .mp-beam {
+  stroke: #f2a300;
 }
 
 .mp-btn:hover {
@@ -352,10 +359,17 @@
   background: var(--teal-soft);
 }
 
-.mp-btn.is-selected svg {
-  color: #ffffff;
+.mp-btn.is-selected .mp-diagram {
   background: var(--mirror);
   animation: soft-pop 260ms ease both;
+}
+
+.mp-btn.is-selected .mp-mirror-line {
+  stroke: #ffffff;
+}
+
+.mp-btn.is-selected .mp-beam {
+  stroke: var(--star);
 }
 
 /* ------------------------------ 버튼 ------------------------------ */
@@ -741,30 +755,6 @@
   isolation: isolate;
 }
 
-.pb-col-labels,
-.pb-row-labels {
-  display: flex;
-}
-
-.pb-row-labels {
-  flex-direction: column;
-}
-
-.pb-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.82rem;
-  font-weight: 400;
-  line-height: 1;
-}
-
-.pb-body {
-  display: flex;
-}
-
 /* 또렷한 진청록 격자: 굵은 테두리 + 칸 사이 청록 라인. 픽셀 그림자. */
 .pb-grid {
   position: relative;
@@ -797,28 +787,25 @@
     box-shadow 150ms ease;
 }
 
-.pb-cell::after {
-  content: attr(aria-label);
-  position: absolute;
-  right: 4px;
-  bottom: 2px;
-  color: rgba(18, 58, 58, 0.28);
-  font-family: var(--font-mono);
-  font-size: 0.48rem;
-  font-weight: 700;
-  opacity: 0;
-  transition: opacity 140ms ease;
-}
-
 .pb-cell:hover {
   z-index: 2;
-  background: var(--blue-soft);
+  /* 반투명 틴트를 불투명 칸 색 위에 겹쳐 그린다(밑의 격자색이 비치지 않게). */
+  background:
+    linear-gradient(var(--blue-soft), var(--blue-soft)),
+    var(--cell);
   box-shadow: inset 0 0 0 2px rgba(47, 111, 237, 0.55);
   transform: scale(1.035);
 }
 
-.pb-cell:hover::after {
-  opacity: 1;
+/* 거울 선택 직후 "여기에 놓을 수 있어" 반짝임 (빈 칸 대상) — 금빛 테두리 펄스 */
+.pb-cell.is-place-hint {
+  animation: place-hint 1.2s ease-in-out 2;
+}
+
+@keyframes place-hint {
+  50% {
+    box-shadow: inset 0 0 0 3px rgba(255, 196, 47, 0.8);
+  }
 }
 
 .pb-cell:active {
@@ -843,7 +830,9 @@
 }
 
 .pb-cell.is-allowed:hover {
-  background: var(--teal-soft);
+  background:
+    linear-gradient(var(--teal-soft), var(--teal-soft)),
+    var(--cell);
   box-shadow: inset 0 0 0 2px rgba(15, 118, 110, 0.6);
 }
 
@@ -941,43 +930,99 @@
   pointer-events: none;
 }
 
-/* 빛줄기 = 진한 주황/코랄. 밝은 보드 위에서 또렷하게 대비. */
+/* ------------------------------ 빛줄기 ------------------------------
+ * 기본·성공 = 노랑, 실패 = 다 그려진 뒤 빨강으로 물듦.
+ * --beam-len(경로 전체 길이)과 --beam-ms(총 시간)는 PathOverlay가 인라인으로 넘긴다.
+ * stroke-dashoffset을 줄여 빛이 입구에서 한 칸씩 나아가는 것처럼 그린다.
+ * ------------------------------------------------------------------- */
 .path-glow {
   fill: none;
-  stroke: rgba(255, 106, 61, 0.4);
+  stroke: rgba(255, 196, 47, 0.5);
   stroke-width: 15;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.9;
   filter: url('#beam-glow');
+  stroke-dasharray: var(--beam-len);
+  animation: beam-draw var(--beam-ms) linear both;
 }
 
 .path-core {
   fill: none;
-  stroke: var(--beam);
+  stroke: #f2a300;
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: var(--beam-len);
+  animation: beam-draw var(--beam-ms) linear both;
 }
 
+/* 흐르는 하이라이트는 빛이 다 그려진 뒤에 나타나 흐른다.
+   (그리기와 dasharray를 함께 쓸 수 없어서 뒤로 미룸) */
 .path-spark {
   fill: none;
-  stroke: #ffd9c7;
+  stroke: #fff3c9;
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 9 17;
-  opacity: 0.95;
-  animation: beam-flow 0.8s linear infinite;
+  opacity: 0;
+  animation:
+    spark-in 240ms ease var(--beam-ms) forwards,
+    beam-flow 0.8s linear var(--beam-ms) infinite;
+}
+
+/* 실패: 빛이 끝까지 간 다음 빔 전체가 빨갛게 물들어 어디로 흘렀는지 보여준다. */
+.path-overlay.is-fail .path-glow {
+  animation:
+    beam-draw var(--beam-ms) linear both,
+    beam-glow-fail 420ms ease var(--beam-ms) forwards;
+}
+
+.path-overlay.is-fail .path-core {
+  animation:
+    beam-draw var(--beam-ms) linear both,
+    beam-core-fail 420ms ease var(--beam-ms) forwards;
+}
+
+.path-overlay.is-fail .path-spark {
+  stroke: #ffc9c9;
+}
+
+@keyframes beam-draw {
+  from {
+    stroke-dashoffset: var(--beam-len);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes spark-in {
+  to {
+    opacity: 0.95;
+  }
+}
+
+@keyframes beam-core-fail {
+  to {
+    stroke: #e11d2e;
+  }
+}
+
+@keyframes beam-glow-fail {
+  to {
+    stroke: rgba(225, 29, 46, 0.42);
+  }
 }
 
 .path-origin-glow {
-  fill: rgba(255, 106, 61, 0.4);
+  fill: rgba(255, 196, 47, 0.5);
   filter: url('#beam-glow');
 }
 
 .path-origin {
-  fill: var(--beam);
+  fill: #f2a300;
   transform-box: fill-box;
   transform-origin: center;
   animation: origin-pulse 1s ease-in-out infinite;
@@ -986,6 +1031,126 @@
 @keyframes origin-pulse {
   50% {
     transform: scale(1.38);
+  }
+}
+
+/* --------------------------- 성공 모달 --------------------------- */
+.success-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: rgba(18, 58, 58, 0.46);
+  backdrop-filter: blur(3px);
+  animation: page-rise 220ms ease both;
+}
+
+.success-modal {
+  position: relative;
+  width: min(380px, 100%);
+  padding: 2rem 1.6rem 1.5rem;
+  border: 2px solid var(--star);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #fffdf4, var(--panel));
+  box-shadow: 4px 4px 0 rgba(214, 150, 20, 0.35);
+  text-align: center;
+  animation: soft-pop 320ms ease both;
+}
+
+.sm-title {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-pixel);
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.sm-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.sm-star {
+  color: var(--star);
+  text-shadow: 2px 2px 0 rgba(214, 150, 20, 0.4);
+  opacity: 0;
+  animation: soft-pop 420ms ease both;
+}
+
+.sm-msg {
+  margin: 0.8rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  font-weight: 620;
+  word-break: keep-all;
+}
+
+.sm-score {
+  width: fit-content;
+  margin: 0.6rem auto 0;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.24rem 0.7rem;
+  color: var(--text);
+  background: var(--panel-hi);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.sm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 1.3rem;
+}
+
+.sm-actions .btn {
+  width: 100%;
+}
+
+.sm-next {
+  min-height: 54px;
+  font-size: 1.05rem;
+}
+
+/* 픽셀 폭죽: 모달 위 몇 지점에서 네모 조각이 퍼진다 */
+.sm-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.sm-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--pc);
+  opacity: 0;
+  animation: firework-pop 900ms ease-out both;
+}
+
+@keyframes firework-pop {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(1);
   }
 }
 

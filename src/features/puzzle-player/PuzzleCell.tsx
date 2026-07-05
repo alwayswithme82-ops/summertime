@@ -25,7 +25,8 @@ function SketchStar({ size }: { size: number }) {
 }
 
 interface PuzzleCellProps {
-  cellKey: string
+  row: number
+  col: number
   size: number
   mirror?: MirrorType
   isStar: boolean
@@ -33,27 +34,34 @@ interface PuzzleCellProps {
   isAllowed: boolean
   isEntry: boolean
   isExit: boolean
+  /** 거울을 놓을 수 있는 빈 칸인지 (놓기 힌트 반짝임 대상). */
+  isPlaceable: boolean
+  /** 거울 선택 직후 잠깐 켜지는 "여기 놓을 수 있어" 반짝임. */
+  showPlaceHint: boolean
   onClick: () => void
 }
 
+/** 스크린리더용 칸 설명. 좌표(A1) 대신 아이가 이해할 수 있는 말로. */
+function cellLabel(row: number, col: number, props: PuzzleCellProps): string {
+  const base = `${row}번째 줄 ${col}번째 칸`
+  if (props.mirror) {
+    return `${base}, ${props.mirror === '/' ? '위로 꺾는 거울' : '아래로 꺾는 거울'} 있음`
+  }
+  if (props.isStar) return `${base}, 별`
+  if (props.isForbidden) return `${base}, 금지 칸`
+  return base
+}
+
 /** 격자 한 칸. 거울/별/금지/허용 표시를 담당한다. (입구/출구는 보드 밖 화살표로 표시) */
-export function PuzzleCell({
-  cellKey,
-  size,
-  mirror,
-  isStar,
-  isForbidden,
-  isAllowed,
-  isEntry,
-  isExit,
-  onClick,
-}: PuzzleCellProps) {
+export function PuzzleCell(props: PuzzleCellProps) {
+  const { row, col, size, mirror, isStar, isForbidden, isAllowed, isEntry, isExit, isPlaceable, showPlaceHint, onClick } = props
   const classes = ['pb-cell']
   if (isEntry) classes.push('is-entry')
   if (isExit) classes.push('is-exit')
   if (isStar && !mirror) classes.push('is-star')
   if (isForbidden && !mirror) classes.push('is-forbidden')
   if (isAllowed) classes.push('is-allowed')
+  if (showPlaceHint && isPlaceable && !mirror) classes.push('is-place-hint')
 
   let content: React.ReactNode = null
   if (mirror) {
@@ -72,8 +80,7 @@ export function PuzzleCell({
       className={classes.join(' ')}
       style={{ width: size, height: size }}
       onClick={onClick}
-      aria-label={cellKey}
-      title={cellKey}
+      aria-label={cellLabel(row, col, props)}
     >
       {content}
     </button>

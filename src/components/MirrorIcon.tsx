@@ -19,21 +19,14 @@ export function MirrorIcon({ type, size = 28, className }: MirrorIconProps) {
     type === '/'
       ? [pad, size - pad, size - pad, pad] // 좌하 → 우상
       : [pad, pad, size - pad, size - pad] // 좌상 → 우하
+  const width = Math.max(4, size * 0.16)
 
-  // 직선 대신 살짝 떨리게 휘는 손그림 대각선.
-  // 두 제어점을 진행 방향의 수직으로 반대로 밀어 미세한 S자 흔들림을 준다.
+  // 거울면 위에 얹는 얇은 하이라이트 선의 수직 오프셋.
   const dx = x2 - x1
   const dy = y2 - y1
   const len = Math.hypot(dx, dy) || 1
-  const px = -dy / len
-  const py = dx / len
-  const amp = size * 0.05
-  const c1x = x1 + dx * 0.32 + px * amp
-  const c1y = y1 + dy * 0.32 + py * amp
-  const c2x = x1 + dx * 0.68 - px * amp
-  const c2y = y1 + dy * 0.68 - py * amp
-  const d = `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`
-  const width = Math.max(3.5, size * 0.15)
+  const ox = (-dy / len) * width * 0.62
+  const oy = (dx / len) * width * 0.62
 
   return (
     <svg
@@ -45,24 +38,25 @@ export function MirrorIcon({ type, size = 28, className }: MirrorIconProps) {
       role="img"
       aria-label={type === '/' ? '/ 거울' : '\\ 거울'}
     >
-      {/* 옅게 겹쳐 그린 밑선 — 두 번 그은 연필 느낌 */}
-      <path
-        d={d}
-        fill="none"
+      <line
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
         stroke="currentColor"
         strokeWidth={width}
         strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity={0.28}
-        transform="translate(0.6 0.6)"
       />
-      <path
-        d={d}
-        fill="none"
+      {/* 거울 유리의 반짝임을 나타내는 얇은 하이라이트 */}
+      <line
+        x1={x1 + dx * 0.18 + ox}
+        y1={y1 + dy * 0.18 + oy}
+        x2={x1 + dx * 0.5 + ox}
+        y2={y1 + dy * 0.5 + oy}
         stroke="currentColor"
-        strokeWidth={width}
+        strokeWidth={Math.max(1.6, width * 0.34)}
         strokeLinecap="round"
-        strokeLinejoin="round"
+        opacity={0.4}
       />
     </svg>
   )
