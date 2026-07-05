@@ -12,11 +12,6 @@
   transform: translate(-50%, -50%) scale(1);
   transform-origin: center bottom;
   will-change: left, top, transform, opacity;
-  transition:
-    left 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    top 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    transform 430ms cubic-bezier(0.55, 0.06, 0.68, 0.19),
-    opacity 300ms ease-in;
 }
 
 /* 시작: 지도 하단 중앙(쉬고 있던 자리) */
@@ -26,12 +21,17 @@
   opacity: 1;
 }
 
-/* 이동 완료: 문 바로 앞 */
+/* 문 앞으로 걸어가기: 거리에 비례한 --travel-ms 동안, 천천히 출발해 살짝 안착
+   (가벼운 오버슈트) — 순간이동처럼 보이지 않게 한다. */
 .stage-entrance__mascot--near {
   left: var(--door-x);
   top: calc(var(--door-y) + 12%);
   transform: translate(-50%, -50%) scale(0.9);
   opacity: 1;
+  transition:
+    left var(--travel-ms, 1000ms) cubic-bezier(0.4, 0, 0.28, 1.06),
+    top var(--travel-ms, 1000ms) cubic-bezier(0.4, 0, 0.28, 1.06),
+    transform var(--travel-ms, 1000ms) cubic-bezier(0.4, 0, 0.28, 1.06);
 }
 
 /* 문 안으로: 문 중심으로 이동하며 축소·소멸 */
@@ -40,6 +40,11 @@
   top: calc(var(--door-y) - 1%);
   transform: translate(-50%, -50%) scale(0.12);
   opacity: 0;
+  transition:
+    left 430ms ease-in,
+    top 430ms ease-in,
+    transform 430ms cubic-bezier(0.55, 0.06, 0.68, 0.19),
+    opacity 300ms ease-in;
 }
 
 .stage-entrance__bob {
@@ -47,7 +52,7 @@
 }
 
 .stage-entrance__bob--walk {
-  animation: stage-entrance-bob 320ms ease-in-out infinite;
+  animation: stage-entrance-bob 300ms ease-in-out infinite;
 }
 
 .stage-entrance__character {
@@ -132,7 +137,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-8%);
+    transform: translateY(-11%);
   }
 }
 
@@ -160,6 +165,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .stage-entrance__mascot,
+  .stage-entrance__mascot--near,
+  .stage-entrance__mascot--in,
   .stage-entrance__flash--on {
     transition: none;
   }

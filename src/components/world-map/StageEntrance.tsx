@@ -13,13 +13,31 @@ const LINES = [
   '빛을 탈출시키러 가자!',
 ]
 
-// 시퀀스 타이밍(ms). CSS transition 시간과 맞춰 둔다. 전체 ≈ 2초.
-const TRAVEL_MS = 400
+// 시퀀스 타이밍(ms). CSS transition 시간과 맞춰 둔다.
 const CHAR_MS = 48
 const PAUSE_MS = 380
 const OPEN_LEAD_MS = 160
 const ENTER_MS = 430
 const FLASH_MS = 180
+
+// 걷기(문 앞으로 이동) 타이밍. 순간이동처럼 보이지 않게 거리에 비례한 시간을 준다.
+const START_X = 50 // 마스코트 시작 위치(지도 하단 중앙) — CSS --start 와 일치
+const START_Y = 86
+const NEAR_Y_OFFSET = 12 // 문 앞 정지 위치 = 문 y + 12% — CSS --near 와 일치
+const STAGE_ASPECT = 16 / 9 // 가로 %를 세로 % 와 같은 시각 단위로 환산
+const WALK_MS_PER_UNIT = 17 // 단위 거리당 걷는 시간 → 거리가 멀수록 오래 걷는다
+const TRAVEL_MIN_MS = 800 // 가까운 문도 순식간에 도착하지 않게
+const TRAVEL_MAX_MS = 1200
+
+// 시작점에서 문 앞까지의 시각적 거리에 비례한 이동 시간(걷는 속도 일정).
+function travelDuration(stage: StageDefinition): number {
+  const dx = (stage.x - START_X) * STAGE_ASPECT
+  const dy = stage.y + NEAR_Y_OFFSET - START_Y
+  const distance = Math.hypot(dx, dy)
+  return Math.round(
+    Math.min(TRAVEL_MAX_MS, Math.max(TRAVEL_MIN_MS, distance * WALK_MS_PER_UNIT)),
+  )
+}
 
 interface StageEntranceProps {
   stage: StageDefinition
@@ -32,6 +50,8 @@ export default function StageEntrance({ stage, onOpenDoor, onComplete }: StageEn
     const pick = LINES[Math.floor(Math.random() * LINES.length)]
     return pick.replace('{N}', String(stage.number))
   }, [stage.number])
+
+  const travelMs = useMemo(() => travelDuration(stage), [stage])
 
   const [phase, setPhase] = useState<Phase>('travel')
   const [moved, setMoved] = useState(false)
@@ -87,13 +107,13 @@ export default function StageEntrance({ stage, onOpenDoor, onComplete }: StageEn
       push(() => setPhase('flash'), typeEnd + PAUSE_MS + OPEN_LEAD_MS + ENTER_MS)
       // 6) 전환
       push(finish, typeEnd + PAUSE_MS + OPEN_LEAD_MS + ENTER_MS + FLASH_MS)
-    }, TRAVEL_MS)
+    }, travelMs)
 
     return () => {
       done = true
       timers.forEach(window.clearTimeout)
     }
-  }, [line])
+  }, [line, travelMs])
 
   const positionState =
     phase === 'enter' || phase === 'flash' ? 'in' : moved ? 'near' : 'start'
@@ -103,6 +123,7 @@ export default function StageEntrance({ stage, onOpenDoor, onComplete }: StageEn
   const style = {
     '--door-x': `${stage.x}%`,
     '--door-y': `${stage.y}%`,
+    '--travel-ms': `${travelMs}ms`,
   } as CSSProperties
 
   return (
