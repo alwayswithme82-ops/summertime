@@ -1,0 +1,172 @@
+.stage-entrance {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.stage-entrance__mascot {
+  position: absolute;
+  z-index: 2;
+  width: clamp(64px, 8cqw, 120px);
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center bottom;
+  will-change: left, top, transform, opacity;
+  transition:
+    left 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    top 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 430ms cubic-bezier(0.55, 0.06, 0.68, 0.19),
+    opacity 300ms ease-in;
+}
+
+/* 시작: 지도 하단 중앙(쉬고 있던 자리) */
+.stage-entrance__mascot--start {
+  left: 50%;
+  top: 86%;
+  opacity: 1;
+}
+
+/* 이동 완료: 문 바로 앞 */
+.stage-entrance__mascot--near {
+  left: var(--door-x);
+  top: calc(var(--door-y) + 12%);
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 1;
+}
+
+/* 문 안으로: 문 중심으로 이동하며 축소·소멸 */
+.stage-entrance__mascot--in {
+  left: var(--door-x);
+  top: calc(var(--door-y) - 1%);
+  transform: translate(-50%, -50%) scale(0.12);
+  opacity: 0;
+}
+
+.stage-entrance__bob {
+  display: block;
+}
+
+.stage-entrance__bob--walk {
+  animation: stage-entrance-bob 320ms ease-in-out infinite;
+}
+
+.stage-entrance__character {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 2px rgba(70, 43, 18, 0.34));
+}
+
+.stage-entrance__bubble {
+  position: absolute;
+  bottom: 92%;
+  left: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(2px, 0.25cqw, 4px);
+  width: max-content;
+  max-width: clamp(120px, 16cqw, 240px);
+  padding: clamp(5px, 0.55cqw, 9px) clamp(9px, 0.9cqw, 14px);
+  border: clamp(2px, 0.18cqw, 3px) solid #714821;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff5d6, #ebcf9b);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35),
+    0.12em 0.18em 0 rgba(63, 38, 15, 0.34);
+  color: #603b1d;
+  font-family: var(--font-pixel-ui);
+  font-size: clamp(9px, 1cqw, 16px);
+  font-weight: 800;
+  line-height: 1.15;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 249, 220, 0.9);
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+  animation: stage-entrance-pop 260ms cubic-bezier(0.2, 0.85, 0.25, 1.15) both;
+}
+
+.stage-entrance__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: clamp(-7px, -0.5cqw, -4px);
+  left: 50%;
+  width: clamp(8px, 0.8cqw, 12px);
+  aspect-ratio: 1;
+  border-right: clamp(2px, 0.18cqw, 3px) solid #714821;
+  border-bottom: clamp(2px, 0.18cqw, 3px) solid #714821;
+  background: #ebcf9b;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.stage-entrance__cursor {
+  display: inline-block;
+  width: clamp(2px, 0.22cqw, 4px);
+  height: 1em;
+  background: #714821;
+  animation: stage-entrance-caret 640ms steps(1) infinite;
+}
+
+.stage-entrance__flash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--door-x) var(--door-y),
+    rgba(255, 250, 224, 1) 0%,
+    rgba(255, 238, 176, 0.92) 26%,
+    rgba(255, 236, 170, 0) 68%
+  );
+}
+
+.stage-entrance__flash--on {
+  opacity: 1;
+  transition: opacity 180ms ease-in;
+}
+
+@keyframes stage-entrance-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8%);
+  }
+}
+
+@keyframes stage-entrance-pop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes stage-entrance-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-entrance__mascot,
+  .stage-entrance__flash--on {
+    transition: none;
+  }
+
+  .stage-entrance__bob--walk,
+  .stage-entrance__bubble,
+  .stage-entrance__cursor {
+    animation: none;
+  }
+}

@@ -46,6 +46,22 @@
   font-family: 'WorldMap Pretendard', var(--font-sans);
 }
 
+/* 입장 연출 중: 클릭한 문만 남기고 나머지 UI 를 살짝 어둡게(포커스). */
+.world-map-ui--sequence .world-title-wrap,
+.world-map-ui--sequence .world-map-sign,
+.world-map-ui--sequence .stage-door:not(.stage-door--active) {
+  filter: brightness(0.6);
+  opacity: 0.42;
+  transition:
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.world-map-ui--sequence .world-map-mascot {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
 .world-title-wrap {
   position: absolute;
   top: clamp(22px, 3.2cqw, 46px);

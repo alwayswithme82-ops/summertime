@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import type { Puzzle } from '../core'
 import HintMascot from '../components/world-map/HintMascot'
 import StageDoor, { type StageDoorStatus } from '../components/world-map/StageDoor'
+import StageEntrance from '../components/world-map/StageEntrance'
 import LightPath from '../components/world-map/LightPath'
 import SparkleIcon from '../components/world-map/icons/SparkleIcon'
 import { samplePuzzles } from '../data/samplePuzzles'
-import { stages } from '../data/stages'
+import { stages, type StageDefinition } from '../data/stages'
 import './WorldMapPage.css'
 
 interface WorldMapPageProps {
@@ -50,9 +51,22 @@ function rememberSelectedStage(puzzleId: string) {
   }
 }
 
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
+interface ActiveEntrance {
+  stage: StageDefinition
+  puzzle: Puzzle
+}
+
 export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
-  const [openingStageId, setOpeningStageId] = useState<number | null>(null)
-  const navigationTimer = useRef<number | null>(null)
+  const [entrance, setEntrance] = useState<ActiveEntrance | null>(null)
+  const [doorOpen, setDoorOpen] = useState(false)
   const clearedPuzzleIds = readClearedPuzzleIds()
   const savedStageId = readSelectedStageId()
   const defaultStageId = stages.find(
@@ -62,28 +76,24 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
     ? savedStageId
     : defaultStageId
 
-  useEffect(() => {
-    return () => {
-      if (navigationTimer.current !== null) {
-        window.clearTimeout(navigationTimer.current)
-      }
-    }
-  }, [])
-
   function stageStatus(puzzleId: string): StageDoorStatus {
     if (clearedPuzzleIds.includes(puzzleId)) return 'completed'
     if (puzzleId === selectedStageId) return 'current'
     return 'available'
   }
 
-  function selectStage(stageNumber: number, puzzle: Puzzle) {
-    if (openingStageId !== null) return
+  function selectStage(stage: StageDefinition, puzzle: Puzzle) {
+    if (entrance) return
 
     rememberSelectedStage(puzzle.id)
-    setOpeningStageId(stageNumber)
-    navigationTimer.current = window.setTimeout(() => {
+
+    // 모션 최소화 설정이면 연출 없이 즉시 전환.
+    if (prefersReducedMotion()) {
       onSelect(puzzle)
-    }, 850)
+      return
+    }
+
+    setEntrance({ stage, puzzle })
   }
 
   return (
@@ -100,7 +110,7 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
 
         <LightPath />
 
-        <div className="world-map-ui">
+        <div className={`world-map-ui${entrance ? ' world-map-ui--sequence' : ''}`}>
           <header className="world-title-wrap">
             <SparkleIcon className="world-title-sparkle world-title-sparkle--far-left" />
             <SparkleIcon className="world-title-sparkle world-title-sparkle--left" />
@@ -127,8 +137,9 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
                   status={stageStatus(stage.puzzleId)}
                   left={stage.x}
                   top={stage.y}
-                  isOpening={openingStageId === stage.number}
-                  onSelect={() => selectStage(stage.number, puzzle)}
+                  isActive={entrance?.stage.number === stage.number}
+                  isOpening={doorOpen && entrance?.stage.number === stage.number}
+                  onSelect={() => selectStage(stage, puzzle)}
                 />
               )
             })}
@@ -143,6 +154,15 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
             <span>다음 목표를 향해 가자!</span>
             <i aria-hidden="true" />
           </aside>
+
+          {entrance && (
+            <StageEntrance
+              key={entrance.stage.number}
+              stage={entrance.stage}
+              onOpenDoor={() => setDoorOpen(true)}
+              onComplete={() => onSelect(entrance.puzzle)}
+            />
+          )}
         </div>
       </section>
     </main>

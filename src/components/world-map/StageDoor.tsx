@@ -13,6 +13,7 @@ interface StageDoorProps {
   status: StageDoorStatus
   left: number
   top: number
+  isActive: boolean
   isOpening: boolean
   onSelect: () => void
 }
@@ -25,6 +26,7 @@ export default function StageDoor({
   status,
   left,
   top,
+  isActive,
   isOpening,
   onSelect,
 }: StageDoorProps) {
@@ -34,10 +36,10 @@ export default function StageDoor({
   return (
     <button
       type="button"
-      className={`stage-door stage-door--${status}${isOpening ? ' stage-door--opening' : ''}`}
+      className={`stage-door stage-door--${status}${isActive ? ' stage-door--active' : ''}${isOpening ? ' stage-door--opening' : ''}`}
       style={position}
       onClick={onSelect}
-      disabled={isLocked || isOpening}
+      disabled={isLocked || isActive || isOpening}
       aria-label={
         isLocked
           ? `${label} ${difficulty} 잠김`
