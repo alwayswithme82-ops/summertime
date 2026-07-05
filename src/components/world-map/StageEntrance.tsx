@@ -27,7 +27,7 @@ const ENTER_MS = 430
 const FLASH_MS = 180
 
 // 걷기(문 앞으로 이동) 타이밍. 순간이동처럼 보이지 않게 거리에 비례한 시간을 준다.
-const START_X = 50 // 마스코트 시작 위치(지도 하단 중앙) — CSS --start 와 일치
+const START_X = 38 // 마스코트 시작 위치(지도 하단, 튜토리얼 문 옆) — CSS --start 와 일치
 const START_Y = 86
 const NEAR_Y_OFFSET = 12 // 문 앞 정지 위치 = 문 y + 12% — CSS --near 와 일치
 const STAGE_ASPECT = 16 / 9 // 가로 %를 세로 % 와 같은 시각 단위로 환산

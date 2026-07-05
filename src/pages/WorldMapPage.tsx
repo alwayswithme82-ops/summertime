@@ -16,8 +16,8 @@ interface WorldMapPageProps {
   onStartTutorial: () => void
 }
 
-/** 튜토리얼 문의 월드맵 위치(오두막 쪽, 왼쪽 아래). */
-const TUTORIAL_TARGET: EntranceTarget = { number: 0, x: 12, y: 78 }
+/** 튜토리얼 문의 월드맵 위치(하단 중앙, 다리 위) — 첫 화면에서 바로 눈에 띄게. */
+const TUTORIAL_TARGET: EntranceTarget = { number: 0, x: 50, y: 73 }
 const TUTORIAL_LINES = ['차근차근 배워볼까?', '처음이라면 여기부터!', '천천히 알려줄게!']
 
 type Entrance =
@@ -180,7 +180,9 @@ export default function WorldMapPage({ onSelect, onStartTutorial }: WorldMapPage
           </div>
 
           <aside className="world-map-mascot" aria-label="빛방울 요정">
-            <p className="world-map-mascot__speech">문을 열어 볼까요?</p>
+            <p className="world-map-mascot__speech">
+              {tutorialDone ? '문을 열어 볼까요?' : '처음이라면 튜토리얼부터!'}
+            </p>
             <HintMascot className="world-map-mascot__character" />
           </aside>
 

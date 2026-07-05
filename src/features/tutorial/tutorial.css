@@ -141,7 +141,7 @@
 }
 
 .tb-mirror {
-  color: var(--teal-line);
+  color: var(--mirror);
   filter: drop-shadow(1px 1px 0 rgba(11, 89, 82, 0.4));
   animation: tut-pop 240ms ease both;
 }

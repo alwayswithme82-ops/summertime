@@ -173,7 +173,8 @@
 .world-map-mascot {
   position: absolute;
   bottom: clamp(12px, 1.8cqh, 24px);
-  left: 50%;
+  /* 하단 중앙은 튜토리얼 문 자리 — 마스코트는 문 옆에서 안내한다. */
+  left: 38%;
   z-index: 6;
   width: clamp(90px, 10cqw, 150px);
   pointer-events: none;

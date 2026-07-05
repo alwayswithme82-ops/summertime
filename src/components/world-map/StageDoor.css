@@ -322,10 +322,33 @@
 
 /* ---- 튜토리얼 문: 단계 문과 다른 색 + "처음이라면?" 깃발로 눈에 띄게 ---- */
 .stage-door--tutorial {
+  /* 하단 중앙 배치 + 단계 문보다 한 단계 크게 — 시작 지점임을 분명히 */
+  --door-width: clamp(4.4rem, 9.8cqw, 9.2rem);
   --door-frame: #2b6f66;
   --door-top-color: #dff3ee;
   --door-bottom-color: #46a08f;
   z-index: 6;
+}
+
+/* 문 뒤 금빛 후광 — 지도 어디서든 시선이 먼저 닿게 은은히 맥동한다. */
+.stage-door--tutorial::before {
+  content: '';
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  z-index: -2;
+  width: 165%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 240, 168, 0.55) 0%,
+    rgba(255, 220, 96, 0.26) 42%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: tutorial-halo-pulse 2.4s ease-in-out infinite;
 }
 
 .stage-door--tutorial .stage-door__body {
@@ -375,7 +398,7 @@
 
 .tutorial-door__flag {
   position: absolute;
-  bottom: calc(100% - clamp(4px, 0.6cqh, 8px));
+  bottom: calc(100% + clamp(2px, 0.4cqh, 5px));
   left: 50%;
   z-index: 6;
   width: max-content;
@@ -405,6 +428,18 @@
   border-bottom: clamp(2px, 0.16cqw, 3px) solid #234c45;
   background: #ffcf5a;
   transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes tutorial-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
 }
 
 @keyframes tutorial-flag-bob {
@@ -454,6 +489,7 @@
 @media (prefers-reduced-motion: reduce) {
   .stage-door--current .stage-door__body,
   .stage-door--tutorial .stage-door__body,
+  .stage-door--tutorial::before,
   .stage-door--active,
   .tutorial-door__flag,
   .stage-door__sparkle {

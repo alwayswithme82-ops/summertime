@@ -14,9 +14,9 @@
   will-change: left, top, transform, opacity;
 }
 
-/* 시작: 지도 하단 중앙(쉬고 있던 자리) */
+/* 시작: 지도 하단, 튜토리얼 문 옆(쉬고 있던 자리) */
 .stage-entrance__mascot--start {
-  left: 50%;
+  left: 38%;
   top: 86%;
   opacity: 1;
 }

@@ -4,6 +4,7 @@ import { PuzzlePage } from './features/puzzle-player/PuzzlePage'
 import TutorialPage from './features/tutorial/TutorialPage'
 import WorldMapPage from './pages/WorldMapPage'
 import './App.css'
+import './adventure-theme.css'
 
 function App() {
   const [selectedPuzzle, setSelectedPuzzle] = useState<Puzzle | null>(null)

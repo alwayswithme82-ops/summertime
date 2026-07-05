@@ -332,7 +332,7 @@
 .mp-btn svg {
   border-radius: var(--radius-sm);
   padding: 5px;
-  color: var(--teal-line);
+  color: var(--mirror);
   background: var(--panel-hi);
 }
 
@@ -354,7 +354,7 @@
 
 .mp-btn.is-selected svg {
   color: #ffffff;
-  background: var(--teal-line);
+  background: var(--mirror);
   animation: soft-pop 260ms ease both;
 }
 
@@ -874,7 +874,7 @@
 
 .pc-mirror {
   display: block;
-  color: var(--teal-line);
+  color: var(--mirror);
   filter: drop-shadow(1px 1px 0 rgba(11, 89, 82, 0.4));
   animation: soft-pop 240ms ease both;
 }

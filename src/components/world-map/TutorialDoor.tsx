@@ -57,7 +57,6 @@ export default function TutorialDoor({
       aria-label={done ? '튜토리얼 다시 하기 (완료함)' : '튜토리얼 시작하기, 처음이라면 여기부터'}
     >
       <span className="tutorial-door__flag" aria-hidden="true">처음이라면?</span>
-      <span className="stage-door__label">튜토리얼</span>
       <span className="stage-door__ground" aria-hidden="true" />
 
       <span className="stage-door__body" aria-hidden="true">
@@ -71,7 +70,7 @@ export default function TutorialDoor({
       </span>
 
       <span className="stage-door__info">
-        <span>{done ? '완료함' : '배우기'}</span>
+        <span>{done ? '튜토리얼 완료!' : '튜토리얼'}</span>
       </span>
     </button>
   )
