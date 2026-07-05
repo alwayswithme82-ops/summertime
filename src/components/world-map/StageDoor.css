@@ -320,6 +320,103 @@
   transform: translate(-50%, -50%) scale(0.65);
 }
 
+/* ---- 튜토리얼 문: 단계 문과 다른 색 + "처음이라면?" 깃발로 눈에 띄게 ---- */
+.stage-door--tutorial {
+  --door-frame: #2b6f66;
+  --door-top-color: #dff3ee;
+  --door-bottom-color: #46a08f;
+  z-index: 6;
+}
+
+.stage-door--tutorial .stage-door__body {
+  background: linear-gradient(180deg, #e6f6f1, #43a794);
+  animation: stage-door-float 2.6s ease-in-out infinite;
+  box-shadow:
+    inset 0 0.08em 0 rgba(255, 255, 255, 0.5),
+    0.1em 0.14em 0 #234c45,
+    0 0 1em 0.16em rgba(74, 200, 176, 0.6);
+}
+
+.stage-door--tutorial .stage-door__label {
+  color: #1f4d46;
+  text-shadow:
+    -1px 0 #e6f6f1,
+    1px 0 #e6f6f1,
+    0 1px #e6f6f1;
+}
+
+.stage-door--tutorial .stage-door__knob {
+  background: #d9f2ea;
+  border-color: #234c45;
+}
+
+.stage-door--tutorial .stage-door__info {
+  border-color: #235049;
+  background: linear-gradient(#e4f6f1, #a9dccf);
+  color: #1f4d46;
+}
+
+.tutorial-door__glyph {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  z-index: 4;
+  width: 46%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1px 0 rgba(255, 246, 226, 0.7));
+  transition: opacity 220ms ease, transform 500ms ease;
+}
+
+.stage-door--tutorial.stage-door--opening .tutorial-door__glyph {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.65);
+}
+
+.tutorial-door__flag {
+  position: absolute;
+  bottom: calc(100% - clamp(4px, 0.6cqh, 8px));
+  left: 50%;
+  z-index: 6;
+  width: max-content;
+  padding: clamp(2px, 0.35cqw, 5px) clamp(5px, 0.7cqw, 10px);
+  border: clamp(2px, 0.16cqw, 3px) solid #234c45;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff2c2, #ffcf5a);
+  box-shadow: 0.1em 0.14em 0 rgba(40, 60, 40, 0.32);
+  color: #5b3a1c;
+  font-family: var(--font-pixel-ui);
+  font-size: clamp(0.42rem, 0.92cqw, 0.85rem);
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  animation: tutorial-flag-bob 1.8s ease-in-out infinite;
+}
+
+.tutorial-door__flag::after {
+  content: '';
+  position: absolute;
+  bottom: clamp(-6px, -0.45cqw, -3px);
+  left: 50%;
+  width: clamp(7px, 0.7cqw, 11px);
+  aspect-ratio: 1;
+  border-right: clamp(2px, 0.16cqw, 3px) solid #234c45;
+  border-bottom: clamp(2px, 0.16cqw, 3px) solid #234c45;
+  background: #ffcf5a;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes tutorial-flag-bob {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-3px);
+  }
+}
+
 @keyframes stage-door-pop {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -356,7 +453,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .stage-door--current .stage-door__body,
+  .stage-door--tutorial .stage-door__body,
   .stage-door--active,
+  .tutorial-door__flag,
   .stage-door__sparkle {
     animation: none;
   }

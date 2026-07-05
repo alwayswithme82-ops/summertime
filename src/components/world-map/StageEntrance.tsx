@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import type { StageDefinition } from '../../data/stages'
 import HintMascot from './HintMascot'
 import './StageEntrance.css'
 
 type Phase = 'travel' | 'type' | 'pause' | 'open' | 'enter' | 'flash'
 
-// 대사 후보. {N} 은 단계 번호로 치환된다.
+/** 연출이 향할 대상(문)의 위치와 번호. StageDefinition 도 구조적으로 호환된다. */
+export interface EntranceTarget {
+  number: number
+  x: number
+  y: number
+}
+
+// 기본 대사 후보. {N} 은 단계 번호로 치환된다.
 const LINES = [
   '좋아, {N}단계로 가보자!',
   '이번엔 어떤 문제일까?',
@@ -30,9 +36,9 @@ const TRAVEL_MIN_MS = 800 // 가까운 문도 순식간에 도착하지 않게
 const TRAVEL_MAX_MS = 1200
 
 // 시작점에서 문 앞까지의 시각적 거리에 비례한 이동 시간(걷는 속도 일정).
-function travelDuration(stage: StageDefinition): number {
-  const dx = (stage.x - START_X) * STAGE_ASPECT
-  const dy = stage.y + NEAR_Y_OFFSET - START_Y
+function travelDuration(target: EntranceTarget): number {
+  const dx = (target.x - START_X) * STAGE_ASPECT
+  const dy = target.y + NEAR_Y_OFFSET - START_Y
   const distance = Math.hypot(dx, dy)
   return Math.round(
     Math.min(TRAVEL_MAX_MS, Math.max(TRAVEL_MIN_MS, distance * WALK_MS_PER_UNIT)),
@@ -40,16 +46,19 @@ function travelDuration(stage: StageDefinition): number {
 }
 
 interface StageEntranceProps {
-  stage: StageDefinition
+  stage: EntranceTarget
+  /** 말풍선 대사 후보를 직접 지정(생략 시 단계용 기본 대사 사용). */
+  lines?: string[]
   onOpenDoor: () => void
   onComplete: () => void
 }
 
-export default function StageEntrance({ stage, onOpenDoor, onComplete }: StageEntranceProps) {
+export default function StageEntrance({ stage, lines, onOpenDoor, onComplete }: StageEntranceProps) {
   const line = useMemo(() => {
-    const pick = LINES[Math.floor(Math.random() * LINES.length)]
+    const pool = lines && lines.length > 0 ? lines : LINES
+    const pick = pool[Math.floor(Math.random() * pool.length)]
     return pick.replace('{N}', String(stage.number))
-  }, [stage.number])
+  }, [stage.number, lines])
 
   const travelMs = useMemo(() => travelDuration(stage), [stage])
 

@@ -1,0 +1,498 @@
+/* ================================================================== *
+ * 튜토리얼 화면 — 게임 화면과 같은 밝은 민트 톤. 마스코트가 안내한다.
+ * ================================================================== */
+.tut-page {
+  width: min(760px, calc(100% - 2rem));
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* -------------------------------- 상단 -------------------------------- */
+.tut-top {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.9rem;
+  border: 2px solid var(--teal-line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--pixel);
+}
+
+.tut-badge {
+  border: 2px solid var(--teal-deep);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.55rem;
+  color: #fff;
+  background: var(--teal-line);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.tut-heading {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-pixel);
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.tut-skip {
+  margin-left: auto;
+  min-height: 36px;
+  padding: 0.35rem 0.8rem;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--text-soft);
+  background: var(--panel-hi);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 150ms ease;
+}
+
+.tut-skip:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--pixel-sm);
+  background: var(--panel);
+}
+
+/* -------------------------------- 무대 -------------------------------- */
+.tut-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.tut-board-hold {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  border: 2px solid var(--teal-line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 100% 0, rgba(255, 106, 61, 0.06), transparent 12rem),
+    var(--panel-hi);
+  box-shadow: var(--shadow-float);
+}
+
+/* ------------------------------ 보드 ------------------------------ */
+.tb-frame {
+  position: relative;
+  isolation: isolate;
+  user-select: none;
+}
+
+.tb-grid {
+  display: grid;
+  border: 3px solid var(--teal-line);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  background: var(--teal-line);
+  box-shadow: 3px 4px 0 rgba(15, 118, 110, 0.22);
+  box-sizing: content-box;
+}
+
+.tb-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 2px;
+  padding: 0;
+  color: var(--text);
+  background: var(--cell);
+  cursor: default;
+}
+
+.tb-cell.is-clickable {
+  cursor: pointer;
+}
+
+.tb-cell.is-star {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 196, 47, 0.28), transparent 62%),
+    #fff8ee;
+}
+
+.tb-cell.is-placeable {
+  background: var(--teal-soft);
+  box-shadow: inset 0 0 0 2px rgba(15, 118, 110, 0.4);
+}
+
+.tb-cell.is-clickable:hover {
+  background: var(--teal-soft);
+  box-shadow: inset 0 0 0 2px rgba(15, 118, 110, 0.7);
+}
+
+.tb-placeable-mark {
+  width: 40%;
+  height: 40%;
+  border: 2px dashed rgba(15, 118, 110, 0.7);
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+
+.tb-mirror {
+  color: var(--teal-line);
+  filter: drop-shadow(1px 1px 0 rgba(11, 89, 82, 0.4));
+  animation: tut-pop 240ms ease both;
+}
+
+/* 입구/출구 마커 */
+.tb-mark {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--beam);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: filter 200ms ease, opacity 200ms ease;
+}
+
+.tb-mark-label {
+  border: 2px solid var(--teal-deep);
+  border-radius: var(--radius-sm);
+  padding: 1px 7px;
+  color: #fff;
+  background: var(--teal-line);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.66rem;
+  line-height: 1.1;
+}
+
+.tb-mark--exit .tb-mark-label {
+  border-color: #c74b23;
+  background: var(--beam);
+}
+
+.tb-mark--glow {
+  z-index: 6;
+  filter: drop-shadow(0 0 8px rgba(255, 214, 90, 0.95)) brightness(1.15);
+}
+
+/* 스포트라이트(포커스) — 지금 짚는 대상만 밝게, 나머지는 어둡게 */
+.tb-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(18, 45, 42, 0.5);
+  transition: background 260ms ease;
+}
+
+.tb-dim--spot {
+  background: radial-gradient(
+    circle var(--spot-r, 0px) at var(--spot-x, 50%) var(--spot-y, 50%),
+    transparent 0,
+    transparent var(--spot-r, 0px),
+    rgba(18, 45, 42, 0.55) calc(var(--spot-r, 0px) + 30px)
+  );
+}
+
+/* 강조 링 */
+.tb-ring {
+  position: absolute;
+  z-index: 6;
+  width: 82px;
+  height: 82px;
+  border: 3px solid var(--star);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 3px rgba(255, 196, 47, 0.25),
+    0 0 16px rgba(255, 196, 47, 0.65);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: tut-ring-pulse 1.15s ease-in-out infinite;
+}
+
+.tb-ring--still {
+  animation: none;
+}
+
+/* 빛줄기 */
+.tb-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.tb-beam-glow {
+  fill: none;
+  stroke: rgba(255, 106, 61, 0.4);
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: blur(3px);
+}
+
+.tb-beam-core {
+  fill: none;
+  stroke: var(--beam);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tb-beam-spark {
+  fill: none;
+  stroke: #ffd9c7;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 9 16;
+  animation: tut-beam-flow 0.8s linear infinite;
+}
+
+/* 손가락 포인터 */
+.tb-finger-wrap {
+  position: absolute;
+  z-index: 8;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  animation: tut-finger-bob 900ms ease-in-out infinite;
+  filter: drop-shadow(0 3px 2px rgba(70, 43, 18, 0.35));
+}
+
+.tb-finger-wrap--still {
+  animation: none;
+}
+
+.tb-finger {
+  display: block;
+  transform: rotate(-12deg);
+}
+
+/* ------------------------------ 안내(마스코트) ------------------------------ */
+.tut-guide {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  padding: 0 0.4rem;
+}
+
+.tut-mascot {
+  flex: none;
+  width: 92px;
+  filter: drop-shadow(0 4px 2px rgba(70, 43, 18, 0.3));
+  animation: tut-float 2.8s ease-in-out infinite;
+}
+
+.tut-mascot--still {
+  animation: none;
+}
+
+.tut-mascot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tut-speech {
+  position: relative;
+  flex: 1;
+  min-height: 3.2rem;
+  margin-bottom: 0.6rem;
+  padding: 0.7rem 0.95rem;
+  border: 3px solid #714821;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff5d6, #ecd3a0);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35),
+    0.14em 0.2em 0 rgba(63, 38, 15, 0.32);
+  color: #5b3a1c;
+  font-family: var(--font-pixel-ui);
+  font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.tut-speech::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  bottom: 14px;
+  width: 16px;
+  height: 16px;
+  border-left: 3px solid #714821;
+  border-bottom: 3px solid #714821;
+  background: #f2d9a6;
+  transform: rotate(45deg);
+}
+
+.tut-caret {
+  display: inline-block;
+  width: 3px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: #714821;
+  animation: tut-caret-blink 640ms steps(1) infinite;
+}
+
+/* ------------------------------ 하단 조작 ------------------------------ */
+.tut-dock {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid var(--teal-line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--pixel);
+}
+
+.tut-tool {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  transition: opacity 200ms ease;
+}
+
+.tut-tool[aria-hidden='false'] {
+  opacity: 1;
+}
+
+.tut-tool-chip {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--teal-line);
+  background: var(--panel-hi);
+  box-shadow: var(--pixel-sm);
+}
+
+.tut-tool-chip.is-active {
+  border-color: var(--teal-line);
+  background: var(--teal-soft);
+  animation: tut-pop 260ms ease both;
+}
+
+.tut-tool-label {
+  color: var(--text-soft);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.8rem;
+}
+
+.tut-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.tut-run {
+  min-height: 50px;
+  padding-inline: 1.5rem;
+  font-size: 1.02rem;
+}
+
+.tut-running-hint {
+  color: var(--muted);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.86rem;
+}
+
+/* '실행하기' 강조 펄스 */
+.is-guide-pulse {
+  animation: tut-run-pulse 1.1s ease-in-out infinite;
+}
+
+/* ------------------------------ 키프레임 ------------------------------ */
+@keyframes tut-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes tut-ring-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes tut-beam-flow {
+  to {
+    stroke-dashoffset: -25;
+  }
+}
+
+@keyframes tut-finger-bob {
+  0%,
+  100% {
+    transform: translate(-50%, -100%);
+  }
+  50% {
+    transform: translate(-50%, calc(-100% - 7px));
+  }
+}
+
+@keyframes tut-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1deg);
+  }
+}
+
+@keyframes tut-caret-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes tut-run-pulse {
+  0%,
+  100% {
+    box-shadow: 2px 2px 0 var(--teal-deep), 0 0 0 0 rgba(255, 196, 47, 0.6);
+  }
+  50% {
+    box-shadow: 2px 2px 0 var(--teal-deep), 0 0 0 8px rgba(255, 196, 47, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tut-mascot,
+  .tb-ring,
+  .tb-beam-spark,
+  .tb-finger-wrap,
+  .tut-tool-chip.is-active,
+  .is-guide-pulse,
+  .tb-mirror {
+    animation: none;
+  }
+}

@@ -2,16 +2,27 @@ import { useState } from 'react'
 import type { Puzzle } from '../core'
 import HintMascot from '../components/world-map/HintMascot'
 import StageDoor, { type StageDoorStatus } from '../components/world-map/StageDoor'
-import StageEntrance from '../components/world-map/StageEntrance'
+import StageEntrance, { type EntranceTarget } from '../components/world-map/StageEntrance'
+import TutorialDoor from '../components/world-map/TutorialDoor'
 import LightPath from '../components/world-map/LightPath'
 import SparkleIcon from '../components/world-map/icons/SparkleIcon'
 import { samplePuzzles } from '../data/samplePuzzles'
 import { stages, type StageDefinition } from '../data/stages'
+import { readTutorialDone } from '../features/tutorial/tutorialProgress'
 import './WorldMapPage.css'
 
 interface WorldMapPageProps {
   onSelect: (puzzle: Puzzle) => void
+  onStartTutorial: () => void
 }
+
+/** 튜토리얼 문의 월드맵 위치(오두막 쪽, 왼쪽 아래). */
+const TUTORIAL_TARGET: EntranceTarget = { number: 0, x: 12, y: 78 }
+const TUTORIAL_LINES = ['차근차근 배워볼까?', '처음이라면 여기부터!', '천천히 알려줄게!']
+
+type Entrance =
+  | { kind: 'puzzle'; target: EntranceTarget; puzzle: Puzzle }
+  | { kind: 'tutorial'; target: EntranceTarget }
 
 const CLEARED_STORAGE_KEY = 'cleared_puzzle_ids'
 const SELECTED_STAGE_STORAGE_KEY = 'selected_world_map_stage_id'
@@ -59,15 +70,11 @@ function prefersReducedMotion(): boolean {
   )
 }
 
-interface ActiveEntrance {
-  stage: StageDefinition
-  puzzle: Puzzle
-}
-
-export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
-  const [entrance, setEntrance] = useState<ActiveEntrance | null>(null)
+export default function WorldMapPage({ onSelect, onStartTutorial }: WorldMapPageProps) {
+  const [entrance, setEntrance] = useState<Entrance | null>(null)
   const [doorOpen, setDoorOpen] = useState(false)
   const clearedPuzzleIds = readClearedPuzzleIds()
+  const tutorialDone = readTutorialDone()
   const savedStageId = readSelectedStageId()
   const defaultStageId = stages.find(
     (stage) => !clearedPuzzleIds.includes(stage.puzzleId),
@@ -93,7 +100,23 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
       return
     }
 
-    setEntrance({ stage, puzzle })
+    setEntrance({
+      kind: 'puzzle',
+      target: { number: stage.number, x: stage.x, y: stage.y },
+      puzzle,
+    })
+  }
+
+  function selectTutorial() {
+    if (entrance) return
+
+    // 모션 최소화 설정이면 연출 없이 즉시 튜토리얼로.
+    if (prefersReducedMotion()) {
+      onStartTutorial()
+      return
+    }
+
+    setEntrance({ kind: 'tutorial', target: TUTORIAL_TARGET })
   }
 
   return (
@@ -137,12 +160,23 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
                   status={stageStatus(stage.puzzleId)}
                   left={stage.x}
                   top={stage.y}
-                  isActive={entrance?.stage.number === stage.number}
-                  isOpening={doorOpen && entrance?.stage.number === stage.number}
+                  isActive={entrance?.kind === 'puzzle' && entrance.target.number === stage.number}
+                  isOpening={
+                    doorOpen && entrance?.kind === 'puzzle' && entrance.target.number === stage.number
+                  }
                   onSelect={() => selectStage(stage, puzzle)}
                 />
               )
             })}
+
+            <TutorialDoor
+              left={TUTORIAL_TARGET.x}
+              top={TUTORIAL_TARGET.y}
+              done={tutorialDone}
+              isActive={entrance?.kind === 'tutorial'}
+              isOpening={doorOpen && entrance?.kind === 'tutorial'}
+              onSelect={selectTutorial}
+            />
           </div>
 
           <aside className="world-map-mascot" aria-label="빛방울 요정">
@@ -157,10 +191,13 @@ export default function WorldMapPage({ onSelect }: WorldMapPageProps) {
 
           {entrance && (
             <StageEntrance
-              key={entrance.stage.number}
-              stage={entrance.stage}
+              key={entrance.kind === 'tutorial' ? 'tutorial' : entrance.target.number}
+              stage={entrance.target}
+              lines={entrance.kind === 'tutorial' ? TUTORIAL_LINES : undefined}
               onOpenDoor={() => setDoorOpen(true)}
-              onComplete={() => onSelect(entrance.puzzle)}
+              onComplete={() =>
+                entrance.kind === 'tutorial' ? onStartTutorial() : onSelect(entrance.puzzle)
+              }
             />
           )}
         </div>
