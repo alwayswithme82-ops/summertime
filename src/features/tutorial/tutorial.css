@@ -116,6 +116,11 @@
   cursor: pointer;
 }
 
+/* 비활성 칸이 클릭을 삼키지 않게 — 보드를 탭해도 대사가 넘어가야 한다 */
+.tb-cell:disabled {
+  pointer-events: none;
+}
+
 .tb-cell.is-star {
   background:
     radial-gradient(circle at 50% 48%, rgba(255, 196, 47, 0.28), transparent 62%),
@@ -341,6 +346,30 @@
   vertical-align: text-bottom;
   background: #714821;
   animation: tut-caret-blink 640ms steps(1) infinite;
+}
+
+/* 대사를 다 보여준 뒤 "눌러서 계속" 안내 — 말풍선 오른쪽 아래에서 깜빡인다 */
+.tut-advance {
+  display: block;
+  margin-top: 0.4rem;
+  text-align: right;
+  color: rgba(91, 58, 28, 0.75);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  animation: tut-advance-blink 1.15s ease-in-out infinite;
+  user-select: none;
+}
+
+@keyframes tut-advance-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* 대사 진행 입력(스페이스/탭)을 받을 수 있는 동안엔 화면 전체가 눌리는 느낌을 준다 */
+.tut-page.is-awaiting-input {
+  cursor: pointer;
 }
 
 /* ------------------------------ 하단 조작 ------------------------------ */

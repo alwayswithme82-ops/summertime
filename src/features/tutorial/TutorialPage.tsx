@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CellKey, PlacedMirrors } from '../../core'
 import { simulateLight } from '../../core'
 import HintMascot from '../../components/world-map/HintMascot'
@@ -49,11 +49,15 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
   const [guide, setGuide] = useState(GREET)
   const [spot, setSpot] = useState<CellKey | null>(null)
   const [glow, setGlow] = useState<Glow>(null)
-  const [introReady, setIntroReady] = useState(false)
   const [beamCount, setBeamCount] = useState(0)
   const [beamExtend, setBeamExtend] = useState(false)
+  // 대사를 다 보여준 뒤 사용자 입력(스페이스/탭)을 기다리는 중인지.
+  const [waiting, setWaiting] = useState(false)
 
-  const typed = useTypewriter(guide, reduceMotion)
+  const { text: typed, done: typingDone, skip: skipTyping } = useTypewriter(guide, reduceMotion)
+
+  // 입력이 오면 진행을 재개하는 콜백. 대기 중이 아니면 null.
+  const advanceRef = useRef<(() => void) | null>(null)
 
   const solvedSim = useMemo(() => simulateLight(tutorialPuzzle, placed), [placed])
   const solvedSimRef = useRef(solvedSim)
@@ -65,43 +69,50 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
     timersRef.current = []
   }
 
-  const typeMs = (msg: string) => (reduceMotion ? 0 : msg.length * 45)
-  const hold = (msg: string) => typeMs(msg) + (reduceMotion ? 450 : 950)
   const STEP_MS = reduceMotion ? 150 : 340
 
   // 스텝 진행: 각 phase 진입 시 안내/강조/빛 애니메이션을 구동한다.
+  // 대사는 자동으로 넘어가지 않고 waitAdvance()로 사용자 입력을 기다린다.
   useEffect(() => {
     let alive = true
     const sleep = (ms: number) =>
       new Promise<void>((resolve) => {
         timersRef.current.push(window.setTimeout(resolve, ms))
       })
+    const waitAdvance = () =>
+      new Promise<void>((resolve) => {
+        setWaiting(true)
+        advanceRef.current = () => {
+          advanceRef.current = null
+          setWaiting(false)
+          resolve()
+        }
+      })
 
     async function runIntro() {
       setSpot(null)
       setGlow(null)
-      setIntroReady(false)
       setGuide(GREET)
-      await sleep(hold(GREET))
+      await waitAdvance()
       if (!alive) return
       setSpot(ENTRY_CELL)
       setGlow('entry')
       setGuide(CAP_ENTRY)
-      await sleep(hold(CAP_ENTRY))
+      await waitAdvance()
       if (!alive) return
       setSpot(STAR_CELL)
       setGlow(null)
       setGuide(CAP_STAR)
-      await sleep(hold(CAP_STAR))
+      await waitAdvance()
       if (!alive) return
       setSpot(EXIT_CELL)
       setGlow('exit')
       setGuide(CAP_EXIT)
-      await sleep(hold(CAP_EXIT))
+      await waitAdvance()
       if (!alive) return
       setSpot(null)
       setGlow(null)
-      setIntroReady(true)
+      setPhase('place')
     }
 
     async function runRunning() {
@@ -118,14 +129,14 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
         if (!alive) return
         if (event === 'REFLECT') {
           setGuide(REFLECT_MSG)
-          await sleep(hold(REFLECT_MSG))
+          await waitAdvance()
         } else if (event === 'STAR') {
           setGuide(STAR_MSG)
-          await sleep(hold(STAR_MSG))
+          await waitAdvance()
         } else if (event === 'EXIT') {
           setBeamExtend(true)
           setGuide(EXIT_MSG)
-          await sleep(hold(EXIT_MSG))
+          await waitAdvance()
         }
         if (!alive) return
       }
@@ -157,9 +168,43 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
     return () => {
       alive = false
       clearTimers()
+      advanceRef.current = null
+      setWaiting(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase])
+
+  /**
+   * 스페이스/클릭(탭) 한 번 = 타이핑 중이면 즉시 완성, 다 보였으면 다음 대사로.
+   * 행동 스텝(place/ready)에서는 대기 콜백이 없으므로 타이핑 완성만 되고 넘어가지 않는다.
+   */
+  const handleAdvance = useCallback(() => {
+    if (!typingDone) {
+      skipTyping()
+      return
+    }
+    advanceRef.current?.()
+  }, [typingDone, skipTyping])
+
+  // 스페이스는 포커스 위치와 상관없이 동작한다(창 단위 리스너).
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.code !== 'Space' || event.repeat) return
+      // 넘길 것이 없으면(행동 스텝 등) 스페이스의 기본 동작(버튼 활성화)을 막지 않는다.
+      if (typingDone && !advanceRef.current) return
+      event.preventDefault()
+      handleAdvance()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [handleAdvance, typingDone])
+
+  // 화면 아무 곳이나 클릭/탭해도 넘어간다. 버튼(건너뛰기·실행하기·거울 칸)은 제 역할 유지.
+  function handlePageClick(event: React.MouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement
+    if (target.closest('button')) return
+    handleAdvance()
+  }
 
   function handleCellClick(cell: CellKey) {
     if (phase !== 'place') return
@@ -194,10 +239,13 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
         }
       : null
 
-  const typingDone = typed.length >= guide.length
+  const showAdvanceHint = waiting && typingDone
 
   return (
-    <div className="tut-page">
+    <div
+      className={`tut-page${showAdvanceHint || !typingDone ? ' is-awaiting-input' : ''}`}
+      onClick={handlePageClick}
+    >
       <header className="tut-top">
         <span className="tut-badge">튜토리얼</span>
         <h1 className="tut-heading">빛요정과 함께 배우기</h1>
@@ -233,6 +281,11 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
         <div className="tut-speech" role="status" aria-live="polite">
           <span className="tut-speech-text">{typed}</span>
           {!typingDone && <span className="tut-caret" aria-hidden="true" />}
+          {showAdvanceHint && (
+            <span className="tut-advance">
+              <span aria-hidden="true">▶ </span>스페이스 / 탭으로 계속
+            </span>
+          )}
         </div>
       </div>
 
@@ -245,11 +298,6 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
         </div>
 
         <div className="tut-actions">
-          {phase === 'intro' && introReady && (
-            <button type="button" className="btn btn-primary" onClick={() => setPhase('place')}>
-              다음
-            </button>
-          )}
           {(phase === 'ready' || phase === 'place') && (
             <button
               type="button"
@@ -261,7 +309,7 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
               실행하기
             </button>
           )}
-          {phase === 'running' && (
+          {phase === 'running' && !waiting && (
             <span className="tut-running-hint">빛이 나아가는 중…</span>
           )}
           {phase === 'done' && (
