@@ -3,6 +3,7 @@ import type { CellKey, PlacedMirrors } from '../../core'
 import { simulateLight } from '../../core'
 import HintMascot from '../../components/world-map/HintMascot'
 import { MirrorIcon } from '../../components/MirrorIcon'
+import { playPlace, playReflect, playRunStart, playStar, playSuccess } from '../../audio/sfx'
 import { tutorialPuzzle, TUTORIAL_TARGET_CELL, TUTORIAL_TARGET_MIRROR } from '../../data/tutorialPuzzle'
 import { TutorialBoard } from './TutorialBoard'
 import { useTypewriter } from './useTypewriter'
@@ -128,13 +129,16 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
         await sleep(STEP_MS)
         if (!alive) return
         if (event === 'REFLECT') {
+          playReflect()
           setGuide(REFLECT_MSG)
           await waitAdvance()
         } else if (event === 'STAR') {
+          playStar()
           setGuide(STAR_MSG)
           await waitAdvance()
         } else if (event === 'EXIT') {
           setBeamExtend(true)
+          playSuccess()
           setGuide(EXIT_MSG)
           await waitAdvance()
         }
@@ -209,12 +213,14 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
   function handleCellClick(cell: CellKey) {
     if (phase !== 'place') return
     if (cell !== TUTORIAL_TARGET_CELL) return
+    playPlace()
     setPlaced({ [TUTORIAL_TARGET_CELL]: TUTORIAL_TARGET_MIRROR })
     setPhase('ready')
   }
 
   function handleRun() {
     if (phase !== 'ready') return
+    playRunStart()
     setPhase('running')
   }
 
@@ -314,7 +320,7 @@ export default function TutorialPage({ onExit }: TutorialPageProps) {
           )}
           {phase === 'done' && (
             <button type="button" className="btn btn-primary tut-run" onClick={onExit}>
-              월드맵으로
+              시작화면으로
             </button>
           )}
         </div>

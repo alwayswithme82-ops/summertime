@@ -1,9 +1,6 @@
-import type { Score } from '../../core'
-
 interface SuccessModalProps {
   /** 이 문제에서 지나야 하는(=지난) 별 개수. */
   starCount: number
-  score: Score | null
   /** 다음 문제로. 마지막 문제면 넘기지 않는다(버튼 숨김). */
   onNext?: () => void
   onWorldMap?: () => void
@@ -39,7 +36,7 @@ function FireworkBurst({ x, y, delay }: { x: string; y: string; delay: number })
 }
 
 /** 성공 축하 모달. 실패는 배너(ResultPanel)로, 성공만 이 모달로 축하한다. */
-export function SuccessModal({ starCount, score, onNext, onWorldMap }: SuccessModalProps) {
+export function SuccessModal({ starCount, onNext, onWorldMap }: SuccessModalProps) {
   return (
     <div className="success-backdrop" role="presentation">
       <div
@@ -70,7 +67,6 @@ export function SuccessModal({ starCount, score, onNext, onWorldMap }: SuccessMo
         </div>
 
         <p className="sm-msg">빛이 별을 모두 지나 출구로 나갔어요!</p>
-        {score && <p className="sm-score">점수 {score.total}점</p>}
 
         <div className="sm-actions">
           {onNext && (
@@ -79,7 +75,7 @@ export function SuccessModal({ starCount, score, onNext, onWorldMap }: SuccessMo
             </button>
           )}
           <button type="button" className="btn btn-ghost" onClick={onWorldMap}>
-            월드맵으로
+            시작화면으로
           </button>
         </div>
       </div>

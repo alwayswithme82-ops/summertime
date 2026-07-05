@@ -19,8 +19,10 @@ interface PuzzleBoardProps {
   simulation: SimulationResult | null
   /** 실행 결과 성공/실패 — 빛 색(노랑/빨강)을 정한다. */
   resultStatus: 'success' | 'fail' | null
-  /** 거울 선택 직후 빈 칸들을 잠깐 반짝여 "여기 놓을 수 있어"를 알려준다. */
+  /** 도구 선택 직후 대상 칸들을 잠깐 반짝여 "여기 누르면 돼"를 알려준다. */
   placeHint: boolean
+  /** 반짝일 대상: 거울 도구면 빈 칸, 지우개면 거울 있는 칸. */
+  hintMode: 'place' | 'erase'
   onCellClick: (cellKey: string) => void
 }
 
@@ -154,6 +156,7 @@ export function PuzzleBoard({
   simulation,
   resultStatus,
   placeHint,
+  hintMode,
   onCellClick,
 }: PuzzleBoardProps) {
   const { rows, cols } = puzzle
@@ -200,6 +203,7 @@ export function PuzzleBoard({
                   isExit={cellKey === exitCell}
                   isPlaceable={isPlaceable}
                   showPlaceHint={placeHint}
+                  hintMode={hintMode}
                   onClick={() => onCellClick(cellKey)}
                 />
               )

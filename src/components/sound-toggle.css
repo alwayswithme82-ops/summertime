@@ -1,0 +1,33 @@
+.sound-toggle {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--teal-line);
+  border-radius: 50%;
+  padding: 0;
+  color: var(--teal-line);
+  background: var(--panel);
+  box-shadow: var(--pixel);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.sound-toggle:hover {
+  transform: translate(-1px, -1px);
+}
+
+.sound-toggle:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.sound-toggle[aria-pressed='false'] {
+  opacity: 0.72;
+}

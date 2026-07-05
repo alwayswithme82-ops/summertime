@@ -328,19 +328,12 @@
     background 150ms ease;
 }
 
-.mp-diagram {
-  width: 46px;
-  height: 46px;
+.mp-icon {
+  display: block;
+  padding: 3px;
   border-radius: var(--radius-sm);
+  color: var(--mirror);
   background: var(--panel-hi);
-}
-
-.mp-diagram .mp-mirror-line {
-  stroke: var(--mirror);
-}
-
-.mp-diagram .mp-beam {
-  stroke: #f2a300;
 }
 
 .mp-btn:hover {
@@ -359,17 +352,45 @@
   background: var(--teal-soft);
 }
 
-.mp-btn.is-selected .mp-diagram {
-  background: var(--mirror);
+.mp-btn.is-selected .mp-icon {
+  background: linear-gradient(var(--teal-soft), var(--teal-soft)), var(--panel-hi);
+  box-shadow: inset 0 0 0 2px rgba(255, 196, 47, 0.8);
   animation: soft-pop 260ms ease both;
 }
 
-.mp-btn.is-selected .mp-mirror-line {
-  stroke: #ffffff;
+/* 지우개 버튼 — 거울과 헷갈리지 않게 코랄 색 + 이름표 */
+.mp-btn--erase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  color: #d9573f;
 }
 
-.mp-btn.is-selected .mp-beam {
-  stroke: var(--star);
+.mp-btn--erase .mp-icon {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  color: #d9573f;
+}
+
+.mp-btn-caption {
+  color: inherit;
+  font-family: var(--font-pixel-ui);
+  font-size: 0.56rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.mp-btn--erase:hover {
+  border-color: #d9573f;
+  box-shadow: 3px 3px 0 rgba(217, 87, 63, 0.3);
+}
+
+.mp-btn--erase.is-selected {
+  border-color: #d9573f;
+  background: rgba(255, 106, 61, 0.14);
 }
 
 /* ------------------------------ 버튼 ------------------------------ */
@@ -1091,19 +1112,6 @@
   font-size: 0.86rem;
   font-weight: 620;
   word-break: keep-all;
-}
-
-.sm-score {
-  width: fit-content;
-  margin: 0.6rem auto 0;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 0.24rem 0.7rem;
-  color: var(--text);
-  background: var(--panel-hi);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.78rem;
-  font-weight: 400;
 }
 
 .sm-actions {

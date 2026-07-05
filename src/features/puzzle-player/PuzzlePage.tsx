@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { MirrorType, PlacedMirrors, Puzzle, ValidationResult } from '../../core'
-import { cellKeyToPosition, scoreSolution, validateSolution } from '../../core'
+import { cellKeyToPosition, validateSolution } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
-import { MirrorPalette } from './MirrorPalette'
+import { MirrorPalette, type PaletteTool } from './MirrorPalette'
 import { PuzzleBoard } from './PuzzleBoard'
-import { beamDurationMs } from './PathOverlay'
+import { playErase, playFail, playPlace, playReflect, playRunStart, playStar, playSuccess } from '../../audio/sfx'
+import { CELL_MS, beamDurationMs } from './PathOverlay'
 import { ResultPanel } from './ResultPanel'
 import { RulePanel } from './RulePanel'
 import { SuccessModal } from './SuccessModal'
@@ -69,7 +70,7 @@ interface PuzzlePageProps {
 
 export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: PuzzlePageProps = {}) {
   const [placedMirrors, setPlacedMirrors] = useState<PlacedMirrors>({})
-  const [selectedMirror, setSelectedMirror] = useState<MirrorType>('/')
+  const [selectedTool, setSelectedTool] = useState<PaletteTool>('/')
   const [result, setResult] = useState<ValidationResult | null>(null)
   // 빛 애니메이션이 끝난 뒤에야 성공 모달/실패 배너를 보여준다.
   const [revealResult, setRevealResult] = useState(false)
@@ -91,10 +92,11 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
       return
     }
     const cells = result.simulation.path.length + (result.simulation.exited ? 1 : 0)
-    const timer = window.setTimeout(
-      () => setRevealResult(true),
-      beamDurationMs(cells) + 400,
-    )
+    const timer = window.setTimeout(() => {
+      setRevealResult(true)
+      if (result.success) playSuccess()
+      else playFail()
+    }, beamDurationMs(cells) + 400)
     return () => window.clearTimeout(timer)
   }, [result])
 
@@ -103,11 +105,6 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
     writeHideIntro(hide)
   }
 
-  const score = useMemo(
-    () => (result ? scoreSolution(puzzle, result, placedMirrors) : null),
-    [result, puzzle, placedMirrors],
-  )
-
   const mirrorsUsed = Object.keys(placedMirrors).length
   const mirrorLimit = puzzle.rule.exactMirrorCount ?? puzzle.rule.maxMirrors
   const totalStars = puzzle.rule.requiredStars.length
@@ -115,32 +112,52 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
     ? result.simulation.visitedStars.filter((s) => puzzle.rule.requiredStars.includes(s)).length
     : 0
 
-  /** 같은 칸을 계속 누르면 빈칸 → 고른 거울 → 반대 거울 → 빈칸으로 순환한다. */
+  /**
+   * 거울 도구: 빈 칸이면 고른 거울을 놓고, 이미 있으면 반대 방향으로 바꾼다.
+   * 지우개 도구: 거울이 있는 칸을 누르면 지운다.
+   */
   function handleCellClick(cellKey: string) {
     if (!canPlaceMirror(puzzle, cellKey)) return
-    setResult(null)
-    setPlacedMirrors((previous) => {
-      const next = { ...previous }
-      const current = next[cellKey]
-      if (!current) {
-        next[cellKey] = selectedMirror
-      } else if (current === selectedMirror) {
-        next[cellKey] = OTHER_MIRROR[current]
-      } else {
+    const current = placedMirrors[cellKey]
+    if (selectedTool === 'ERASER') {
+      if (!current) return
+      playErase()
+      setResult(null)
+      setPlacedMirrors((previous) => {
+        const next = { ...previous }
         delete next[cellKey]
-      }
-      return next
-    })
+        return next
+      })
+      return
+    }
+    playPlace()
+    setResult(null)
+    setPlacedMirrors((previous) => ({
+      ...previous,
+      [cellKey]: previous[cellKey] ? OTHER_MIRROR[previous[cellKey]] : selectedTool,
+    }))
   }
 
-  function handleSelectMirror(mirror: MirrorType) {
-    setSelectedMirror(mirror)
+  function handleSelectTool(tool: PaletteTool) {
+    setSelectedTool(tool)
     setPlaceHint(true)
+  }
+
+  /** 실행 사운드: 출발 스윕 + 빛 애니메이션 타이밍에 맞춘 반사·별 효과음 예약. */
+  function playBeamSfx(run: ValidationResult) {
+    playRunStart()
+    run.simulation.path.forEach((step, i) => {
+      const at = ((i + 1) * CELL_MS) / 1000
+      if (step.event === 'REFLECT') playReflect(at)
+      else if (step.event === 'STAR') playStar(at)
+    })
   }
 
   function handleRun() {
     setRevealResult(false)
-    setResult(validateSolution(puzzle, placedMirrors))
+    const run = validateSolution(puzzle, placedMirrors)
+    setResult(run)
+    playBeamSfx(run)
   }
 
   function handleReset() {
@@ -159,7 +176,9 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
     }
     setPlacedMirrors({ ...sample })
     setRevealResult(false)
-    setResult(validateSolution(puzzle, sample))
+    const run = validateSolution(puzzle, sample)
+    setResult(run)
+    playBeamSfx(run)
   }
 
   const resultStatus = result ? (result.success ? 'success' : 'fail') : null
@@ -223,6 +242,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
             simulation={result?.simulation ?? null}
             resultStatus={resultStatus}
             placeHint={placeHint}
+            hintMode={selectedTool === 'ERASER' ? 'erase' : 'place'}
             onCellClick={handleCellClick}
           />
         </div>
@@ -236,7 +256,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
 
       <div className="pp-dock">
         <div className="pp-dock-mirrors">
-          <MirrorPalette selected={selectedMirror} onSelect={handleSelectMirror} />
+          <MirrorPalette selected={selectedTool} onSelect={handleSelectTool} />
         </div>
         <div className="pp-dock-actions">
           <button type="button" className="btn btn-ghost" onClick={handleReset}>
@@ -251,12 +271,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
       </div>
 
       {revealResult && result?.success && (
-        <SuccessModal
-          starCount={totalStars}
-          score={score}
-          onNext={onNext}
-          onWorldMap={onBack}
-        />
+        <SuccessModal starCount={totalStars} onNext={onNext} onWorldMap={onBack} />
       )}
 
       <RulePanel
