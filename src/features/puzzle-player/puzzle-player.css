@@ -967,6 +967,8 @@
   font-size: 0.72rem;
   font-weight: 400;
   line-height: 1.1;
+  /* 좌우 띠가 좁아도 '출구'가 세로로 꺾이지 않게 한 줄 고정. */
+  white-space: nowrap;
 }
 
 .pb-marker-entry .pb-marker-label {

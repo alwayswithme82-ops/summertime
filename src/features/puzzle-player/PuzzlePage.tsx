@@ -244,7 +244,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
 
           <div className="pp-result-live" aria-live="polite">
             {revealResult && (
-              <ResultPanel result={result} onDismiss={() => setResult(null)} />
+              <ResultPanel result={result} puzzle={puzzle} onDismiss={() => setResult(null)} />
             )}
           </div>
         </div>
