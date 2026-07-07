@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { MirrorType, PlacedMirrors, Puzzle, ValidationResult } from '../../core'
 import { cellKeyToPosition, validateSolution } from '../../core'
 import { samplePuzzles } from '../../data/samplePuzzles'
+import { isCountFocused } from './puzzleFocus'
 import { MirrorPalette, type PaletteTool } from './MirrorPalette'
 import { PuzzleBoard } from './PuzzleBoard'
 import { playErase, playFail, playPlace, playReflect, playRunStart, playStar, playSuccess } from '../../audio/sfx'
@@ -80,6 +81,17 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
 
   const mirrorsUsed = Object.keys(placedMirrors).length
   const mirrorLimit = puzzle.rule.exactMirrorCount ?? puzzle.rule.maxMirrors
+  // 개수 중심 문제만 거울 카운터를 강조한다. 위치 중심은 "어디에 놓는지"가 핵심.
+  const countFocused = isCountFocused(puzzle.rule)
+  const markedOnly = puzzle.rule.mirrorPlacementMode === 'MARKED_ONLY'
+  const slashUsed = Object.values(placedMirrors).filter((m) => m === '/').length
+  const requiredCounts = puzzle.rule.requiredMirrorCounts
+  const paletteRemaining = requiredCounts
+    ? {
+        '/': (requiredCounts.slash ?? 0) - slashUsed,
+        '\\': (requiredCounts.backslash ?? 0) - (mirrorsUsed - slashUsed),
+      }
+    : undefined
   const totalStars = puzzle.rule.requiredStars.length
   const passedStars = result
     ? result.simulation.visitedStars.filter((s) => puzzle.rule.requiredStars.includes(s)).length
@@ -189,13 +201,15 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
             <span className="pp-badge-icon" aria-hidden="true">★</span>
             {passedStars}/{totalStars}
           </span>
-          <span
-            className="pp-badge pp-badge-mirror"
-            aria-label={`사용한 거울 ${mirrorsUsed}개, 최대 ${mirrorLimit}개`}
-          >
-            <span className="pp-badge-icon" aria-hidden="true">◇</span>
-            {mirrorsUsed}/{mirrorLimit}
-          </span>
+          {countFocused && (
+            <span
+              className="pp-badge pp-badge-mirror"
+              aria-label={`사용한 거울 ${mirrorsUsed}개, 목표 ${mirrorLimit}개`}
+            >
+              <span className="pp-badge-icon" aria-hidden="true">◇</span>
+              {mirrorsUsed}/{mirrorLimit}
+            </span>
+          )}
           <button
             type="button"
             className="pp-icon-btn"
@@ -210,7 +224,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
       <main className="pp-stage">
         <GoalPanel
           puzzle={puzzle}
-          mirrorsUsed={mirrorsUsed}
+          placedMirrors={placedMirrors}
           passedStars={passedStars}
           onShowSample={puzzle.sampleAnswer ? handleShowSample : undefined}
         />
@@ -238,7 +252,12 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
 
       <div className="pp-dock">
         <div className="pp-dock-mirrors">
-          <MirrorPalette selected={selectedTool} onSelect={handleSelectTool} />
+          <MirrorPalette
+            selected={selectedTool}
+            onSelect={handleSelectTool}
+            remaining={paletteRemaining}
+            markedOnly={markedOnly}
+          />
         </div>
         <div className="pp-dock-actions">
           <button type="button" className="btn btn-ghost" onClick={handleReset}>

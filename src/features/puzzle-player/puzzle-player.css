@@ -254,8 +254,33 @@
   line-height: 1.2;
 }
 
-.gp-mirror-counts svg {
+.gp-goals li.gp-mirror-count svg {
   flex: none;
+}
+
+/* 종류별 개수를 넘겨 놓으면 경고 색으로 바뀐다. */
+.gp-goals li.is-over {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.gp-goals li.is-over::before {
+  content: '!';
+  color: #ffffff;
+  background: var(--danger);
+}
+
+/* 위치 중심 문제: 빛나는 칸 안내 — 보드의 금빛 칸과 같은 색으로 연결해 준다. */
+.gp-goals li.gp-marked {
+  border-color: rgba(255, 196, 47, 0.75);
+  background: #fff8e6;
+}
+
+.gp-goals li.gp-marked::before {
+  content: '✦';
+  color: var(--star);
+  background: rgba(255, 196, 47, 0.25);
 }
 
 .gp-sample {
@@ -423,6 +448,7 @@
 }
 
 .mp-btn {
+  position: relative;
   display: grid;
   place-items: center;
   width: 60px;
@@ -468,6 +494,31 @@
   background: linear-gradient(var(--teal-soft), var(--teal-soft)), var(--panel-hi);
   box-shadow: inset 0 0 0 2px rgba(255, 196, 47, 0.8);
   animation: soft-pop 260ms ease both;
+}
+
+/* 개수 중심 문제: 종류별 남은 개수 배지 — 버튼 오른쪽 위에 콕 붙는다. */
+.mp-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 4px;
+  border: 2px solid var(--teal-deep);
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  background: var(--teal-line);
+  box-shadow: var(--pixel-sm);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.66rem;
+  line-height: 1;
+}
+
+.mp-count.is-empty {
+  border-color: #b3b3ad;
+  background: #8b8b85;
 }
 
 /* 지우개 버튼 — 거울과 헷갈리지 않게 코랄 색 + 이름표 */
@@ -849,16 +900,29 @@
     var(--danger-soft);
 }
 
+/* 거울을 놓을 수 있는 '빛나는 칸' — 금빛 테두리가 은은하게 숨쉬어 한눈에 보인다. */
 .pb-cell.is-allowed {
-  background: var(--cell);
-  box-shadow: inset 0 0 0 2px rgba(15, 118, 110, 0.32);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 196, 47, 0.2), transparent 72%),
+    var(--cell);
+  box-shadow: inset 0 0 0 2px rgba(255, 196, 47, 0.55);
+  animation: allowed-glow 2.1s ease-in-out infinite;
+}
+
+@keyframes allowed-glow {
+  50% {
+    box-shadow:
+      inset 0 0 0 2px rgba(255, 196, 47, 0.95),
+      inset 0 0 12px rgba(255, 196, 47, 0.45);
+  }
 }
 
 .pb-cell.is-allowed:hover {
   background:
-    linear-gradient(var(--teal-soft), var(--teal-soft)),
+    linear-gradient(rgba(255, 196, 47, 0.22), rgba(255, 196, 47, 0.22)),
     var(--cell);
-  box-shadow: inset 0 0 0 2px rgba(15, 118, 110, 0.6);
+  box-shadow: inset 0 0 0 2px rgba(214, 150, 20, 0.85);
+  animation: none;
 }
 
 .pc-star {
@@ -880,7 +944,7 @@
   place-items: center;
   width: 22px;
   height: 22px;
-  border: 2px dashed rgba(15, 118, 110, 0.6);
+  border: 2px dashed rgba(214, 150, 20, 0.65);
   border-radius: 4px;
   color: transparent;
   transform: rotate(45deg);

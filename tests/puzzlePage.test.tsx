@@ -30,7 +30,9 @@ describe('PuzzlePage (스모크)', () => {
     // 성공 조건(별/출구/거울)이 풀이 중에 계속 보인다.
     expect(panel).toHaveTextContent('별 3개 모두 지나기')
     expect(panel).toHaveTextContent('출구')
-    expect(panel).toHaveTextContent('거울')
+    // 위치 중심 문제(p1)는 개수 문구 대신 "빛나는 칸" 안내가 보인다.
+    expect(panel).toHaveTextContent('빛나는 칸에만 거울을 놓을 수 있어요')
+    expect(panel).not.toHaveTextContent('이하')
     // 입장 시 자동으로 뜨는 규칙 모달은 더 이상 없다.
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })

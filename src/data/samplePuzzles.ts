@@ -8,8 +8,8 @@ import type { Puzzle } from '../core'
 export const samplePuzzles: Puzzle[] = [
   {
     id: 'p1',
-    title: '오른쪽으로 빠져나가기',
-    description: '별 3개를 지나 오른쪽 1행 출구로 빛을 내보내요.',
+    title: '첫 번째 반사',
+    description: '빛나는 칸에 거울을 놓아 별 3개를 지나 출구로 보내요',
     level: 'NORMAL',
     rows: 5,
     cols: 5,
@@ -29,8 +29,8 @@ export const samplePuzzles: Puzzle[] = [
   },
   {
     id: 'p2',
-    title: '위로 올려보내기',
-    description: '별 3개를 지나 위쪽 E열 출구로 빛을 내보내요.',
+    title: '별 셋을 지나서',
+    description: '빛나는 칸에 거울을 놓아 별 3개를 모두 지나요',
     level: 'NORMAL',
     rows: 5,
     cols: 5,
@@ -50,8 +50,8 @@ export const samplePuzzles: Puzzle[] = [
   },
   {
     id: 'p3',
-    title: '지그재그로 올라가기',
-    description: '별 3개를 지나 위쪽 C열 출구로 빛을 내보내요.',
+    title: '돌고 돌아',
+    description: '빛나는 칸에 거울을 놓아 별 3개를 지나요',
     level: 'NORMAL',
     rows: 5,
     cols: 5,
@@ -71,8 +71,8 @@ export const samplePuzzles: Puzzle[] = [
   },
   {
     id: 'p4',
-    title: '작은 미로 (4x4)',
-    description: '별 2개를 지나 오른쪽 2행 출구로 빛을 내보내요.',
+    title: '작은 미로',
+    description: '빛나는 칸에 거울을 놓아 별 2개를 지나요',
     level: 'BASIC',
     rows: 4,
     cols: 4,
@@ -92,8 +92,8 @@ export const samplePuzzles: Puzzle[] = [
   },
   {
     id: 'p5',
-    title: '큰 미로 (7x7)',
-    description: '별 5개를 지나 위쪽 G열 출구로 빛을 내보내요. / 3개, \\ 2개만 쓸 수 있어요.',
+    title: '큰 미로',
+    description: '거울은 딱 5개! ／3개, ＼2개로 별 5개를 모두 지나요',
     level: 'LARGE',
     rows: 7,
     cols: 7,
