@@ -46,7 +46,30 @@ function friendlyError(message: string, puzzle: Puzzle): string {
   if (text.startsWith('금지칸을 지나갔어요')) return '빛이 ✕ 금지칸을 지나갔어요'
   if (text.startsWith('정해진 출구')) return '정해진 출구로 나가지 못했어요'
 
-  return text
+  if (text.startsWith('아직 지나지 않은 별')) {
+    // 좌표를 떼기 전 원문에서 별 개수를 세어 "몇 개 남았는지"로 바꿔 준다.
+    const missed = (message.match(/[A-Z]+\d+/g) ?? []).length
+    return missed > 0 ? `아직 지나지 않은 별이 ${missed}개 있어요` : '아직 지나지 않은 별이 있어요'
+  }
+
+  if (text.startsWith('빛이 같은 곳을')) {
+    return '빛이 같은 곳을 빙글빙글 돌고 있어요 — 거울 방향을 바꿔 볼까요?'
+  }
+
+  // 다듬지 못한 메시지도 마침표만 정리해 말투를 맞춘다.
+  return text.replace(/\.$/, '')
+}
+
+/**
+ * 케이스별 중복 정리 후 다듬은 문구 목록을 만든다.
+ * '딱 N개' 조건이 있는 문제에서는 'N개 이하' 안내가 같은 얘기의 반복이라 뺀다.
+ */
+function friendlyErrors(result: ValidationResult, puzzle: Puzzle): string[] {
+  let errors = result.errors
+  if (puzzle.rule.exactMirrorCount != null) {
+    errors = errors.filter((e) => !/개 이하로 사용/.test(e))
+  }
+  return errors.map((e) => friendlyError(e, puzzle))
 }
 
 /**
@@ -61,8 +84,8 @@ export function ResultPanel({ result, puzzle, onDismiss }: ResultPanelProps) {
       <div className="rb-body">
         <h3 className="rb-title">다시 해볼까요?</h3>
         <ul className="rp-reasons">
-          {result.errors.map((e) => (
-            <li key={e}>{friendlyError(e, puzzle)}</li>
+          {friendlyErrors(result, puzzle).map((e) => (
+            <li key={e}>{e}</li>
           ))}
         </ul>
         <p className="rb-tip">빨간 빛을 따라가면 어디서 막혔는지 보여요</p>
