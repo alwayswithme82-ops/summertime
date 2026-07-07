@@ -272,9 +272,23 @@
   background: rgba(255, 196, 47, 0.25);
 }
 
+.gp-sample-box {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .gp-sample {
   min-height: 40px;
   font-size: 0.8rem;
+}
+
+.gp-sponsor {
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.58rem;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .pp-board-hold {

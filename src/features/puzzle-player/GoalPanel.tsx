@@ -126,9 +126,12 @@ export function GoalPanel({ puzzle, placedMirrors, passedStars, onShowSample }: 
       </ul>
 
       {onShowSample && (
-        <button type="button" className="btn btn-ghost gp-sample" onClick={onShowSample}>
-          예시 정답 보기
-        </button>
+        <div className="gp-sample-box">
+          <button type="button" className="btn btn-ghost gp-sample" onClick={onShowSample}>
+            예시 정답 보기
+          </button>
+          <p className="gp-sponsor">후원 문의 국민 93800201730223 이태열</p>
+        </div>
       )}
     </aside>
   )

@@ -54,6 +54,8 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
   const [result, setResult] = useState<ValidationResult | null>(null)
   // 빛 애니메이션이 끝난 뒤에야 성공 모달/실패 배너를 보여준다.
   const [revealResult, setRevealResult] = useState(false)
+  // 예시 정답으로 만든 성공인지 구분해 성공 모달 문구를 바꾼다.
+  const [sampleShown, setSampleShown] = useState(false)
   // 입장 직후와 거울 선택 직후, 놓을 수 있는 빈 칸을 잠깐 반짝인다.
   const [placeHint, setPlaceHint] = useState(true)
   // '이렇게 풀어요' 도움말 — 문제 조건은 GoalPanel이 항상 보여주므로 필요할 때만 연다.
@@ -140,6 +142,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
 
   function handleRun() {
     setRevealResult(false)
+    setSampleShown(false)
     const run = validateSolution(puzzle, placedMirrors)
     setResult(run)
     playBeamSfx(run)
@@ -148,6 +151,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
   function handleReset() {
     setPlacedMirrors({})
     setResult(null)
+    setSampleShown(false)
   }
 
   function handleShowSample() {
@@ -161,6 +165,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
     }
     setPlacedMirrors({ ...sample })
     setRevealResult(false)
+    setSampleShown(true)
     const run = validateSolution(puzzle, sample)
     setResult(run)
     playBeamSfx(run)
@@ -272,7 +277,13 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
       </div>
 
       {revealResult && result?.success && (
-        <SuccessModal starCount={totalStars} onNext={onNext} onWorldMap={onBack} />
+        <SuccessModal
+          starCount={totalStars}
+          mode={sampleShown ? 'sample' : 'success'}
+          onNext={onNext}
+          onWorldMap={onBack}
+          onRetry={handleReset}
+        />
       )}
 
       <RulePanel open={showHelp} onClose={() => setShowHelp(false)} />

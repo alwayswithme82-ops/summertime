@@ -83,12 +83,18 @@ describe('PuzzlePage (스모크)', () => {
   it('"예시 정답 보기"를 누르면 예시가 적용되고 성공으로 판정된다', () => {
     vi.useFakeTimers()
     render(<PuzzlePage />)
+    expect(screen.getByText('후원 문의 국민 93800201730223 이태열')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '예시 정답 보기' }))
     finishBeamAnimation()
-    // 예시 정답 적용 후 자동 판정 → 성공 모달
-    expect(screen.getByText('성공!')).toBeInTheDocument()
+    // 예시 정답 적용 후 자동 판정 → 직접 풀이 유도 모달
+    expect(screen.getByText('직접 해볼까요?')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '직접 해보기' })).toBeInTheDocument()
     // 예시 배치의 거울(A1 '/')이 SVG 대각선으로 보드에 표시된다.
     const a1 = screen.getByRole('button', { name: '1번째 줄 1번째 칸, / 모양 거울 있음' })
     expect(a1.querySelector('svg[data-mirror="/"]')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: '직접 해보기' }))
+    expect(screen.queryByText('직접 해볼까요?')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '1번째 줄 1번째 칸' })).toBeInTheDocument()
   })
 })
