@@ -16,12 +16,13 @@ export const samplePuzzles: Puzzle[] = [
     entry: { side: 'TOP', index: 3, direction: 'DOWN' },
     exit: { side: 'RIGHT', index: 1, direction: 'RIGHT' },
     stars: ['A2', 'B3', 'D2'],
-    // 아래쪽 구석(A5, E5) 금지칸은 풀이 경로와 무관한 장식이라 뺐다 — 조건을 단순하게.
-    forbiddenCells: ['E3'],
+    // 금지칸은 각 반사 지점을 놓쳤을 때 빛이 바로 막히는 자리에만 둔다:
+    // C2 = 입구에서 거울 없이 직진, A4 = A3 거울 누락, E3 = D3 거울 누락.
+    forbiddenCells: ['C2', 'A4', 'E3'],
     allowedMirrorCells: ['A1', 'C1', 'D1', 'A3', 'C3', 'D3'],
     rule: {
       requiredStars: ['A2', 'B3', 'D2'],
-      forbiddenCells: ['E3'],
+      forbiddenCells: ['C2', 'A4', 'E3'],
       allowedMirrorCells: ['A1', 'C1', 'D1', 'A3', 'C3', 'D3'],
       mirrorPlacementMode: 'MARKED_ONLY',
       maxMirrors: 6,
@@ -38,12 +39,14 @@ export const samplePuzzles: Puzzle[] = [
     entry: { side: 'LEFT', index: 4, direction: 'RIGHT' },
     exit: { side: 'TOP', index: 5, direction: 'UP' },
     stars: ['C1', 'B3', 'C4'],
-    // 아래쪽 구석(A5, E5) 금지칸은 풀이 경로와 무관한 장식이라 뺐다 — 조건을 단순하게.
-    forbiddenCells: ['C2'],
+    // 금지칸은 반사 지점을 놓쳤을 때 빛이 바로 막히는 자리에만 둔다:
+    // E4 = 첫 거울(D4) 누락 시 직진, D2 = D3 거울 누락 시 틀린 출구 직전.
+    // (기존 C2는 빛이 닿을 수 없는 장식이라 제거.)
+    forbiddenCells: ['E4', 'D2'],
     allowedMirrorCells: ['A1', 'E1', 'A3', 'D3', 'B4', 'D4'],
     rule: {
       requiredStars: ['C1', 'B3', 'C4'],
-      forbiddenCells: ['C2'],
+      forbiddenCells: ['E4', 'D2'],
       allowedMirrorCells: ['A1', 'E1', 'A3', 'D3', 'B4', 'D4'],
       mirrorPlacementMode: 'MARKED_ONLY',
       maxMirrors: 6,
