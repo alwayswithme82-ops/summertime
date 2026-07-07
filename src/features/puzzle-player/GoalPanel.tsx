@@ -100,7 +100,9 @@ export function GoalPanel({ puzzle, placedMirrors, passedStars, onShowSample }: 
         {countFocused ? (
           <>
             <li>
-              거울 {rule.exactMirrorCount ? `딱 ${mirrorTarget}개` : `${mirrorTarget}개 이하`} 쓰기
+              {rule.exactMirrorCount
+                ? `거울 ${mirrorTarget}개 모두 사용하기`
+                : `거울 ${mirrorTarget}개 이하로 쓰기`}
               <span className="gp-count">
                 {mirrorsUsed}/{mirrorTarget}
               </span>

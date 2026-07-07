@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, cleanup, act } from '@testing-library/react'
 import { PuzzlePage } from '../src/features/puzzle-player/PuzzlePage'
+import { getPuzzle } from '../src/data/samplePuzzles'
 
 afterEach(() => {
   cleanup()
@@ -43,6 +44,23 @@ describe('PuzzlePage (스모크)', () => {
     fireEvent.click(screen.getByRole('button', { name: '실행하기' }))
     finishBeamAnimation()
     expect(screen.getByText('다시 해볼까요?')).toBeInTheDocument()
+  })
+
+  it('개수 중심 문제는 거울 조건을 자연스러운 표현으로 보여준다', () => {
+    vi.useFakeTimers()
+    const puzzle = getPuzzle('p5')!
+    render(<PuzzlePage puzzle={puzzle} />)
+
+    const panel = screen.getByRole('complementary', { name: '문제 조건' })
+    expect(panel).toHaveTextContent('거울 5개 모두 사용하기')
+    expect(panel).not.toHaveTextContent('딱')
+
+    fireEvent.click(screen.getByRole('button', { name: '실행하기' }))
+    finishBeamAnimation()
+
+    expect(screen.getByText('거울 5개를 모두 사용해야 해요')).toBeInTheDocument()
+    expect(screen.getByText('／ 거울 3개, ＼ 거울 2개를 사용해야 해요')).toBeInTheDocument()
+    expect(screen.queryByText(/거울을 딱/)).not.toBeInTheDocument()
   })
 
   it('입구/출구가 보드 바깥에 고정 표시된다 (학생이 변경 불가)', () => {

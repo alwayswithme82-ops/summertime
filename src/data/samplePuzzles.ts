@@ -98,7 +98,7 @@ export const samplePuzzles: Puzzle[] = [
   {
     id: 'p5',
     title: '큰 미로',
-    description: '거울은 딱 5개! ／3개, ＼2개로 별 5개를 모두 지나요',
+    description: '거울 5개를 모두 사용하고 ／3개, ＼2개로 별 5개를 모두 지나요',
     level: 'LARGE',
     rows: 7,
     cols: 7,

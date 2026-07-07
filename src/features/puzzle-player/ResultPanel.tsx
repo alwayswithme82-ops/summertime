@@ -19,23 +19,23 @@ function withoutCoordinates(message: string): string {
 
 /**
  * core의 판정 메시지를 화면 표현에 맞게 다듬는다(판정 로직은 그대로).
- * 조건 패널·팔레트와 같은 말투("딱 N개", "빛나는 칸")로 통일한다.
+ * 조건 패널·팔레트와 같은 말투("모두 사용", "빛나는 칸")로 통일한다.
  */
 function friendlyError(message: string, puzzle: Puzzle): string {
   const text = withoutCoordinates(message)
   const markedOnly = puzzle.rule.mirrorPlacementMode === 'MARKED_ONLY'
 
   const exact = text.match(/^거울을 정확히 (\d+)개/)
-  if (exact) return `거울을 딱 ${exact[1]}개 써야 해요`
+  if (exact) return `거울 ${exact[1]}개를 모두 사용해야 해요`
 
   const max = text.match(/^거울을 (\d+)개 이하/)
   if (max) return `거울은 ${max[1]}개까지만 쓸 수 있어요`
 
   const slash = text.match(/^'\/' 거울을 (\d+)개/)
-  if (slash) return `／ 거울을 딱 ${slash[1]}개 써야 해요`
+  if (slash) return `／ 거울 ${slash[1]}개를 사용해야 해요`
 
   const backslash = text.match(/^'\\' 거울을 (\d+)개/)
-  if (backslash) return `＼ 거울을 딱 ${backslash[1]}개 써야 해요`
+  if (backslash) return `＼ 거울 ${backslash[1]}개를 사용해야 해요`
 
   if (text.startsWith('거울을 놓을 수 없는 칸')) {
     return markedOnly
@@ -60,16 +60,38 @@ function friendlyError(message: string, puzzle: Puzzle): string {
   return text.replace(/\.$/, '')
 }
 
+function mirrorCompositionError(errors: string[], puzzle: Puzzle): string | null {
+  const required = puzzle.rule.requiredMirrorCounts
+  if (!required) return null
+
+  const hasMirrorTypeError = errors.some((e) => /^'[/\\]' 거울을 \d+개/.test(e))
+  if (!hasMirrorTypeError) return null
+
+  const parts: string[] = []
+  if (required.slash != null) parts.push(`／ 거울 ${required.slash}개`)
+  if (required.backslash != null) parts.push(`＼ 거울 ${required.backslash}개`)
+
+  return parts.length > 0 ? `${parts.join(', ')}를 사용해야 해요` : null
+}
+
 /**
  * 케이스별 중복 정리 후 다듬은 문구 목록을 만든다.
- * '딱 N개' 조건이 있는 문제에서는 'N개 이하' 안내가 같은 얘기의 반복이라 뺀다.
+ * 정확히 N개 조건이 있는 문제에서는 'N개 이하' 안내가 같은 얘기의 반복이라 뺀다.
  */
 function friendlyErrors(result: ValidationResult, puzzle: Puzzle): string[] {
   let errors = result.errors
   if (puzzle.rule.exactMirrorCount != null) {
     errors = errors.filter((e) => !/개 이하로 사용/.test(e))
   }
-  return errors.map((e) => friendlyError(e, puzzle))
+
+  const composition = mirrorCompositionError(errors, puzzle)
+  if (composition) {
+    errors = errors.filter((e) => !/^'[/\\]' 거울을 \d+개/.test(e))
+  }
+
+  const messages = errors.map((e) => friendlyError(e, puzzle))
+  if (composition) messages.push(composition)
+  return messages
 }
 
 /**
