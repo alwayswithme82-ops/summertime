@@ -29,7 +29,7 @@ export function withoutCoordinates(text: string): string {
     .trim()
 }
 
-/** 종류별 남은 개수 안내 한 줄. 다 쓰면 초록, 넘게 놓으면 경고. */
+/** 종류별 남은 개수 안내 한 줄. 넘게 놓으면 경고 색으로 바뀐다. */
 function MirrorCountGoal({
   type,
   required,
@@ -41,9 +41,8 @@ function MirrorCountGoal({
 }) {
   const remaining = required - used
   const over = remaining < 0
-  const done = remaining === 0
   return (
-    <li className={`gp-mirror-count${done ? ' is-done' : ''}${over ? ' is-over' : ''}`}>
+    <li className={`gp-mirror-count${over ? ' is-over' : ''}`}>
       <MirrorIcon type={type} size={16} />
       {over
         ? `${required}개보다 ${-remaining}개 많아요!`
@@ -86,7 +85,7 @@ export function GoalPanel({ puzzle, placedMirrors, passedStars, onShowSample }: 
       {puzzle.description && <p className="gp-desc">{withoutCoordinates(puzzle.description)}</p>}
 
       <ul className="gp-goals">
-        <li className={passedStars === totalStars && totalStars > 0 ? 'is-done' : ''}>
+        <li>
           별 {totalStars}개 모두 지나기
           <span className="gp-count">
             {passedStars}/{totalStars}

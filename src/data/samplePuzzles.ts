@@ -16,11 +16,12 @@ export const samplePuzzles: Puzzle[] = [
     entry: { side: 'TOP', index: 3, direction: 'DOWN' },
     exit: { side: 'RIGHT', index: 1, direction: 'RIGHT' },
     stars: ['A2', 'B3', 'D2'],
-    forbiddenCells: ['E3', 'A5', 'E5'],
+    // 아래쪽 구석(A5, E5) 금지칸은 풀이 경로와 무관한 장식이라 뺐다 — 조건을 단순하게.
+    forbiddenCells: ['E3'],
     allowedMirrorCells: ['A1', 'C1', 'D1', 'A3', 'C3', 'D3'],
     rule: {
       requiredStars: ['A2', 'B3', 'D2'],
-      forbiddenCells: ['E3', 'A5', 'E5'],
+      forbiddenCells: ['E3'],
       allowedMirrorCells: ['A1', 'C1', 'D1', 'A3', 'C3', 'D3'],
       mirrorPlacementMode: 'MARKED_ONLY',
       maxMirrors: 6,
@@ -37,11 +38,12 @@ export const samplePuzzles: Puzzle[] = [
     entry: { side: 'LEFT', index: 4, direction: 'RIGHT' },
     exit: { side: 'TOP', index: 5, direction: 'UP' },
     stars: ['C1', 'B3', 'C4'],
-    forbiddenCells: ['C2', 'A5', 'E5'],
+    // 아래쪽 구석(A5, E5) 금지칸은 풀이 경로와 무관한 장식이라 뺐다 — 조건을 단순하게.
+    forbiddenCells: ['C2'],
     allowedMirrorCells: ['A1', 'E1', 'A3', 'D3', 'B4', 'D4'],
     rule: {
       requiredStars: ['C1', 'B3', 'C4'],
-      forbiddenCells: ['C2', 'A5', 'E5'],
+      forbiddenCells: ['C2'],
       allowedMirrorCells: ['A1', 'E1', 'A3', 'D3', 'B4', 'D4'],
       mirrorPlacementMode: 'MARKED_ONLY',
       maxMirrors: 6,
