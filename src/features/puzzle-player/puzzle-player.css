@@ -144,11 +144,123 @@
 }
 
 /* ------------------------------- 무대 ------------------------------- */
+/* 왼쪽에 문제 조건 패널이 항상 떠 있고, 오른쪽에 보드가 놓인다. */
 .pp-stage {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
   gap: 1rem;
+}
+
+.pp-stage-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* --------------------------- 문제 조건 패널 --------------------------- */
+.goal-panel {
+  flex: none;
+  width: 236px;
+  position: sticky;
+  top: 78px; /* 고정 HUD 바로 아래 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border: 2px solid var(--teal-line);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 0.8rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--pixel);
+}
+
+.gp-title {
+  margin: 0;
+  color: var(--teal-line);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.gp-desc {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.gp-goals {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gp-goals li {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.42rem 0.5rem;
+  color: var(--text-soft);
+  background: var(--panel-hi);
+  font-size: 0.74rem;
+  font-weight: 640;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.gp-goals li::before {
+  content: '✓';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-sm);
+  color: var(--teal-line);
+  background: var(--teal-soft);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+/* 조건을 만족하면(예: 별을 모두 지나면) 초록으로 칭찬해 준다. */
+.gp-goals li.is-done {
+  border-color: rgba(16, 156, 106, 0.5);
+  background: var(--success-soft);
+}
+
+.gp-goals li.is-done::before {
+  color: #ffffff;
+  background: var(--success);
+}
+
+.gp-count {
+  margin-left: auto;
+  flex: none;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.12rem 0.34rem;
+  background: var(--panel);
+  font-family: var(--font-pixel-ui);
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+
+.gp-mirror-counts svg {
+  flex: none;
+}
+
+.gp-sample {
+  min-height: 40px;
+  font-size: 0.8rem;
 }
 
 .pp-board-hold {
@@ -633,27 +745,7 @@
   margin-left: auto;
 }
 
-/* "다시 보지 않기" 체크 */
-.rp-hide {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-soft);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.72rem;
-  cursor: pointer;
-  user-select: none;
-}
-
-.rp-hide input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  accent-color: var(--teal-line);
-  cursor: pointer;
-}
-
-/* 모달 내부 목표/규칙 텍스트 */
+/* 모달 제목 */
 .rp-title {
   display: flex;
   align-items: flex-start;
@@ -670,94 +762,6 @@
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: 0.01em;
-}
-
-.rp-level {
-  flex: none;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 0.22rem 0.5rem;
-  color: var(--text-soft);
-  background: var(--panel-hi);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.6rem;
-  font-weight: 400;
-}
-
-.rp-level-basic {
-  color: var(--success);
-  border-color: rgba(16, 156, 106, 0.5);
-  background: var(--success-soft);
-}
-
-.rp-level-hard {
-  color: var(--coral-dark);
-  border-color: rgba(255, 106, 61, 0.5);
-  background: var(--coral-soft);
-}
-
-.rp-level-large {
-  color: var(--purple);
-  border-color: rgba(124, 92, 255, 0.5);
-  background: var(--purple-soft);
-}
-
-.rp-desc {
-  margin: 0.7rem 0 0;
-  color: var(--text-soft);
-  font-size: 0.84rem;
-  line-height: 1.6;
-  word-break: keep-all;
-}
-
-.rp-subtitle {
-  margin: 1.1rem 0 0.5rem;
-  color: var(--teal-line);
-  font-family: var(--font-pixel-ui);
-  font-size: 0.9rem;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-}
-
-.rp-goals {
-  display: grid;
-  gap: 0.45rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rp-goals li {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.48rem;
-  border: 2px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 0.5rem 0.62rem;
-  color: var(--text-soft);
-  background: var(--panel-hi);
-  font-size: 0.82rem;
-  font-weight: 640;
-  line-height: 1.4;
-}
-
-.rp-goals li::before {
-  content: '✓';
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 19px;
-  height: 19px;
-  border-radius: var(--radius-sm);
-  color: var(--teal-line);
-  background: var(--teal-soft);
-  font-size: 0.7rem;
-  font-weight: 900;
-}
-
-.rp-mirror-counts svg {
-  flex: none;
 }
 
 /* ================================================================== *
@@ -1163,6 +1167,23 @@
 }
 
 /* ------------------------------ 반응형 ------------------------------ */
+@media (max-width: 720px) {
+  /* 좁은 화면: 조건 패널이 보드 위에 전체 폭으로 온다(항상 보이는 건 유지). */
+  .pp-stage {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .goal-panel {
+    position: static;
+    width: 100%;
+  }
+
+  .gp-goals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 620px) {
   .puzzle-page {
     width: calc(100% - 1rem);

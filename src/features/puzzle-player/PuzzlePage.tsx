@@ -6,6 +6,7 @@ import { MirrorPalette, type PaletteTool } from './MirrorPalette'
 import { PuzzleBoard } from './PuzzleBoard'
 import { playErase, playFail, playPlace, playReflect, playRunStart, playStar, playSuccess } from '../../audio/sfx'
 import { CELL_MS, beamDurationMs } from './PathOverlay'
+import { GoalPanel } from './GoalPanel'
 import { ResultPanel } from './ResultPanel'
 import { RulePanel } from './RulePanel'
 import { SuccessModal } from './SuccessModal'
@@ -16,28 +17,6 @@ const LEVEL_LABEL: Record<Puzzle['level'], string> = {
   NORMAL: '보통',
   HARD: '어려움',
   LARGE: '대형',
-}
-
-const HIDE_INTRO_KEY = 'hide_intro_rules'
-
-/** '다시 보지 않기' 설정을 localStorage에서 읽는다. */
-function readHideIntro(): boolean {
-  if (typeof window === 'undefined') return false
-  try {
-    return window.localStorage.getItem(HIDE_INTRO_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function writeHideIntro(hide: boolean) {
-  if (typeof window === 'undefined') return
-  try {
-    if (hide) window.localStorage.setItem(HIDE_INTRO_KEY, '1')
-    else window.localStorage.removeItem(HIDE_INTRO_KEY)
-  } catch {
-    /* 저장 실패는 무시 */
-  }
 }
 
 function canPlaceMirror(puzzle: Puzzle, cellKey: string): boolean {
@@ -76,9 +55,8 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
   const [revealResult, setRevealResult] = useState(false)
   // 입장 직후와 거울 선택 직후, 놓을 수 있는 빈 칸을 잠깐 반짝인다.
   const [placeHint, setPlaceHint] = useState(true)
-  // '다시 보지 않기'를 켜두지 않았다면 문제 입장 시 규칙을 한 번 자동으로 띄운다.
-  const [hideIntro, setHideIntro] = useState(readHideIntro)
-  const [showRules, setShowRules] = useState(() => !readHideIntro())
+  // '이렇게 풀어요' 도움말 — 문제 조건은 GoalPanel이 항상 보여주므로 필요할 때만 연다.
+  const [showHelp, setShowHelp] = useState(false)
 
   useEffect(() => {
     if (!placeHint) return
@@ -99,11 +77,6 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
     }, beamDurationMs(cells) + 400)
     return () => window.clearTimeout(timer)
   }, [result])
-
-  function handleToggleHideIntro(hide: boolean) {
-    setHideIntro(hide)
-    writeHideIntro(hide)
-  }
 
   const mirrorsUsed = Object.keys(placedMirrors).length
   const mirrorLimit = puzzle.rule.exactMirrorCount ?? puzzle.rule.maxMirrors
@@ -226,8 +199,8 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
           <button
             type="button"
             className="pp-icon-btn"
-            onClick={() => setShowRules(true)}
-            aria-label="규칙 보기"
+            onClick={() => setShowHelp(true)}
+            aria-label="푸는 방법 보기"
           >
             <span aria-hidden="true">ⓘ</span>
           </button>
@@ -235,22 +208,31 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
       </header>
 
       <main className="pp-stage">
-        <div className="pp-board-hold">
-          <PuzzleBoard
-            puzzle={puzzle}
-            placedMirrors={placedMirrors}
-            simulation={result?.simulation ?? null}
-            resultStatus={resultStatus}
-            placeHint={placeHint}
-            hintMode={selectedTool === 'ERASER' ? 'erase' : 'place'}
-            onCellClick={handleCellClick}
-          />
-        </div>
+        <GoalPanel
+          puzzle={puzzle}
+          mirrorsUsed={mirrorsUsed}
+          passedStars={passedStars}
+          onShowSample={puzzle.sampleAnswer ? handleShowSample : undefined}
+        />
 
-        <div className="pp-result-live" aria-live="polite">
-          {revealResult && (
-            <ResultPanel result={result} onDismiss={() => setResult(null)} />
-          )}
+        <div className="pp-stage-main">
+          <div className="pp-board-hold">
+            <PuzzleBoard
+              puzzle={puzzle}
+              placedMirrors={placedMirrors}
+              simulation={result?.simulation ?? null}
+              resultStatus={resultStatus}
+              placeHint={placeHint}
+              hintMode={selectedTool === 'ERASER' ? 'erase' : 'place'}
+              onCellClick={handleCellClick}
+            />
+          </div>
+
+          <div className="pp-result-live" aria-live="polite">
+            {revealResult && (
+              <ResultPanel result={result} onDismiss={() => setResult(null)} />
+            )}
+          </div>
         </div>
       </main>
 
@@ -274,15 +256,7 @@ export function PuzzlePage({ puzzle = samplePuzzles[0], onBack, onNext }: Puzzle
         <SuccessModal starCount={totalStars} onNext={onNext} onWorldMap={onBack} />
       )}
 
-      <RulePanel
-        puzzle={puzzle}
-        mirrorsUsed={mirrorsUsed}
-        open={showRules}
-        onClose={() => setShowRules(false)}
-        onShowSample={handleShowSample}
-        hideIntro={hideIntro}
-        onToggleHideIntro={handleToggleHideIntro}
-      />
+      <RulePanel open={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   )
 }

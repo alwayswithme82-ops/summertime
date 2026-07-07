@@ -20,7 +20,8 @@ interface PathOverlayProps {
   status?: 'success' | 'fail' | null
 }
 
-const GRID_GAP = 3
+/* .pb-grid의 gap(2px)과 반드시 같아야 빛이 칸 중심을 지난다. */
+const GRID_GAP = 2
 
 export function PathOverlay({
   path,

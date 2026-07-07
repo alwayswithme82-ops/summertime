@@ -13,6 +13,11 @@ function cellSizeFor(cols: number): number {
 /** 보드 바깥 입구/출구 화살표가 들어가는 띠의 두께. */
 const EDGE_ZONE = 44
 
+/** .pb-grid의 실제 렌더 치수(border/padding/gap) — CSS와 일치해야 마커가 칸 중심에 온다. */
+const GRID_BORDER = 3
+const GRID_PAD = 2
+const GRID_GAP = 2
+
 interface PuzzleBoardProps {
   puzzle: Puzzle
   placedMirrors: PlacedMirrors
@@ -89,7 +94,12 @@ function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
   const gridY = EDGE_ZONE
 
   const style: React.CSSProperties = { position: 'absolute' }
-  const centerAlong = (i: number) => (i - 0.5) * cellSize
+  // i번째 칸의 중심까지 거리 — 격자 테두리·안쪽 여백·칸 사이 간격을 모두 지나야 한다.
+  const centerAlong = (i: number) =>
+    GRID_BORDER + GRID_PAD + (i - 1) * (cellSize + GRID_GAP) + cellSize / 2
+  // 격자 상자의 전체 폭/높이(테두리 포함).
+  const gridSpan = (count: number) =>
+    2 * (GRID_BORDER + GRID_PAD) + count * cellSize + (count - 1) * GRID_GAP
 
   switch (side) {
     case 'TOP':
@@ -99,7 +109,7 @@ function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
       break
     case 'BOTTOM':
       style.left = gridX + centerAlong(index)
-      style.top = gridY + rows * cellSize + 4
+      style.top = gridY + gridSpan(rows) + 4
       style.transform = 'translateX(-50%)'
       break
     case 'LEFT':
@@ -108,7 +118,7 @@ function EdgeMarker({ kind, point, rows, cols, cellSize }: EdgeMarkerProps) {
       style.transform = 'translateY(-50%)'
       break
     case 'RIGHT':
-      style.left = gridX + cols * cellSize + 6
+      style.left = gridX + gridSpan(cols) + 6
       style.top = gridY + centerAlong(index)
       style.transform = 'translateY(-50%)'
       break
