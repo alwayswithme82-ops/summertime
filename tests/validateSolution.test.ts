@@ -114,4 +114,27 @@ describe('requiredMirrorCounts(/ 3, \\ 2) 작동', () => {
     expect(r.errors.some((e) => e.includes("'/'"))).toBe(true)
     expect(r.errors.some((e) => e.includes('\\'))).toBe(true)
   })
+
+  it('개수/종류 조건이 틀린 동안에는 출구 실패를 같이 보여주지 않는다', () => {
+    const p5 = getPuzzle('p5')!
+    const r = validateSolution(p5, {})
+    expect(r.success).toBe(false)
+    expect(r.errors.some((e) => e.includes('정확히 5개'))).toBe(true)
+    expect(r.errors.some((e) => e.includes('정해진 출구'))).toBe(false)
+  })
+
+  it('정확히 N개 조건이 있으면 N개 이하 실패를 중복으로 만들지 않는다', () => {
+    const p5 = getPuzzle('p5')!
+    const r = validateSolution(p5, {
+      A1: '/',
+      A2: '/',
+      A3: '/',
+      A4: '/',
+      A5: '/',
+      A6: '/',
+    })
+    expect(r.success).toBe(false)
+    expect(r.errors.some((e) => e.includes('정확히 5개'))).toBe(true)
+    expect(r.errors.some((e) => e.includes('이하로 사용'))).toBe(false)
+  })
 })

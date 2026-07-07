@@ -21,15 +21,18 @@ export function validateSolution(puzzle: Puzzle, placedMirrors: PlacedMirrors): 
 
   const cells = Object.keys(placedMirrors) as CellKey[]
   const mirrorCount = cells.length
+  let hasMirrorCountOrTypeError = false
 
-  // 2) maxMirrors 초과
-  if (mirrorCount > rule.maxMirrors) {
+  // 2) maxMirrors 초과. 정확히 N개 조건이 있으면 그 조건 하나로 안내한다.
+  if (rule.exactMirrorCount === undefined && mirrorCount > rule.maxMirrors) {
     errors.push(`거울을 ${rule.maxMirrors}개 이하로 사용해야 해요.`)
+    hasMirrorCountOrTypeError = true
   }
 
   // 3) exactMirrorCount
   if (rule.exactMirrorCount !== undefined && mirrorCount !== rule.exactMirrorCount) {
     errors.push(`거울을 정확히 ${rule.exactMirrorCount}개 사용해야 해요.`)
+    hasMirrorCountOrTypeError = true
   }
 
   // 4) requiredMirrorCounts (/ 와 \ 개수)
@@ -39,9 +42,11 @@ export function validateSolution(puzzle: Puzzle, placedMirrors: PlacedMirrors): 
     const { slash: needSlash, backslash: needBackslash } = rule.requiredMirrorCounts
     if (needSlash !== undefined && slash !== needSlash) {
       errors.push(`'/' 거울을 ${needSlash}개 사용해야 해요.`)
+      hasMirrorCountOrTypeError = true
     }
     if (needBackslash !== undefined && backslash !== needBackslash) {
       errors.push(`'\\' 거울을 ${needBackslash}개 사용해야 해요.`)
+      hasMirrorCountOrTypeError = true
     }
   }
 
@@ -82,7 +87,7 @@ export function validateSolution(puzzle: Puzzle, placedMirrors: PlacedMirrors): 
   }
 
   // 11) 정해진 출구
-  if (!simulation.exitedAtCorrectExit) {
+  if (!hasMirrorCountOrTypeError && !simulation.exitedAtCorrectExit) {
     errors.push('정해진 출구로 나가지 않았어요.')
   }
 
